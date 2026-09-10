@@ -22,7 +22,7 @@ HTML, no build step, styled with one `styles.css`.
 
 ```
 index.html                      Home (EN)
-about/  contact/  writing/      About · Contact · Writing
+about/  contact/                About · Contact
 work/                           Work index
 work/satu-presidents-forum/     Case study — SATU Presidents' Forum
 zh/…                            Traditional-Chinese (Taiwan) mirror of every page
@@ -47,7 +47,7 @@ python -m http.server 8000    # then visit http://localhost:8000/
 
 ## Navigation
 
-Primary nav — Work · Writing · About · Contact (作品／文章／關於／聯絡) — is
+Primary nav — Work · About · Contact (作品／關於／聯絡) — is
 identical in the `<header>` of every page (current page marked with
 `aria-current="page"`); the `<footer>` repeats it plus email, LinkedIn, and the
 language switch. There's no include mechanism, so header/footer are inlined in
