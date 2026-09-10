@@ -1,0 +1,7 @@
+<svg width="304" height="40" viewBox="0 0 304 40" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Unfoldingwithpeg">
+  <path d="M11 8.5V24a9 9 0 0 0 18 0V8.5" stroke="#262524" stroke-width="5" stroke-linecap="round"/>
+  <circle cx="29" cy="8" r="3.6" fill="#d991ab"/>
+  <text x="50" y="28" font-family="'Noto Sans', 'Segoe UI', Helvetica, Arial, sans-serif" font-size="25" font-weight="600" letter-spacing="-0.2">
+    <tspan fill="#262524">Unfoldingwith</tspan><tspan fill="#c66e8f">peg</tspan>
+  </text>
+</svg>

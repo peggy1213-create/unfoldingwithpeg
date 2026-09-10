@@ -1,0 +1,9 @@
+# The design system is its own project, pushed to this same remote's `main`
+# branch. It lives here as a nested folder during local work — keep it out of
+# the site branch.
+Design system/
+
+# OS / editor junk
+.DS_Store
+Thumbs.db
+*.log

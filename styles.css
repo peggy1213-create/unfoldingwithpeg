@@ -1,0 +1,839 @@
+/* =============================================================================
+   unfoldingwithpeg — founder site
+   One stylesheet, no build step.
+
+   Tokens, base rules and component classes (.uwp-*) are lifted verbatim from the
+   Unfoldingwithpeg design system (see /Design system/ds-bundle/_ds_bundle.css).
+   Layout classes (.site-*, .hero, .strip, .stack, .cluster, …) are page-level
+   scaffolding for this site and are the only new CSS here.
+
+   Fonts (both loaded from Google Fonts by the @import below):
+   - Body / UI text: Imprima, wired into --uwp-font-sans in place of the design
+     system's Comic Neue. Imprima ships one weight (400); the design system's
+     bold body text (700) renders as the browser's synthetic bold.
+   - Headings, the "Unfoldingwithpeg" logotype and the primary nav: Noto Sans,
+     via the design system's --uwp-font-display / --uwp-font-brand tokens (which
+     already lead with "Noto Sans") and .site-nav.
+   Chinese pages fall through the same tokens to 粉圓體 / 思源黑體 / system CJK.
+   ========================================================================== */
+
+@import url("https://fonts.googleapis.com/css2?family=Imprima&family=Noto+Sans:wght@400;600;700&display=swap");
+
+/* ---------------------------------------------------------------------------
+   1. Design tokens  (from the design system — do not edit values here)
+   ------------------------------------------------------------------------- */
+:root {
+  --uwp-blue-50: #f0f5f9;
+  --uwp-blue-100: #dce8f1;
+  --uwp-blue-200: #bcd3e4;
+  --uwp-blue-300: #94b8d2;
+  --uwp-blue-400: #6595bf;
+  --uwp-blue-500: #4f7fa8;
+  --uwp-blue-600: #416a8c;
+  --uwp-blue-700: #385771;
+  --uwp-blue-800: #33495d;
+  --uwp-blue-900: #2e3e50;
+  --uwp-rose-50: #fbf1f5;
+  --uwp-rose-100: #f6e0e9;
+  --uwp-rose-200: #eec3d5;
+  --uwp-rose-300: #e3a5bf;
+  --uwp-rose-400: #d991ab;
+  --uwp-rose-500: #c66e8f;
+  --uwp-rose-600: #b05576;
+  --uwp-rose-700: #914760;
+  --uwp-rose-800: #793d52;
+  --uwp-rose-900: #653747;
+  --uwp-neutral-0: #ffffff;
+  --uwp-neutral-50: #faf9f8;
+  --uwp-neutral-100: #f2f2f2;
+  --uwp-neutral-200: #e6e4e2;
+  --uwp-neutral-300: #d4d1ce;
+  --uwp-neutral-400: #b0aba6;
+  --uwp-neutral-500: #8a8580;
+  --uwp-neutral-600: #6b6763;
+  --uwp-neutral-700: #514e4b;
+  --uwp-neutral-800: #3a3836;
+  --uwp-neutral-900: #262524;
+  --uwp-neutral-950: #1a1918;
+  --uwp-success-500: #4f8a6b;
+  --uwp-success-100: #dfeee7;
+  --uwp-warning-500: #b5843c;
+  --uwp-warning-100: #f6e9d4;
+  --uwp-danger-500: #b5544c;
+  --uwp-danger-100: #f4ddda;
+  --uwp-color-bg: var(--uwp-neutral-50);
+  --uwp-color-surface: var(--uwp-neutral-0);
+  --uwp-color-surface-sunken: var(--uwp-neutral-100);
+  --uwp-color-surface-hover: var(--uwp-neutral-100);
+  --uwp-color-text: var(--uwp-neutral-900);
+  --uwp-color-text-muted: var(--uwp-neutral-600);
+  --uwp-color-text-subtle: var(--uwp-neutral-500);
+  --uwp-color-text-on-primary: var(--uwp-neutral-0);
+  --uwp-color-text-on-accent: var(--uwp-neutral-0);
+  --uwp-color-border: var(--uwp-neutral-300);
+  --uwp-color-border-strong: var(--uwp-neutral-400);
+  --uwp-color-border-subtle: var(--uwp-neutral-200);
+  --uwp-color-primary: var(--uwp-blue-400);
+  --uwp-color-primary-hover: var(--uwp-blue-500);
+  --uwp-color-primary-active: var(--uwp-blue-600);
+  --uwp-color-primary-emphasis: var(--uwp-blue-700);
+  --uwp-color-primary-soft: var(--uwp-blue-100);
+  --uwp-color-primary-soft-text: var(--uwp-blue-700);
+  --uwp-color-primary-solid: var(--uwp-blue-600);
+  --uwp-color-primary-solid-hover: var(--uwp-blue-700);
+  --uwp-color-primary-solid-active: var(--uwp-blue-800);
+  --uwp-color-accent: var(--uwp-rose-400);
+  --uwp-color-accent-hover: var(--uwp-rose-500);
+  --uwp-color-accent-active: var(--uwp-rose-600);
+  --uwp-color-accent-emphasis: var(--uwp-rose-700);
+  --uwp-color-accent-soft: var(--uwp-rose-100);
+  --uwp-color-accent-soft-text: var(--uwp-rose-700);
+  --uwp-color-accent-solid: var(--uwp-rose-600);
+  --uwp-color-accent-solid-hover: var(--uwp-rose-700);
+  --uwp-color-accent-solid-active: var(--uwp-rose-800);
+  --uwp-color-focus-ring: var(--uwp-blue-400);
+  --uwp-font-brand: "Noto Sans", "Noto Sans TC", system-ui, -apple-system, "Segoe UI", "PingFang TC", "Microsoft JhengHei", sans-serif;
+  --uwp-font-display: "Noto Sans", "Noto Sans TC", system-ui, -apple-system, "Segoe UI", "PingFang TC", "Microsoft JhengHei", sans-serif;
+  /* body / UI face swapped from the design system's Comic Neue to Imprima (loaded via @import above); Chinese + system fallbacks kept */
+  --uwp-font-sans: "Imprima", "Huninn", "PingFang TC", "Microsoft JhengHei", system-ui, sans-serif;
+  --uwp-font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+  --uwp-text-xs: 0.75rem;
+  --uwp-text-sm: 0.875rem;
+  --uwp-text-base: 1rem;
+  --uwp-text-lg: 1.125rem;
+  --uwp-text-xl: 1.25rem;
+  --uwp-text-2xl: 1.5rem;
+  --uwp-text-3xl: 1.875rem;
+  --uwp-text-4xl: 2.5rem;
+  --uwp-text-5xl: 3.5rem;
+  --uwp-leading-tight: 1.15;
+  --uwp-leading-snug: 1.3;
+  --uwp-leading-normal: 1.55;
+  --uwp-leading-relaxed: 1.75;
+  --uwp-tracking-tight: -0.02em;
+  --uwp-tracking-normal: 0em;
+  --uwp-tracking-wide: 0.04em;
+  --uwp-weight-light: 300;
+  --uwp-weight-normal: 400;
+  --uwp-weight-medium: 700;
+  --uwp-weight-semibold: 700;
+  --uwp-weight-bold: 700;
+  --uwp-weight-heading: 600;
+  --uwp-measure: 68ch;
+  --uwp-space-0: 0;
+  --uwp-space-1: 0.25rem;
+  --uwp-space-2: 0.5rem;
+  --uwp-space-3: 0.75rem;
+  --uwp-space-4: 1rem;
+  --uwp-space-5: 1.25rem;
+  --uwp-space-6: 1.5rem;
+  --uwp-space-8: 2rem;
+  --uwp-space-10: 2.5rem;
+  --uwp-space-12: 3rem;
+  --uwp-space-16: 4rem;
+  --uwp-space-20: 5rem;
+  --uwp-space-24: 6rem;
+  --uwp-radius-sm: 0.25rem;
+  --uwp-radius-md: 0.5rem;
+  --uwp-radius-lg: 0.875rem;
+  --uwp-radius-xl: 1.25rem;
+  --uwp-radius-pill: 999px;
+  --uwp-radius-full: 9999px;
+  --uwp-shadow-sm: 0 1px 2px rgba(38, 37, 36, 0.06), 0 1px 3px rgba(38, 37, 36, 0.05);
+  --uwp-shadow-md: 0 4px 12px -2px rgba(38, 37, 36, 0.1), 0 2px 6px -2px rgba(38, 37, 36, 0.06);
+  --uwp-shadow-lg: 0 12px 32px -8px rgba(38, 37, 36, 0.16), 0 4px 12px -4px rgba(38, 37, 36, 0.08);
+  --uwp-shadow-focus: 0 0 0 3px color-mix(in srgb, var(--uwp-color-focus-ring) 35%, transparent);
+  --uwp-transition-fast: 120ms cubic-bezier(0.4, 0, 0.2, 1);
+  --uwp-transition: 160ms cubic-bezier(0.4, 0, 0.2, 1);
+  --uwp-transition-slow: 240ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+:root[data-theme="dark"] {
+  --uwp-color-bg: var(--uwp-neutral-950);
+  --uwp-color-surface: var(--uwp-neutral-900);
+  --uwp-color-surface-sunken: #211f1e;
+  --uwp-color-surface-hover: var(--uwp-neutral-800);
+  --uwp-color-text: var(--uwp-neutral-100);
+  --uwp-color-text-muted: var(--uwp-neutral-400);
+  --uwp-color-text-subtle: var(--uwp-neutral-500);
+  --uwp-color-border: var(--uwp-neutral-700);
+  --uwp-color-border-strong: var(--uwp-neutral-600);
+  --uwp-color-border-subtle: var(--uwp-neutral-800);
+  --uwp-color-primary: var(--uwp-blue-300);
+  --uwp-color-primary-hover: var(--uwp-blue-200);
+  --uwp-color-primary-active: var(--uwp-blue-100);
+  --uwp-color-primary-emphasis: var(--uwp-blue-200);
+  --uwp-color-primary-soft: color-mix(in srgb, var(--uwp-blue-400) 22%, transparent);
+  --uwp-color-primary-soft-text: var(--uwp-blue-100);
+  --uwp-color-text-on-primary: var(--uwp-neutral-950);
+  --uwp-color-primary-solid: var(--uwp-blue-300);
+  --uwp-color-primary-solid-hover: var(--uwp-blue-200);
+  --uwp-color-primary-solid-active: var(--uwp-blue-100);
+  --uwp-color-accent: var(--uwp-rose-300);
+  --uwp-color-accent-hover: var(--uwp-rose-200);
+  --uwp-color-accent-active: var(--uwp-rose-100);
+  --uwp-color-accent-emphasis: var(--uwp-rose-200);
+  --uwp-color-accent-soft: color-mix(in srgb, var(--uwp-rose-400) 22%, transparent);
+  --uwp-color-accent-soft-text: var(--uwp-rose-100);
+  --uwp-color-text-on-accent: var(--uwp-neutral-950);
+  --uwp-color-accent-solid: var(--uwp-rose-300);
+  --uwp-color-accent-solid-hover: var(--uwp-rose-200);
+  --uwp-color-accent-solid-active: var(--uwp-rose-100);
+  --uwp-shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.4);
+  --uwp-shadow-md: 0 4px 12px -2px rgba(0, 0, 0, 0.5);
+  --uwp-shadow-lg: 0 12px 32px -8px rgba(0, 0, 0, 0.6);
+}
+
+/* Also honour the visitor's OS setting when no explicit theme is set. */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --uwp-color-bg: var(--uwp-neutral-950);
+    --uwp-color-surface: var(--uwp-neutral-900);
+    --uwp-color-surface-sunken: #211f1e;
+    --uwp-color-surface-hover: var(--uwp-neutral-800);
+    --uwp-color-text: var(--uwp-neutral-100);
+    --uwp-color-text-muted: var(--uwp-neutral-400);
+    --uwp-color-text-subtle: var(--uwp-neutral-500);
+    --uwp-color-border: var(--uwp-neutral-700);
+    --uwp-color-border-strong: var(--uwp-neutral-600);
+    --uwp-color-border-subtle: var(--uwp-neutral-800);
+    --uwp-color-primary: var(--uwp-blue-300);
+    --uwp-color-primary-emphasis: var(--uwp-blue-200);
+    --uwp-color-primary-soft: color-mix(in srgb, var(--uwp-blue-400) 22%, transparent);
+    --uwp-color-primary-soft-text: var(--uwp-blue-100);
+    --uwp-color-text-on-primary: var(--uwp-neutral-950);
+    --uwp-color-primary-solid: var(--uwp-blue-300);
+    --uwp-color-primary-solid-hover: var(--uwp-blue-200);
+    --uwp-color-primary-solid-active: var(--uwp-blue-100);
+    --uwp-color-accent: var(--uwp-rose-300);
+    --uwp-color-accent-emphasis: var(--uwp-rose-200);
+    --uwp-color-accent-soft: color-mix(in srgb, var(--uwp-rose-400) 22%, transparent);
+    --uwp-color-accent-soft-text: var(--uwp-rose-100);
+    --uwp-color-text-on-accent: var(--uwp-neutral-950);
+    --uwp-color-accent-solid: var(--uwp-rose-300);
+    --uwp-color-accent-solid-hover: var(--uwp-rose-200);
+    --uwp-color-accent-solid-active: var(--uwp-rose-100);
+    --uwp-shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.4);
+    --uwp-shadow-md: 0 4px 12px -2px rgba(0, 0, 0, 0.5);
+    --uwp-shadow-lg: 0 12px 32px -8px rgba(0, 0, 0, 0.6);
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   2. Base  (from the design system's base.css, applied to the document)
+   ------------------------------------------------------------------------- */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  font-family: var(--uwp-font-sans);
+  font-size: var(--uwp-text-base);
+  line-height: var(--uwp-leading-normal);
+  color: var(--uwp-color-text);
+  background-color: var(--uwp-color-bg);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--uwp-font-display);
+  font-weight: var(--uwp-weight-heading);
+  line-height: var(--uwp-leading-tight);
+  letter-spacing: var(--uwp-tracking-tight);
+  color: var(--uwp-color-text);
+  margin: 0;
+  text-wrap: balance;
+}
+
+p {
+  margin: 0;
+}
+
+a {
+  color: var(--uwp-color-primary-emphasis);
+  text-underline-offset: 0.15em;
+}
+
+img {
+  max-width: 100%;
+  height: auto;
+}
+
+:focus-visible {
+  outline: 2px solid transparent;
+  border-radius: var(--uwp-radius-sm);
+  box-shadow: var(--uwp-shadow-focus);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   3. Design-system components  (from the design system's components.css —
+   the classes the page markup uses; internals untouched)
+   ------------------------------------------------------------------------- */
+.uwp-button {
+  --_bg: var(--uwp-color-primary-solid);
+  --_fg: var(--uwp-color-text-on-primary);
+  --_bd: transparent;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--uwp-space-2);
+  font-family: var(--uwp-font-sans);
+  font-weight: var(--uwp-weight-medium);
+  line-height: 1;
+  white-space: nowrap;
+  border: 1px solid var(--_bd);
+  border-radius: var(--uwp-radius-md);
+  background-color: var(--_bg);
+  color: var(--_fg);
+  cursor: pointer;
+  transition: background-color var(--uwp-transition), color var(--uwp-transition), border-color var(--uwp-transition), box-shadow var(--uwp-transition), transform var(--uwp-transition-fast);
+  text-decoration: none;
+  font-size: var(--uwp-text-base);
+  padding: 0.5625rem 1rem;
+  min-height: 2.5rem;
+}
+.uwp-button:hover { --_bg: var(--uwp-color-primary-solid-hover); }
+.uwp-button:active { --_bg: var(--uwp-color-primary-solid-active); transform: translateY(0.5px); }
+.uwp-button:focus-visible { outline: none; box-shadow: var(--uwp-shadow-focus); }
+.uwp-button--secondary {
+  --_bg: var(--uwp-color-surface);
+  --_fg: var(--uwp-color-text);
+  --_bd: var(--uwp-color-border-strong);
+}
+.uwp-button--secondary:hover { --_bg: var(--uwp-color-surface-hover); }
+.uwp-button--accent {
+  --_bg: var(--uwp-color-accent-solid);
+  --_fg: var(--uwp-color-text-on-accent);
+}
+.uwp-button--accent:hover { --_bg: var(--uwp-color-accent-solid-hover); }
+.uwp-button--lg { font-size: var(--uwp-text-lg); padding: 0.75rem 1.375rem; min-height: 3rem; }
+
+.uwp-link {
+  font-family: var(--uwp-font-sans);
+  color: var(--uwp-color-primary-emphasis);
+  font-weight: var(--uwp-weight-medium);
+  text-decoration: underline;
+  text-decoration-color: color-mix(in srgb, currentColor 35%, transparent);
+  text-underline-offset: 0.15em;
+  border-radius: var(--uwp-radius-sm);
+  transition: color var(--uwp-transition), text-decoration-color var(--uwp-transition);
+}
+.uwp-link:hover { color: var(--uwp-color-primary-active); text-decoration-color: currentColor; }
+.uwp-link:focus-visible { outline: none; box-shadow: var(--uwp-shadow-focus); }
+.uwp-link--subtle { color: var(--uwp-color-text-muted); font-weight: var(--uwp-weight-normal); }
+.uwp-link--subtle:hover { color: var(--uwp-color-text); }
+.uwp-link--standalone {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--uwp-space-1);
+  text-decoration: none;
+  font-weight: var(--uwp-weight-semibold);
+}
+.uwp-link--standalone .uwp-link__arrow { transition: transform var(--uwp-transition); }
+.uwp-link--standalone:hover .uwp-link__arrow { transform: translateX(2px); }
+
+.uwp-card {
+  display: flex;
+  flex-direction: column;
+  font-family: var(--uwp-font-sans);
+  background-color: var(--uwp-color-surface);
+  border: 1px solid var(--uwp-color-border-subtle);
+  border-radius: var(--uwp-radius-lg);
+  overflow: hidden;
+  color: var(--uwp-color-text);
+}
+.uwp-card--outlined { border-color: var(--uwp-color-border); box-shadow: none; }
+.uwp-card--interactive {
+  cursor: pointer;
+  transition: box-shadow var(--uwp-transition), transform var(--uwp-transition), border-color var(--uwp-transition);
+}
+.uwp-card--interactive:hover { box-shadow: var(--uwp-shadow-lg); transform: translateY(-2px); }
+.uwp-card__body { display: flex; flex-direction: column; gap: var(--uwp-space-2); padding: var(--uwp-space-6); }
+.uwp-card__footer {
+  margin-top: auto;
+  padding: var(--uwp-space-4) var(--uwp-space-6) var(--uwp-space-6);
+  display: flex;
+  align-items: center;
+  gap: var(--uwp-space-3);
+}
+.uwp-card__eyebrow {
+  font-size: var(--uwp-text-xs);
+  font-weight: var(--uwp-weight-semibold);
+  letter-spacing: var(--uwp-tracking-wide);
+  text-transform: uppercase;
+  color: var(--uwp-color-accent-emphasis);
+}
+.uwp-card__title {
+  font-family: var(--uwp-font-display);
+  font-size: var(--uwp-text-xl);
+  font-weight: var(--uwp-weight-heading);
+  line-height: var(--uwp-leading-snug);
+}
+.uwp-card__text {
+  color: var(--uwp-color-text-muted);
+  font-size: var(--uwp-text-base);
+  line-height: var(--uwp-leading-normal);
+}
+
+.uwp-tag {
+  --_bg: var(--uwp-color-surface-sunken);
+  --_fg: var(--uwp-color-text-muted);
+  display: inline-flex;
+  align-items: center;
+  gap: var(--uwp-space-1);
+  font-family: var(--uwp-font-sans);
+  font-weight: var(--uwp-weight-medium);
+  line-height: 1;
+  border-radius: var(--uwp-radius-pill);
+  background-color: var(--_bg);
+  color: var(--_fg);
+  white-space: nowrap;
+  font-size: var(--uwp-text-sm);
+  padding: 0.3125rem 0.6875rem;
+}
+.uwp-tag--blue { --_bg: var(--uwp-color-primary-soft); --_fg: var(--uwp-color-primary-soft-text); }
+.uwp-tag--rose { --_bg: var(--uwp-color-accent-soft); --_fg: var(--uwp-color-accent-soft-text); }
+.uwp-tag--outline { --_bg: transparent; box-shadow: inset 0 0 0 1px var(--uwp-color-border-strong); }
+
+.uwp-field { display: flex; flex-direction: column; gap: var(--uwp-space-2); font-family: var(--uwp-font-sans); }
+.uwp-field__label { font-size: var(--uwp-text-sm); font-weight: var(--uwp-weight-medium); color: var(--uwp-color-text); }
+.uwp-field__optional { color: var(--uwp-color-text-subtle); font-weight: var(--uwp-weight-normal); }
+.uwp-field__control {
+  font: inherit;
+  font-size: var(--uwp-text-base);
+  color: var(--uwp-color-text);
+  background-color: var(--uwp-color-surface);
+  border: 1px solid var(--uwp-color-border-strong);
+  border-radius: var(--uwp-radius-md);
+  padding: 0.5625rem 0.75rem;
+  transition: border-color var(--uwp-transition), box-shadow var(--uwp-transition);
+  width: 100%;
+}
+.uwp-field__control::placeholder { color: var(--uwp-color-text-subtle); }
+.uwp-field__control:hover { border-color: var(--uwp-color-text-subtle); }
+.uwp-field__control:focus { outline: none; border-color: var(--uwp-color-primary); box-shadow: var(--uwp-shadow-focus); }
+.uwp-field__textarea { min-height: 6.5rem; resize: vertical; line-height: var(--uwp-leading-normal); }
+.uwp-field__hint { font-size: var(--uwp-text-sm); color: var(--uwp-color-text-muted); }
+
+.uwp-callout {
+  --_edge: var(--uwp-color-primary);
+  --_wash: var(--uwp-color-primary-soft);
+  display: flex;
+  gap: var(--uwp-space-3);
+  font-family: var(--uwp-font-sans);
+  padding: var(--uwp-space-4) var(--uwp-space-5);
+  background-color: var(--_wash);
+  border-radius: var(--uwp-radius-md);
+  border-left: 3px solid var(--_edge);
+  color: var(--uwp-color-text);
+}
+.uwp-callout--warm { --_edge: var(--uwp-color-accent); --_wash: var(--uwp-color-accent-soft); }
+.uwp-callout--note { --_edge: var(--uwp-color-border-strong); --_wash: var(--uwp-color-surface-sunken); }
+.uwp-callout__content { display: flex; flex-direction: column; gap: var(--uwp-space-1); min-width: 0; }
+.uwp-callout__title { font-weight: var(--uwp-weight-semibold); font-size: var(--uwp-text-sm); }
+.uwp-callout__body { font-size: var(--uwp-text-sm); line-height: var(--uwp-leading-normal); color: var(--uwp-color-text-muted); }
+.uwp-callout--quote {
+  --_edge: var(--uwp-color-accent);
+  --_wash: transparent;
+  padding-block: var(--uwp-space-2);
+  font-family: var(--uwp-font-display);
+}
+.uwp-callout--quote .uwp-callout__body {
+  font-size: var(--uwp-text-xl);
+  font-style: italic;
+  color: var(--uwp-color-text);
+  line-height: var(--uwp-leading-snug);
+}
+.uwp-callout--quote .uwp-callout__cite {
+  font-family: var(--uwp-font-sans);
+  font-style: normal;
+  font-size: var(--uwp-text-sm);
+  color: var(--uwp-color-text-muted);
+}
+
+.uwp-divider { border: 0; align-self: stretch; background-color: var(--uwp-color-border); }
+.uwp-divider--horizontal { width: 100%; height: 1px; margin-block: var(--uwp-space-6); }
+.uwp-divider--soft { background-color: var(--uwp-color-border-subtle); }
+
+.uwp-avatar {
+  --_size: 5rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: var(--_size);
+  height: var(--_size);
+  border-radius: var(--uwp-radius-full);
+  background-color: var(--uwp-color-accent-soft);
+  color: var(--uwp-color-accent-soft-text);
+  font-family: var(--uwp-font-sans);
+  font-weight: var(--uwp-weight-semibold);
+  font-size: calc(var(--_size) * 0.4);
+  line-height: 1;
+  overflow: hidden;
+  user-select: none;
+}
+
+/* ---------------------------------------------------------------------------
+   4. Page layout  (site-specific scaffolding — the only bespoke CSS)
+   ------------------------------------------------------------------------- */
+
+/* Skip link */
+.skip-link {
+  position: absolute;
+  left: var(--uwp-space-4);
+  top: var(--uwp-space-4);
+  padding: var(--uwp-space-2) var(--uwp-space-4);
+  background: var(--uwp-color-surface);
+  border-radius: var(--uwp-radius-md);
+  box-shadow: var(--uwp-shadow-md);
+  transform: translateY(-150%);
+  transition: transform var(--uwp-transition);
+  z-index: 100;
+}
+.skip-link:focus { transform: translateY(0); }
+
+/* Centered content column */
+.wrap {
+  width: 100%;
+  max-width: 68rem;
+  margin-inline: auto;
+  padding-inline: var(--uwp-space-6);
+}
+.wrap--narrow { max-width: 46rem; }
+.wrap--prose { max-width: var(--uwp-measure); }
+
+/* Vertical rhythm between page sections */
+.section { padding-block: var(--uwp-space-16); }
+.section--tight { padding-block: var(--uwp-space-12); }
+.section + .section { padding-top: 0; }
+
+/* --- Header + primary nav ------------------------------------------------- */
+.site-header {
+  border-bottom: 1px solid var(--uwp-color-border-subtle);
+  background-color: var(--uwp-color-bg);
+}
+.site-header__inner {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--uwp-space-3) var(--uwp-space-6);
+  padding-block: var(--uwp-space-4);
+}
+.site-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--uwp-space-2);
+  margin-right: auto;
+  font-family: var(--uwp-font-brand);
+  font-weight: var(--uwp-weight-heading);
+  font-size: var(--uwp-text-lg);
+  color: var(--uwp-color-text);
+  text-decoration: none;
+}
+.site-brand img { display: block; width: 1.75rem; height: 1.75rem; }
+.site-brand b { color: var(--uwp-color-accent-emphasis); font-weight: inherit; }
+
+/* Language switch (English <-> Traditional Chinese, Taiwan) */
+.lang-switch {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--uwp-space-1);
+  padding: 0.3125rem 0.6875rem;
+  order: 2;
+  font-family: var(--uwp-font-sans);
+  font-size: var(--uwp-text-sm);
+  font-weight: var(--uwp-weight-medium);
+  color: var(--uwp-color-text-muted);
+  text-decoration: none;
+  border: 1px solid var(--uwp-color-border-strong);
+  border-radius: var(--uwp-radius-pill);
+  white-space: nowrap;
+  transition: color var(--uwp-transition), border-color var(--uwp-transition), background-color var(--uwp-transition);
+}
+.lang-switch:hover {
+  color: var(--uwp-color-text);
+  border-color: var(--uwp-color-text-subtle);
+  background-color: var(--uwp-color-surface);
+}
+.lang-switch:focus-visible { outline: none; box-shadow: var(--uwp-shadow-focus); }
+
+.site-nav {
+  order: 3;
+  flex-basis: 100%;
+}
+.site-nav ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--uwp-space-1) var(--uwp-space-5);
+}
+.site-nav a {
+  display: inline-block;
+  padding: var(--uwp-space-1) 0;
+  font-family: var(--uwp-font-display); /* Noto Sans */
+  font-weight: var(--uwp-weight-medium);
+  color: var(--uwp-color-text-muted);
+  text-decoration: none;
+  border-bottom: 2px solid transparent;
+}
+.site-nav a:hover { color: var(--uwp-color-text); }
+.site-nav a[aria-current="page"] {
+  color: var(--uwp-color-text);
+  border-bottom-color: var(--uwp-color-accent);
+}
+
+/* --- Footer ------------------------------------------------------------- */
+.site-footer {
+  margin-top: var(--uwp-space-24);
+  border-top: 1px solid var(--uwp-color-border-subtle);
+  background-color: var(--uwp-color-surface-sunken);
+}
+.site-footer__inner {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: var(--uwp-space-8);
+  padding-block: var(--uwp-space-12);
+}
+.site-footer nav ul {
+  list-style: none;
+  margin: 0 0 var(--uwp-space-4);
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--uwp-space-2) var(--uwp-space-5);
+}
+.site-footer nav a { color: var(--uwp-color-text-muted); text-decoration: none; font-weight: var(--uwp-weight-medium); }
+.site-footer nav a:hover { color: var(--uwp-color-text); }
+.site-footer__meta { font-size: var(--uwp-text-sm); color: var(--uwp-color-text-subtle); }
+.site-footer__contact { display: flex; flex-direction: column; gap: var(--uwp-space-1); font-size: var(--uwp-text-sm); }
+
+/* --- Hero -------------------------------------------------------------- */
+.hero { padding-block: var(--uwp-space-20) var(--uwp-space-16); }
+.hero__eyebrow {
+  font-size: var(--uwp-text-sm);
+  font-weight: var(--uwp-weight-semibold);
+  letter-spacing: var(--uwp-tracking-wide);
+  text-transform: uppercase;
+  color: var(--uwp-color-primary-emphasis);
+  margin-bottom: var(--uwp-space-4);
+}
+.hero h1 { font-size: clamp(2.25rem, 1.4rem + 3vw, var(--uwp-text-5xl)); font-weight: var(--uwp-weight-bold); }
+.hero__lines { margin-top: var(--uwp-space-6); display: flex; flex-direction: column; gap: var(--uwp-space-2); }
+.hero__lines p { font-size: var(--uwp-text-xl); color: var(--uwp-color-text-muted); max-width: var(--uwp-measure); }
+.hero__cta { margin-top: var(--uwp-space-8); display: flex; flex-wrap: wrap; gap: var(--uwp-space-3); }
+
+/* --- Generic section heading ----------------------------------------- */
+.section__head { margin-bottom: var(--uwp-space-8); }
+.section__head h2 { font-size: var(--uwp-text-3xl); }
+.section__head p { margin-top: var(--uwp-space-3); color: var(--uwp-color-text-muted); max-width: var(--uwp-measure); }
+.section__kicker {
+  font-size: var(--uwp-text-xs);
+  font-weight: var(--uwp-weight-semibold);
+  letter-spacing: var(--uwp-tracking-wide);
+  text-transform: uppercase;
+  color: var(--uwp-color-accent-emphasis);
+  margin-bottom: var(--uwp-space-3);
+}
+
+/* --- Prose blocks (stacked paragraphs) ------------------------------- */
+.prose > * + * { margin-top: var(--uwp-space-4); }
+.prose p { max-width: var(--uwp-measure); color: var(--uwp-color-text); }
+.prose h2 { margin-top: var(--uwp-space-10); font-size: var(--uwp-text-2xl); }
+.prose h3 { margin-top: var(--uwp-space-8); font-size: var(--uwp-text-xl); }
+.prose ul, .prose ol { max-width: var(--uwp-measure); padding-left: var(--uwp-space-6); }
+.prose li + li { margin-top: var(--uwp-space-2); }
+
+/* --- Signal strip --------------------------------------------------- */
+.strip {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--uwp-space-6);
+  padding: var(--uwp-space-8);
+  background-color: var(--uwp-color-surface);
+  border: 1px solid var(--uwp-color-border-subtle);
+  border-radius: var(--uwp-radius-lg);
+}
+.strip__item dt {
+  font-size: var(--uwp-text-xs);
+  font-weight: var(--uwp-weight-semibold);
+  letter-spacing: var(--uwp-tracking-wide);
+  text-transform: uppercase;
+  color: var(--uwp-color-text-subtle);
+  margin-bottom: var(--uwp-space-1);
+}
+.strip__item dd { margin: 0; font-size: var(--uwp-text-lg); color: var(--uwp-color-text); }
+.strip__marks { display: flex; flex-wrap: wrap; gap: var(--uwp-space-2); }
+
+/* --- Card grid --------------------------------------------------- */
+.card-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--uwp-space-6);
+}
+.card-grid--3 { grid-template-columns: minmax(0, 1fr); }
+/* grid/flex children must be allowed to shrink below their content size */
+.card-grid > *, .problems > li, .strip > *, .contact-grid > * { min-width: 0; }
+
+/* Card rendered as a block link */
+a.card-link { display: block; text-decoration: none; color: inherit; }
+a.card-link > .uwp-card { height: 100%; }
+
+/* --- Numbered problem list ------------------------------------------ */
+.problems { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--uwp-space-6); counter-reset: problem; list-style: none; margin: 0; padding: 0; }
+.problems li {
+  counter-increment: problem;
+  padding: var(--uwp-space-6);
+  background-color: var(--uwp-color-surface);
+  border: 1px solid var(--uwp-color-border-subtle);
+  border-radius: var(--uwp-radius-lg);
+}
+.problems li::before {
+  content: counter(problem, decimal-leading-zero);
+  display: block;
+  font-family: var(--uwp-font-display);
+  font-size: var(--uwp-text-xl);
+  font-weight: var(--uwp-weight-heading);
+  color: var(--uwp-color-accent-emphasis);
+  margin-bottom: var(--uwp-space-2);
+}
+.problems h3 { font-size: var(--uwp-text-lg); margin-bottom: var(--uwp-space-2); }
+.problems p { color: var(--uwp-color-text-muted); }
+
+/* --- Soft CTA band ------------------------------------------------ */
+.cta-band {
+  text-align: center;
+  padding: var(--uwp-space-16) var(--uwp-space-6);
+  background-color: var(--uwp-color-primary-soft);
+  border-radius: var(--uwp-radius-xl);
+}
+.cta-band h2 { font-size: var(--uwp-text-3xl); }
+.cta-band p { margin: var(--uwp-space-3) auto 0; max-width: 40rem; color: var(--uwp-color-primary-soft-text); }
+.cta-band .uwp-button { margin-top: var(--uwp-space-6); }
+
+/* --- Case-study specific ---------------------------------------- */
+.case-header { padding-block: var(--uwp-space-16) var(--uwp-space-10); }
+.case-header h1 { font-size: clamp(2rem, 1.4rem + 2.5vw, var(--uwp-text-4xl)); margin-top: var(--uwp-space-4); }
+.case-meta { display: flex; flex-wrap: wrap; gap: var(--uwp-space-2); margin-top: var(--uwp-space-6); }
+.case-section { padding-block: var(--uwp-space-10); border-top: 1px solid var(--uwp-color-border-subtle); }
+.case-section > h2 {
+  font-size: var(--uwp-text-sm);
+  font-weight: var(--uwp-weight-semibold);
+  letter-spacing: var(--uwp-tracking-wide);
+  text-transform: uppercase;
+  color: var(--uwp-color-primary-emphasis);
+  margin-bottom: var(--uwp-space-4);
+}
+.case-section__lede { font-size: var(--uwp-text-xl); color: var(--uwp-color-text); max-width: var(--uwp-measure); }
+.case-nav { display: flex; justify-content: space-between; gap: var(--uwp-space-4); padding-block: var(--uwp-space-10); flex-wrap: wrap; }
+
+/* --- Writing index --------------------------------------------- */
+.cluster { padding-block: var(--uwp-space-12); border-top: 1px solid var(--uwp-color-border-subtle); }
+.cluster:first-of-type { border-top: 0; }
+.cluster > h2 { font-size: var(--uwp-text-2xl); }
+.cluster__intro { margin-top: var(--uwp-space-3); color: var(--uwp-color-text-muted); max-width: var(--uwp-measure); }
+.article-list { list-style: none; margin: var(--uwp-space-6) 0 0; padding: 0; display: flex; flex-direction: column; }
+.article-list li { border-top: 1px solid var(--uwp-color-border-subtle); }
+.article-list li:last-child { border-bottom: 1px solid var(--uwp-color-border-subtle); }
+.article-list a {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--uwp-space-1) var(--uwp-space-3);
+  padding-block: var(--uwp-space-4);
+  text-decoration: none;
+  color: var(--uwp-color-text);
+  font-weight: var(--uwp-weight-medium);
+}
+.article-list a:hover { color: var(--uwp-color-primary-emphasis); }
+.article-list .article-list__note { font-size: var(--uwp-text-sm); color: var(--uwp-color-text-subtle); font-weight: var(--uwp-weight-normal); }
+
+/* --- About timeline ------------------------------------------- */
+.timeline { list-style: none; margin: var(--uwp-space-6) 0 0; padding: 0; }
+.timeline li { display: grid; grid-template-columns: 1fr; gap: var(--uwp-space-1); padding-block: var(--uwp-space-5); border-top: 1px solid var(--uwp-color-border-subtle); }
+.timeline__when { font-size: var(--uwp-text-sm); color: var(--uwp-color-text-subtle); font-weight: var(--uwp-weight-medium); }
+.about-lockup { display: flex; flex-wrap: wrap; align-items: center; gap: var(--uwp-space-6); }
+.about-photo {
+  width: 8rem; height: 8rem; flex-shrink: 0;
+  border-radius: var(--uwp-radius-full);
+  background-color: var(--uwp-color-surface-sunken);
+  border: 1px dashed var(--uwp-color-border-strong);
+  display: flex; align-items: center; justify-content: center;
+  text-align: center; font-size: var(--uwp-text-xs); color: var(--uwp-color-text-subtle);
+  padding: var(--uwp-space-2);
+}
+
+/* --- Contact -------------------------------------------------- */
+.contact-grid { display: grid; grid-template-columns: 1fr; gap: var(--uwp-space-12); }
+.contact-form { display: flex; flex-direction: column; gap: var(--uwp-space-5); }
+.contact-direct dl { margin: var(--uwp-space-4) 0 0; display: grid; gap: var(--uwp-space-4); }
+.contact-direct dt { font-size: var(--uwp-text-xs); font-weight: var(--uwp-weight-semibold); letter-spacing: var(--uwp-tracking-wide); text-transform: uppercase; color: var(--uwp-color-text-subtle); }
+.contact-direct dd { margin: var(--uwp-space-1) 0 0; }
+
+/* Skeleton safety: placeholder strings are long. Let button and tag labels
+   wrap here so the page never scrolls sideways during review. With real
+   (short) copy these have no visible effect. */
+.hero__cta .uwp-button,
+.cta-band .uwp-button,
+.case-nav .uwp-link--standalone { white-space: normal; text-align: center; }
+.strip__marks .uwp-tag,
+.case-meta .uwp-tag { white-space: normal; }
+
+/* Small helper for placeholder-only notes to the reviewer */
+.placeholder-note {
+  font-family: var(--uwp-font-mono);
+  font-size: var(--uwp-text-xs);
+  color: var(--uwp-color-text-subtle);
+  background: var(--uwp-color-surface-sunken);
+  border: 1px dashed var(--uwp-color-border);
+  border-radius: var(--uwp-radius-sm);
+  padding: var(--uwp-space-3);
+  display: block;
+}
+
+/* ---------------------------------------------------------------------------
+   5. Single breakpoint — 768px and up
+   ------------------------------------------------------------------------- */
+@media (max-width: 767px) {
+  .hero__cta { flex-direction: column; align-items: stretch; }
+}
+
+@media (min-width: 768px) {
+  .wrap { padding-inline: var(--uwp-space-8); }
+  .site-header__inner { flex-wrap: nowrap; }
+  .site-nav { order: 0; flex-basis: auto; }
+  .lang-switch { order: 0; }
+
+  .hero__cta { margin-top: var(--uwp-space-10); }
+
+  .strip { grid-template-columns: repeat(3, minmax(0, 1fr)); align-items: start; }
+  .strip__marks { grid-column: 1 / -1; }
+
+  .card-grid--3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .problems { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+
+  .contact-grid { grid-template-columns: 3fr 2fr; }
+  .contact-direct dl { grid-template-columns: 1fr; }
+  .timeline li { grid-template-columns: 12rem 1fr; gap: var(--uwp-space-6); }
+  .article-list a { flex-wrap: nowrap; justify-content: space-between; }
+}
