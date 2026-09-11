@@ -8,16 +8,16 @@
    scaffolding for this site and are the only new CSS here.
 
    Fonts (both loaded from Google Fonts by the @import below):
-   - Body / UI text: Imprima, wired into --uwp-font-sans in place of the design
-     system's Comic Neue. Imprima ships one weight (400); the design system's
-     bold body text (700) renders as the browser's synthetic bold.
+   - Body / UI text: Encode Sans Semi Expanded, wired into --uwp-font-sans in
+     place of the design system's Comic Neue. It ships real weights (400/600/
+     700), so the design system's bold body text renders as a true bold cut.
    - Headings, the "Unfoldingwithpeg" logotype and the primary nav: Noto Sans,
      via the design system's --uwp-font-display / --uwp-font-brand tokens (which
      already lead with "Noto Sans") and .site-nav.
    Chinese pages fall through the same tokens to 粉圓體 / 思源黑體 / system CJK.
    ========================================================================== */
 
-@import url("https://fonts.googleapis.com/css2?family=Imprima&family=Noto+Sans:wght@400;600;700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Encode+Sans+Semi+Expanded:wght@400;600;700&family=Noto+Sans:wght@400;600;700&display=swap");
 
 /* ---------------------------------------------------------------------------
    1. Design tokens  (from the design system — do not edit values here)
@@ -94,8 +94,8 @@
   --uwp-color-focus-ring: var(--uwp-blue-400);
   --uwp-font-brand: "Noto Sans", "Noto Sans TC", system-ui, -apple-system, "Segoe UI", "PingFang TC", "Microsoft JhengHei", sans-serif;
   --uwp-font-display: "Noto Sans", "Noto Sans TC", system-ui, -apple-system, "Segoe UI", "PingFang TC", "Microsoft JhengHei", sans-serif;
-  /* body / UI face swapped from the design system's Comic Neue to Imprima (loaded via @import above); Chinese + system fallbacks kept */
-  --uwp-font-sans: "Imprima", "Huninn", "PingFang TC", "Microsoft JhengHei", system-ui, sans-serif;
+  /* body / UI face swapped from the design system's Comic Neue to Encode Sans Semi Expanded (loaded via @import above); Chinese + system fallbacks kept */
+  --uwp-font-sans: "Encode Sans Semi Expanded", "Huninn", "PingFang TC", "Microsoft JhengHei", system-ui, sans-serif;
   --uwp-font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
   --uwp-text-xs: 0.75rem;
   --uwp-text-sm: 0.875rem;
