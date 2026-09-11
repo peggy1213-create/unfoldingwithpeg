@@ -1,0 +1,42 @@
+name: Deploy to Cloudflare
+
+# Publishes the site to Cloudflare Workers on every push to main (e.g. when a
+# post PR is merged). Runs the same command as local: `astro build && wrangler
+# deploy`. Requires two repository secrets — see README / repo settings:
+#   - CLOUDFLARE_API_TOKEN   (Workers deploy-scoped API token)
+#   - CLOUDFLARE_ACCOUNT_ID  (the target Cloudflare account id)
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch: {} # allow manual runs from the Actions tab
+
+# Never run two production deploys at once; let an in-flight deploy finish.
+concurrency:
+  group: deploy-production
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build and deploy
+        run: npm run deploy
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
