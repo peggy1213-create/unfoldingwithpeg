@@ -23,8 +23,6 @@ HTML, no build step, styled with one `styles.css`.
 ```
 index.html                      Home (EN)
 about/  contact/                About · Contact
-work/                           Work index
-work/satu-presidents-forum/     Case study — SATU Presidents' Forum
 zh/…                            Traditional-Chinese (Taiwan) mirror of every page
 styles.css                      The one stylesheet (shared by both languages)
 assets/brand/                   Logo mark, wordmark, lockup, favicon (SVG)
@@ -37,7 +35,7 @@ and every page declares `hreflang` alternates for `en`, `zh-Hant-TW`, and
 
 ## Serving
 
-Links and asset paths are **root-relative** (`/styles.css`, `/work/`, `/zh/work/`),
+Links and asset paths are **root-relative** (`/styles.css`, `/zh/`),
 so serve from a domain root or a local static server — opening files directly
 with `file://` won't resolve the paths.
 
@@ -47,18 +45,11 @@ python -m http.server 8000    # then visit http://localhost:8000/
 
 ## Navigation
 
-Primary nav — Work · About · Contact (作品／關於／聯絡) — is
+Primary nav — About · Contact (關於／聯絡) — is
 identical in the `<header>` of every page (current page marked with
 `aria-current="page"`); the `<footer>` repeats it plus email, LinkedIn, and the
 language switch. There's no include mechanism, so header/footer are inlined in
 each file — edit them across all pages together.
-
-## Adding a case study
-
-1. `cp -r work/satu-presidents-forum work/<new-slug>` (and the same under `zh/work/`).
-2. Fill in the content.
-3. Add a card in `work/index.html` + `zh/work/index.html` (and, if featured, on `/` and `/zh/`).
-4. Point each page's language switch and `hreflang` links at its counterpart.
 
 ## To do before going live
 
