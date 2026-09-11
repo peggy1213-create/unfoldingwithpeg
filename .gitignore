@@ -7,3 +7,7 @@ Design system/
 .DS_Store
 Thumbs.db
 *.log
+
+# Claude Code local files — keep the shared preview-server config, ignore the rest
+.claude/*
+!.claude/launch.json
