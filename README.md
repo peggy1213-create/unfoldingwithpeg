@@ -90,6 +90,25 @@ npm run build
 npm run preview   # wrangler dev, serving the built Worker
 ```
 
+### Automated deploys (GitHub Actions)
+
+Pushing to `main` deploys the site automatically via
+[`.github/workflows/deploy.yml`](.github/workflows/deploy.yml), which runs the
+same `npm run deploy` in CI. So merging a post PR into `main` publishes it — no
+local deploy needed. The workflow can also be run on demand from the repo's
+**Actions** tab (**Deploy to Cloudflare → Run workflow**).
+
+It requires two **repository secrets** (Settings → Secrets and variables →
+Actions):
+
+| Secret                  | What it is                                        |
+| ----------------------- | ------------------------------------------------- |
+| `CLOUDFLARE_API_TOKEN`  | API token from the "Edit Cloudflare Workers" template (My Profile → API Tokens). |
+| `CLOUDFLARE_ACCOUNT_ID` | The target account id (Workers & Pages → sidebar). |
+
+Add both **before** the first push to `main`, or the deploy step fails for lack
+of credentials. Keep the token private and rotate it in Cloudflare if it leaks.
+
 ## D1 binding (future RAG work)
 
 A **Cloudflare D1** database binding is scaffolded — but **commented out** — in
