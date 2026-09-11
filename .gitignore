@@ -16,6 +16,8 @@ dist/
 Thumbs.db
 *.log
 
-# Claude Code local files — keep the shared preview-server config, ignore the rest
+# Claude Code local files — keep the shared preview-server config and skills,
+# ignore the rest (settings, local state, caches)
 .claude/*
 !.claude/launch.json
+!.claude/skills/
