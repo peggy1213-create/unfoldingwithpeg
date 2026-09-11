@@ -1,34 +1,42 @@
 {
-  // Cloudflare Workers configuration for the unfoldingwithpeg site.
-  // Docs: https://developers.cloudflare.com/workers/wrangler/configuration/
-  //
-  // The @astrojs/cloudflare adapter (via @cloudflare/vite-plugin) supplies the
-  // Worker entry (`main`) and the static-assets binding automatically at build
-  // time, so they are intentionally NOT set here.
-  "$schema": "node_modules/wrangler/config-schema.json",
-  "name": "unfoldingwithpeg",
-  "compatibility_date": "2025-09-01",
-  "compatibility_flags": ["nodejs_compat"],
+	// Cloudflare Workers configuration for the unfoldingwithpeg site.
+	// Docs: https://developers.cloudflare.com/workers/wrangler/configuration/
+	//
+	// The @astrojs/cloudflare adapter (via @cloudflare/vite-plugin) supplies the
+	// Worker entry (`main`) and the static-assets binding automatically at build
+	// time, so they are intentionally NOT set here.
+	"$schema": "node_modules/wrangler/config-schema.json",
+	"name": "unfoldingwithpeg",
+	"compatibility_date": "2025-09-01",
+	"compatibility_flags": [
+		"nodejs_compat"
+	],
+	"observability": {
+		"enabled": true
+	},
 
-  "observability": {
-    "enabled": true
-  }
-
-  // ---------------------------------------------------------------------------
-  // TODO (future RAG work): D1 database binding.
-  //
-  // The retrieval-augmented-generation feature (prompt 2+) will store post
-  // embeddings / content in a Cloudflare D1 database. When that lands:
-  //   1. Create the DB:   npx wrangler d1 create unfoldingwithpeg-rag
-  //   2. Paste the returned database_id below and uncomment this block.
-  //   3. Access it in endpoints via `locals.runtime.env.DB`.
-  //
-  // "d1_databases": [
-  //   {
-  //     "binding": "DB",
-  //     "database_name": "unfoldingwithpeg-rag",
-  //     "database_id": "<PASTE-DATABASE-ID-HERE>"
-  //   }
-  // ]
-  // ---------------------------------------------------------------------------
+	// Custom Domains. Because studiounfolding.cc is already a zone in this
+	// Cloudflare account, `custom_domain: true` makes Wrangler create the DNS
+	// record and provision the TLS certificate automatically on deploy.
+	"routes": [
+		{ "pattern": "studiounfolding.cc", "custom_domain": true },
+		{ "pattern": "www.studiounfolding.cc", "custom_domain": true }
+	]
+	// ---------------------------------------------------------------------------
+	// TODO (future RAG work): D1 database binding.
+	//
+	// The retrieval-augmented-generation feature (prompt 2+) will store post
+	// embeddings / content in a Cloudflare D1 database. When that lands:
+	//   1. Create the DB:   npx wrangler d1 create unfoldingwithpeg-rag
+	//   2. Paste the returned database_id below and uncomment this block.
+	//   3. Access it in endpoints via `locals.runtime.env.DB`.
+	//
+	// "d1_databases": [
+	//   {
+	//     "binding": "DB",
+	//     "database_name": "unfoldingwithpeg-rag",
+	//     "database_id": "<PASTE-DATABASE-ID-HERE>"
+	//   }
+	// ]
+	// ---------------------------------------------------------------------------
 }
