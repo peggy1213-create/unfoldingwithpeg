@@ -16,15 +16,16 @@ export default defineConfig({
   // Bilingual routing.
   // - zh-TW is the default locale and is served WITHOUT a prefix (at "/").
   // - en is the secondary locale and is served under "/en/".
-  // - English routes that don't exist fall back to their zh-TW equivalent.
+  // Each language's pages are independent: a missing English page 404s rather
+  // than falling back to zh-TW. (A locale `fallback` is deliberately NOT set —
+  // it would serve zh-TW content at an /en/ URL for any English category/tag
+  // page with no posts in English, which must instead 404, and would surface
+  // untranslated posts under /en/ despite the per-post translation linking.)
   i18n: {
     defaultLocale: "zh-TW",
     locales: ["zh-TW", "en"],
     routing: {
       prefixDefaultLocale: false, // zh-TW at "/", en at "/en/"
-    },
-    fallback: {
-      en: "zh-TW", // en → zh-TW when an English page is missing
     },
   },
 });

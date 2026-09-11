@@ -1,0 +1,134 @@
+---
+export const prerender = true;
+
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import PostCard from "../../components/PostCard.astro";
+import {
+  getCategoryGroups,
+  getTagGroups,
+  categoryHref,
+  tagHref,
+} from "../../utils/i18n";
+
+const lang = "en";
+const groups = await getCategoryGroups(lang);
+const tags = await getTagGroups(lang);
+---
+
+<BaseLayout
+  lang={lang}
+  title="Writing — Peggy Pei-Chun Hsieh"
+  description="Writing by Peggy Pei-Chun Hsieh, grouped by topic: learning design, building products, tech, investment, and more."
+>
+  <div class="wrap wrap--prose">
+    <section class="section--tight">
+      <p class="section__kicker">Writing</p>
+      <h1>Writing</h1>
+      <p class="lede">Grouped by topic, newest first.</p>
+    </section>
+
+    <nav class="browse" aria-label="Browse by category or tag">
+      <div class="browse__group">
+        <h2 class="browse__label">Categories</h2>
+        <ul class="chips">
+          {
+            groups.map((group) => (
+              <li>
+                <a
+                  class="uwp-tag uwp-tag--blue"
+                  href={categoryHref(group.slug, lang)}
+                >
+                  {group.name}
+                  <span class="chips__count">{group.posts.length}</span>
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+      <div class="browse__group">
+        <h2 class="browse__label">Tags</h2>
+        <ul class="chips">
+          {
+            tags.map((t) => (
+              <li>
+                <a class="uwp-tag uwp-tag--outline" href={tagHref(t.tag, lang)}>
+                  #{t.tag}
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+    </nav>
+
+    {
+      groups.map((group) => (
+        <section class="cat-group">
+          <h2 class="cat-group__head">
+            <a class="uwp-link" href={categoryHref(group.slug, lang)}>
+              {group.name}
+            </a>
+            <span class="cat-group__count">
+              {group.posts.length}{" "}
+              {group.posts.length === 1 ? "post" : "posts"}
+            </span>
+          </h2>
+          {group.posts.map((post) => (
+            <PostCard post={post} lang={lang} />
+          ))}
+        </section>
+      ))
+    }
+  </div>
+</BaseLayout>
+
+<style>
+  .lede {
+    margin-top: var(--uwp-space-2);
+    color: var(--uwp-color-text-muted);
+  }
+  .browse {
+    margin-top: var(--uwp-space-8);
+    padding-block: var(--uwp-space-6);
+    border-top: 1px solid var(--uwp-color-border-subtle);
+    border-bottom: 1px solid var(--uwp-color-border-subtle);
+    display: flex;
+    flex-direction: column;
+    gap: var(--uwp-space-5);
+  }
+  .browse__label {
+    font-size: var(--uwp-text-sm);
+    font-weight: var(--uwp-weight-medium);
+    color: var(--uwp-color-text-subtle);
+    margin-bottom: var(--uwp-space-3);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+  .chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--uwp-space-2);
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  .chips__count {
+    color: var(--uwp-color-text-subtle);
+    font-variant-numeric: tabular-nums;
+  }
+  .cat-group {
+    margin-top: var(--uwp-space-10);
+  }
+  .cat-group__head {
+    display: flex;
+    align-items: baseline;
+    gap: var(--uwp-space-3);
+    font-size: var(--uwp-text-2xl);
+  }
+  .cat-group__count {
+    font-size: var(--uwp-text-sm);
+    font-weight: var(--uwp-weight-normal);
+    color: var(--uwp-color-text-subtle);
+  }
+</style>

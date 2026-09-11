@@ -1,0 +1,56 @@
+---
+export const prerender = true;
+
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import PostCard from "../../components/PostCard.astro";
+import { getTagGroups, type TagGroup } from "../../utils/i18n";
+
+const lang = "zh-TW";
+
+// One page per tag that appears on ≥1 non-draft post in this language. Tags
+// with no posts are never generated, so their URLs 404.
+export async function getStaticPaths() {
+  const groups = await getTagGroups("zh-TW");
+  return groups.map((group) => ({
+    params: { tag: group.tag },
+    props: { group },
+  }));
+}
+
+const { group } = Astro.props as { group: TagGroup };
+---
+
+<BaseLayout
+  lang={lang}
+  title={`#${group.tag} — 文章 — 謝佩君 Peggy`}
+  description={`謝佩君（Peggy）標記為「${group.tag}」的文章，跨所有分類。`}
+>
+  <div class="wrap wrap--prose">
+    <section class="section--tight">
+      <p class="section__kicker">標籤</p>
+      <h1>#{group.tag}</h1>
+      <p class="lede">{group.posts.length} 篇文章</p>
+    </section>
+
+    <div class="tag-list">
+      {group.posts.map((post) => <PostCard post={post} lang={lang} showCategory />)}
+    </div>
+
+    <p class="back">
+      <a class="uwp-link" href="/writing/">← 回到所有文章</a>
+    </p>
+  </div>
+</BaseLayout>
+
+<style>
+  .lede {
+    margin-top: var(--uwp-space-2);
+    color: var(--uwp-color-text-muted);
+  }
+  .tag-list {
+    margin-top: var(--uwp-space-8);
+  }
+  .back {
+    margin-top: var(--uwp-space-10);
+  }
+</style>
