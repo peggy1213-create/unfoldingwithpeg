@@ -1,0 +1,99 @@
+---
+export const prerender = true;
+
+import { render } from "astro:content";
+import BaseLayout from "../../../layouts/BaseLayout.astro";
+import {
+  getPostsByLang,
+  getTranslation,
+  postSlug,
+  type Post,
+} from "../../../utils/i18n";
+
+export async function getStaticPaths() {
+  const posts = await getPostsByLang("en");
+  return posts.map((post) => ({
+    params: { slug: postSlug(post) },
+    props: { post },
+  }));
+}
+
+const { post } = Astro.props as { post: Post };
+const { Content } = await render(post);
+
+// Counterpart in zh-TW, if this post is part of a translation pair.
+const translation = await getTranslation(post);
+const translationHref = translation
+  ? `/posts/${postSlug(translation)}/`
+  : null;
+
+const df = new Intl.DateTimeFormat("en", { dateStyle: "long" });
+const published = df.format(post.data.publishedAt);
+const updated = df.format(post.data.updatedAt);
+const showUpdated =
+  post.data.updatedAt.getTime() !== post.data.publishedAt.getTime();
+---
+
+<BaseLayout lang="en" title={post.data.title} description={post.data.description}>
+  <article class="wrap wrap--prose post">
+    <header class="post__head">
+      <p class="post__meta">
+        <span class="uwp-tag uwp-tag--blue">{post.data.category}</span>
+        <time datetime={post.data.publishedAt.toISOString()}>{published}</time>
+        {showUpdated && <span class="post__updated">(updated {updated})</span>}
+      </p>
+      <h1>{post.data.title}</h1>
+      <p class="post__desc">{post.data.description}</p>
+      <ul class="post__tags">
+        {post.data.tags.map((t) => <li class="uwp-tag uwp-tag--outline">#{t}</li>)}
+      </ul>
+      {
+        translationHref && (
+          <p class="post__translation">
+            <a class="uwp-link" href={translationHref} hreflang="zh-Hant-TW" lang="zh-Hant-TW">
+              閱讀中文版
+            </a>
+          </p>
+        )
+      }
+    </header>
+
+    <div class="prose">
+      <Content />
+    </div>
+  </article>
+</BaseLayout>
+
+<style>
+  .post {
+    padding-block: var(--uwp-space-12, 3rem);
+  }
+  .post__head {
+    margin-bottom: var(--uwp-space-8, 2rem);
+  }
+  .post__meta {
+    display: flex;
+    align-items: center;
+    gap: var(--uwp-space-3, 0.75rem);
+    font-size: var(--uwp-text-sm, 0.875rem);
+    color: var(--uwp-color-text-muted, #666);
+  }
+  .post__head h1 {
+    margin-top: var(--uwp-space-4, 1rem);
+  }
+  .post__desc {
+    color: var(--uwp-color-text-muted, #666);
+    max-width: var(--uwp-measure);
+  }
+  .post__tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--uwp-space-2, 0.5rem);
+    list-style: none;
+    padding: 0;
+    margin-top: var(--uwp-space-4, 1rem);
+  }
+  .post__translation {
+    margin-top: var(--uwp-space-4, 1rem);
+  }
+</style>
