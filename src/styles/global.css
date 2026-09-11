@@ -399,7 +399,7 @@ img {
   align-items: center;
   gap: var(--uwp-space-1);
   font-family: var(--uwp-font-sans);
-  font-weight: var(--uwp-weight-medium);
+  font-weight: var(--uwp-weight-normal);
   line-height: 1;
   border-radius: var(--uwp-radius-pill);
   background-color: var(--_bg);
