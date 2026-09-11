@@ -1,0 +1,57 @@
+---
+export const prerender = true;
+
+import BaseLayout from "../../../layouts/BaseLayout.astro";
+import PostCard from "../../../components/PostCard.astro";
+import { getTagGroups, type TagGroup } from "../../../utils/i18n";
+
+const lang = "en";
+
+// One page per tag that appears on ≥1 non-draft post in this language. Tags
+// with no posts are never generated, so their URLs 404.
+export async function getStaticPaths() {
+  const groups = await getTagGroups("en");
+  return groups.map((group) => ({
+    params: { tag: group.tag },
+    props: { group },
+  }));
+}
+
+const { group } = Astro.props as { group: TagGroup };
+const count = group.posts.length;
+---
+
+<BaseLayout
+  lang={lang}
+  title={`#${group.tag} — Writing — Peggy Pei-Chun Hsieh`}
+  description={`Writing by Peggy Pei-Chun Hsieh tagged ${group.tag}, across all categories.`}
+>
+  <div class="wrap wrap--prose">
+    <section class="section--tight">
+      <p class="section__kicker">Tag</p>
+      <h1>#{group.tag}</h1>
+      <p class="lede">{count} {count === 1 ? "post" : "posts"}</p>
+    </section>
+
+    <div class="tag-list">
+      {group.posts.map((post) => <PostCard post={post} lang={lang} showCategory />)}
+    </div>
+
+    <p class="back">
+      <a class="uwp-link" href="/en/writing/">← Back to all writing</a>
+    </p>
+  </div>
+</BaseLayout>
+
+<style>
+  .lede {
+    margin-top: var(--uwp-space-2);
+    color: var(--uwp-color-text-muted);
+  }
+  .tag-list {
+    margin-top: var(--uwp-space-8);
+  }
+  .back {
+    margin-top: var(--uwp-space-10);
+  }
+</style>

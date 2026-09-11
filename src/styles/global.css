@@ -407,7 +407,12 @@ img {
   white-space: nowrap;
   font-size: var(--uwp-text-sm);
   padding: 0.3125rem 0.6875rem;
+  text-decoration: none;
 }
+/* Tags rendered as links (category/tag navigation) get a subtle hover. */
+a.uwp-tag { transition: background-color var(--uwp-transition), box-shadow var(--uwp-transition); }
+a.uwp-tag:hover { --_bg: var(--uwp-color-surface-hover); }
+a.uwp-tag:focus-visible { outline: none; box-shadow: var(--uwp-shadow-focus); }
 .uwp-tag--blue { --_bg: var(--uwp-color-primary-soft); --_fg: var(--uwp-color-primary-soft-text); }
 .uwp-tag--rose { --_bg: var(--uwp-color-accent-soft); --_fg: var(--uwp-color-accent-soft-text); }
 .uwp-tag--outline { --_bg: transparent; box-shadow: inset 0 0 0 1px var(--uwp-color-border-strong); }

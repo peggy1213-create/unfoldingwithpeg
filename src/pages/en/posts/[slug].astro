@@ -7,6 +7,9 @@ import {
   getPostsByLang,
   getTranslation,
   postSlug,
+  categorySlug,
+  categoryHref,
+  tagHref,
   type Post,
 } from "../../../utils/i18n";
 
@@ -20,6 +23,9 @@ export async function getStaticPaths() {
 
 const { post } = Astro.props as { post: Post };
 const { Content } = await render(post);
+
+const lang = "en";
+const catSlug = categorySlug(post);
 
 // Counterpart in zh-TW, if this post is part of a translation pair.
 const translation = await getTranslation(post);
@@ -38,20 +44,36 @@ const showUpdated =
   <article class="wrap wrap--prose post">
     <header class="post__head">
       <p class="post__meta">
-        <span class="uwp-tag uwp-tag--blue">{post.data.category}</span>
+        <a class="uwp-tag uwp-tag--blue" href={categoryHref(catSlug, lang)}>
+          {post.data.category}
+        </a>
         <time datetime={post.data.publishedAt.toISOString()}>{published}</time>
         {showUpdated && <span class="post__updated">(updated {updated})</span>}
       </p>
       <h1>{post.data.title}</h1>
       <p class="post__desc">{post.data.description}</p>
       <ul class="post__tags">
-        {post.data.tags.map((t) => <li class="uwp-tag uwp-tag--outline">#{t}</li>)}
+        {
+          post.data.tags.map((t) => (
+            <li>
+              <a class="uwp-tag uwp-tag--outline" href={tagHref(t, lang)}>
+                #{t}
+              </a>
+            </li>
+          ))
+        }
       </ul>
       {
         translationHref && (
           <p class="post__translation">
-            <a class="uwp-link" href={translationHref} hreflang="zh-Hant-TW" lang="zh-Hant-TW">
-              閱讀中文版
+            <span class="post__translation-label">Available in:</span>
+            <a
+              class="uwp-link"
+              href={translationHref}
+              hreflang="zh-Hant-TW"
+              lang="zh-Hant-TW"
+            >
+              中文
             </a>
           </p>
         )
@@ -95,5 +117,9 @@ const showUpdated =
   }
   .post__translation {
     margin-top: var(--uwp-space-4, 1rem);
+  }
+  .post__translation-label {
+    color: var(--uwp-color-text-muted, #666);
+    margin-right: var(--uwp-space-1, 0.25rem);
   }
 </style>

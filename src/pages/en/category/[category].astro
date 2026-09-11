@@ -1,0 +1,57 @@
+---
+export const prerender = true;
+
+import BaseLayout from "../../../layouts/BaseLayout.astro";
+import PostCard from "../../../components/PostCard.astro";
+import { getCategoryGroups, type CategoryGroup } from "../../../utils/i18n";
+
+const lang = "en";
+
+// One page per category that has ≥1 non-draft post in this language. Categories
+// without posts are never generated, so their URLs 404 (no i18n fallback).
+export async function getStaticPaths() {
+  const groups = await getCategoryGroups("en");
+  return groups.map((group) => ({
+    params: { category: group.slug },
+    props: { group },
+  }));
+}
+
+const { group } = Astro.props as { group: CategoryGroup };
+const count = group.posts.length;
+---
+
+<BaseLayout
+  lang={lang}
+  title={`${group.name} — Writing — Peggy Pei-Chun Hsieh`}
+  description={`Writing by Peggy Pei-Chun Hsieh in the ${group.name} category.`}
+>
+  <div class="wrap wrap--prose">
+    <section class="section--tight">
+      <p class="section__kicker">Category</p>
+      <h1>{group.name}</h1>
+      <p class="lede">{count} {count === 1 ? "post" : "posts"}</p>
+    </section>
+
+    <div class="cat-list">
+      {group.posts.map((post) => <PostCard post={post} lang={lang} />)}
+    </div>
+
+    <p class="back">
+      <a class="uwp-link" href="/en/writing/">← Back to all writing</a>
+    </p>
+  </div>
+</BaseLayout>
+
+<style>
+  .lede {
+    margin-top: var(--uwp-space-2);
+    color: var(--uwp-color-text-muted);
+  }
+  .cat-list {
+    margin-top: var(--uwp-space-8);
+  }
+  .back {
+    margin-top: var(--uwp-space-10);
+  }
+</style>

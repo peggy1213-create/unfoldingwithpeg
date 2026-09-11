@@ -1,0 +1,87 @@
+---
+import {
+  postHref,
+  categorySlug,
+  categoryHref,
+  tagHref,
+  type Post,
+  type Lang,
+} from "../utils/i18n";
+
+interface Props {
+  post: Post;
+  lang: Lang;
+  /** Show the post's category as a tag link (used on tag pages, which are
+   *  cross-category). Off where the category is already the page/group header. */
+  showCategory?: boolean;
+}
+
+const { post, lang, showCategory = false } = Astro.props;
+
+const df = new Intl.DateTimeFormat(lang === "en" ? "en" : "zh-TW", {
+  dateStyle: "long",
+});
+const published = df.format(post.data.publishedAt);
+---
+
+<article class="post-card">
+  <p class="post-card__meta">
+    <time datetime={post.data.publishedAt.toISOString()}>{published}</time>
+    {
+      showCategory && (
+        <a
+          class="uwp-tag uwp-tag--blue"
+          href={categoryHref(categorySlug(post), lang)}
+        >
+          {post.data.category}
+        </a>
+      )
+    }
+  </p>
+  <h3 class="post-card__title">
+    <a class="uwp-link" href={postHref(post)}>{post.data.title}</a>
+  </h3>
+  <p class="post-card__desc">{post.data.description}</p>
+  <ul class="post-card__tags">
+    {
+      post.data.tags.map((t) => (
+        <li>
+          <a class="uwp-tag uwp-tag--outline" href={tagHref(t, lang)}>
+            #{t}
+          </a>
+        </li>
+      ))
+    }
+  </ul>
+</article>
+
+<style>
+  .post-card {
+    padding-block: var(--uwp-space-6);
+    border-top: 1px solid var(--uwp-color-border-subtle);
+  }
+  .post-card__meta {
+    display: flex;
+    align-items: center;
+    gap: var(--uwp-space-3);
+    font-size: var(--uwp-text-sm);
+    color: var(--uwp-color-text-muted);
+  }
+  .post-card__title {
+    margin-top: var(--uwp-space-2);
+    font-size: var(--uwp-text-xl);
+  }
+  .post-card__desc {
+    margin-top: var(--uwp-space-2);
+    color: var(--uwp-color-text-muted);
+    max-width: var(--uwp-measure);
+  }
+  .post-card__tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--uwp-space-2);
+    list-style: none;
+    padding: 0;
+    margin-top: var(--uwp-space-3);
+  }
+</style>
