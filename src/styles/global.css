@@ -837,3 +837,6 @@ a.card-link > .uwp-card { height: 100%; }
   .timeline li { grid-template-columns: 12rem 1fr; gap: var(--uwp-space-6); }
   .article-list a { flex-wrap: nowrap; justify-content: space-between; }
 }
+
+/* Footer language switch — spacing preserved from the original inline style. */
+.site-footer__lang { margin-top: var(--uwp-space-2); }

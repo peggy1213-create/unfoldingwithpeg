@@ -3,6 +3,14 @@
 # the site branch.
 Design system/
 
+# Node / Astro / Wrangler build artifacts
+node_modules/
+dist/
+.astro/
+.wrangler/
+.dev.vars
+*.tsbuildinfo
+
 # OS / editor junk
 .DS_Store
 Thumbs.db

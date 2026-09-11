@@ -1,0 +1,27 @@
+---
+interface Props {
+  /** Current page's locale. */
+  lang: "zh-TW" | "en";
+  /** Language-neutral route, e.g. "/", "/about/", "/contact/". */
+  route: string;
+  /** Optional extra classes (e.g. footer spacing). */
+  class?: string;
+}
+
+const { lang, route, class: extra } = Astro.props;
+
+// Point at the SAME page in the other language.
+const toEn = lang === "zh-TW";
+const href = toEn ? (route === "/" ? "/en/" : "/en" + route) : route;
+const label = toEn ? "EN" : "中文";
+const targetLang = toEn ? "en" : "zh-Hant-TW";
+---
+
+<a
+  class:list={["lang-switch", extra]}
+  href={href}
+  lang={targetLang}
+  hreflang={targetLang}
+>
+  {label}
+</a>

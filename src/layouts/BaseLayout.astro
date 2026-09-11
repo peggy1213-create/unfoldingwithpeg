@@ -1,0 +1,51 @@
+---
+import Nav from "../components/Nav.astro";
+import Footer from "../components/Footer.astro";
+import "../styles/global.css";
+
+interface Props {
+  /** "zh-TW" (default locale, no prefix) or "en" (served under /en/). */
+  lang: "zh-TW" | "en";
+  title: string;
+  description: string;
+}
+
+const { lang, title, description } = Astro.props;
+
+// Derive the language-neutral route (e.g. "/", "/about/", "/contact/") from the
+// current path, so the header/footer, hreflang alternates and the language
+// switch all point at the right counterpart page regardless of locale.
+const raw = Astro.url.pathname;
+const stripped = raw.replace(/^\/en(?=\/|$)/, "") || "/";
+const route = stripped.endsWith("/") ? stripped : stripped + "/";
+
+const zhUrl = route;
+const enUrl = route === "/" ? "/en/" : "/en" + route;
+const htmlLang = lang === "zh-TW" ? "zh-Hant-TW" : "en";
+const skip = lang === "zh-TW" ? "跳到主要內容" : "Skip to content";
+---
+
+<!doctype html>
+<html lang={htmlLang}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="icon" href="/assets/brand/favicon.svg" type="image/svg+xml" />
+    <link rel="alternate" hreflang="en" href={enUrl} />
+    <link rel="alternate" hreflang="zh-Hant-TW" href={zhUrl} />
+    <link rel="alternate" hreflang="x-default" href={zhUrl} />
+  </head>
+  <body>
+    <a class="skip-link uwp-link" href="#main">{skip}</a>
+
+    <Nav lang={lang} route={route} />
+
+    <main id="main">
+      <slot />
+    </main>
+
+    <Footer lang={lang} route={route} />
+  </body>
+</html>

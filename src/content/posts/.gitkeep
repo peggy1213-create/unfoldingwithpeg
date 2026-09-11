@@ -1,0 +1,3 @@
+# Content collection for blog posts.
+# The posts collection and its schema arrive in a later prompt (RAG work).
+# This .gitkeep just keeps the empty directory in git for now.

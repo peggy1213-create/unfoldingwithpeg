@@ -1,0 +1,84 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+---
+
+<BaseLayout
+  lang="zh-TW"
+  title="聯絡 — 謝佩君 Peggy"
+  description="與謝佩君（Peggy）聯絡——一位在台灣的學習體驗設計師，橫跨教育、顧問與國際專案。"
+>
+  <div class="wrap">
+    <section class="section--tight" style="padding-top:var(--uwp-space-16)">
+      <p class="section__kicker">聯絡</p>
+      <h1 style="font-size:var(--uwp-text-4xl)">來聊聊</h1>
+      <p style="margin-top:var(--uwp-space-4);max-width:var(--uwp-measure);color:var(--uwp-color-text-muted)">
+        我很樂意聽見打造學習產品的團隊、統籌國際專案的大學，以及同樣投入學習體驗的夥伴的聲音。我通常會在幾天內回覆。
+      </p>
+    </section>
+
+    <section class="section">
+      <div class="contact-grid">
+        <!-- ==== 表單 ============================================ -->
+        <div>
+          <h2 style="font-size:var(--uwp-text-2xl);margin-bottom:var(--uwp-space-2)">寫封訊息</h2>
+          <p class="uwp-field__hint" style="margin-bottom:var(--uwp-space-6)">簡單說一下你是誰、為什麼來信，能幫我更好地回覆。</p>
+
+          <form class="contact-form" action="mailto:peichun1213@gmail.com" method="post" enctype="text/plain">
+            <div class="uwp-field">
+              <label class="uwp-field__label" for="name">姓名</label>
+              <input class="uwp-field__control" id="name" name="name" type="text" autocomplete="name" required />
+            </div>
+            <div class="uwp-field">
+              <label class="uwp-field__label" for="email">電子郵件</label>
+              <input class="uwp-field__control" id="email" name="email" type="email" autocomplete="email" required />
+            </div>
+            <div class="uwp-field">
+              <label class="uwp-field__label" for="context">
+                我的身分是… <span class="uwp-field__optional">（選填）</span>
+              </label>
+              <select class="uwp-field__control" id="context" name="context">
+                <option value="">請選擇</option>
+                <option>學習／教育團隊</option>
+                <option>大學或教育專案</option>
+                <option>其他</option>
+              </select>
+            </div>
+            <div class="uwp-field">
+              <label class="uwp-field__label" for="message">訊息</label>
+              <textarea class="uwp-field__control uwp-field__textarea" id="message" name="message" required placeholder="用一句話說說你是誰、為什麼來信。"></textarea>
+            </div>
+            <div>
+              <button class="uwp-button uwp-button--lg" type="submit">送出</button>
+            </div>
+            <p class="uwp-field__hint">送出會開啟你的郵件程式、把訊息準備好——內容會直接寄到我的信箱，不會用於其他用途。</p>
+          </form>
+        </div>
+
+        <!-- ==== 直接聯絡 ========================================= -->
+        <aside class="contact-direct">
+          <h2 style="font-size:var(--uwp-text-2xl)">或直接聯絡</h2>
+          <dl>
+            <div>
+              <dt>電子郵件</dt>
+              <dd><a class="uwp-link" href="mailto:peichun1213@gmail.com">peichun1213@gmail.com</a></dd>
+            </div>
+            <div>
+              <dt>LinkedIn</dt>
+              <dd><a class="uwp-link" href="https://www.linkedin.com/in/peggy-peichun-hsieh">linkedin.com/in/peggy-peichun-hsieh</a></dd>
+            </div>
+            <div>
+              <dt>座標</dt>
+              <dd>台灣 · 以中英雙語工作</dd>
+            </div>
+          </dl>
+          <div class="uwp-callout uwp-callout--note" style="margin-top:var(--uwp-space-6)">
+            <div class="uwp-callout__content">
+              <p class="uwp-callout__title">獵才與人力仲介</p>
+              <p class="uwp-callout__body">目前沒有透過仲介媒合的需求，但只要是真誠、具體的來信，我都很歡迎。</p>
+            </div>
+          </div>
+        </aside>
+      </div>
+    </section>
+  </div>
+</BaseLayout>

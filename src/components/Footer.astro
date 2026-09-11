@@ -1,0 +1,49 @@
+---
+import LangSwitcher from "./LangSwitcher.astro";
+
+interface Props {
+  lang: "zh-TW" | "en";
+  /** Language-neutral route, e.g. "/", "/about/", "/contact/". */
+  route: string;
+}
+
+const { lang, route } = Astro.props;
+const zh = lang === "zh-TW";
+const base = zh ? "" : "/en";
+
+const navLabel = zh ? "頁尾導覽" : "Footer";
+const aboutLabel = zh ? "關於" : "About";
+const contactLabel = zh ? "聯絡" : "Contact";
+const meta = zh
+  ? "謝佩君 Peggy 的個人網站——學習體驗設計師，台灣。"
+  : "Personal site of Peggy Pei-Chun Hsieh — learning experience designer, Taiwan.";
+---
+
+<footer class="site-footer">
+  <div class="wrap site-footer__inner">
+    <div>
+      <nav aria-label={navLabel}>
+        <ul>
+          <li><a href={`${base}/about/`}>{aboutLabel}</a></li>
+          <li><a href={`${base}/contact/`}>{contactLabel}</a></li>
+        </ul>
+      </nav>
+      <p class="site-footer__meta">{meta}</p>
+    </div>
+    <div class="site-footer__contact">
+      <a class="uwp-link uwp-link--subtle" href="mailto:peichun1213@gmail.com"
+        >peichun1213@gmail.com</a
+      >
+      <a
+        class="uwp-link uwp-link--subtle"
+        href="https://www.linkedin.com/in/peggy-peichun-hsieh"
+        >linkedin.com/in/peggy-peichun-hsieh</a
+      >
+      <LangSwitcher
+        lang={lang}
+        route={route}
+        class="site-footer__lang"
+      />
+    </div>
+  </div>
+</footer>
