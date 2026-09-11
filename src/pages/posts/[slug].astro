@@ -5,7 +5,6 @@ import { render } from "astro:content";
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import {
   getPostsByLang,
-  getTranslation,
   postSlug,
   categorySlug,
   categoryHref,
@@ -27,12 +26,6 @@ const { Content } = await render(post);
 const lang = "zh-TW";
 const catSlug = categorySlug(post);
 
-// Counterpart in English, if this post is part of a translation pair.
-const translation = await getTranslation(post);
-const translationHref = translation
-  ? `/en/posts/${postSlug(translation)}/`
-  : null;
-
 const df = new Intl.DateTimeFormat("zh-TW", { dateStyle: "long" });
 const published = df.format(post.data.publishedAt);
 const updated = df.format(post.data.updatedAt);
@@ -51,7 +44,16 @@ const showUpdated =
         {showUpdated && <span class="post__updated">（更新於 {updated}）</span>}
       </p>
       <h1>{post.data.title}</h1>
-      <p class="post__desc">{post.data.description}</p>
+      {
+        post.data.tldr ? (
+          <aside class="post__tldr" aria-label="摘要">
+            <p class="post__tldr-label">TL;DR</p>
+            <p class="post__tldr-body">{post.data.tldr}</p>
+          </aside>
+        ) : (
+          <p class="post__desc">{post.data.description}</p>
+        )
+      }
       <ul class="post__tags">
         {
           post.data.tags.map((t) => (
@@ -63,16 +65,6 @@ const showUpdated =
           ))
         }
       </ul>
-      {
-        translationHref && (
-          <p class="post__translation">
-            <span class="post__translation-label">其他語言：</span>
-            <a class="uwp-link" href={translationHref} hreflang="en" lang="en">
-              English
-            </a>
-          </p>
-        )
-      }
     </header>
 
     <div class="prose">
@@ -110,11 +102,24 @@ const showUpdated =
     padding: 0;
     margin-top: var(--uwp-space-4, 1rem);
   }
-  .post__translation {
-    margin-top: var(--uwp-space-4, 1rem);
+  .post__tldr {
+    margin-top: var(--uwp-space-5, 1.25rem);
+    padding: var(--uwp-space-4, 1rem) var(--uwp-space-5, 1.25rem);
+    border-left: 3px solid var(--uwp-color-primary, #4f46e5);
+    border-radius: var(--uwp-radius-md, 0.5rem);
+    background-color: var(--uwp-color-surface-sunken, #f5f5f5);
+    max-width: var(--uwp-measure);
   }
-  .post__translation-label {
-    color: var(--uwp-color-text-muted, #666);
-    margin-right: var(--uwp-space-1, 0.25rem);
+  .post__tldr-label {
+    margin: 0 0 var(--uwp-space-1, 0.25rem);
+    font-size: var(--uwp-text-xs, 0.75rem);
+    font-weight: var(--uwp-weight-semibold);
+    letter-spacing: var(--uwp-tracking-wide);
+    text-transform: uppercase;
+    color: var(--uwp-color-primary, #4f46e5);
+  }
+  .post__tldr-body {
+    margin: 0;
+    color: var(--uwp-color-text);
   }
 </style>

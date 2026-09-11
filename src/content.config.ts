@@ -25,6 +25,10 @@ const posts = defineCollection({
     .object({
       title: z.string(),
       description: z.string().max(200, "description must be ≤ 200 characters"),
+      // Optional one-paragraph "TL;DR" summary shown on the post page between
+      // the header and the tags. Distinct from `description` (which is the
+      // meta/SEO subtitle); omit it on posts that don't need a summary.
+      tldr: z.string().max(400, "tldr must be ≤ 400 characters").optional(),
       category: z.enum([
         "AI",
         "L&D",
