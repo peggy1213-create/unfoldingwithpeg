@@ -21,3 +21,5 @@ Thumbs.db
 .claude/*
 !.claude/launch.json
 !.claude/skills/
+# Skill zip is a build artifact for uploading to claude.ai — don't commit it.
+.claude/skills/*.zip
