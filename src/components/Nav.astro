@@ -16,10 +16,10 @@ const home = zh ? "/" : "/en/";
 
 // Primary nav — Home · Writing · About · Contact, then the language switch
 // (max 5 items). Category and tag pages are reached from posts and the
-// writing index, not from here.
+// posts index, not from here.
 const items = [
   { key: "/", href: home, label: zh ? "首頁" : "Home" },
-  { key: "/writing/", href: `${base}/writing/`, label: zh ? "文章" : "Writing" },
+  { key: "/posts/", href: `${base}/posts/`, label: zh ? "文章" : "Writing" },
   { key: "/about/", href: `${base}/about/`, label: zh ? "關於" : "About" },
   { key: "/contact/", href: `${base}/contact/`, label: zh ? "聯絡" : "Contact" },
 ];

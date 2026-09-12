@@ -1,14 +1,14 @@
 ---
 export const prerender = true;
 
-import BaseLayout from "../layouts/BaseLayout.astro";
-import PostCard from "../components/PostCard.astro";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import PostCard from "../../components/PostCard.astro";
 import {
   getCategoryGroups,
   getTagGroups,
   categoryHref,
   tagHref,
-} from "../utils/i18n";
+} from "../../utils/i18n";
 
 const lang = "zh-TW";
 const groups = await getCategoryGroups(lang);
