@@ -99,11 +99,11 @@ Look at what the value contains, then quote accordingly:
 | Only `"` (a quoted phrase) | `'single'` | none |
 | **Both** `"` and `'` | `'single'` | inner `'` → `''` (double it) |
 
-The last row is what silently broke this build three times- Example:
+The last row is what silently broke this build three times. Example:
 
----yaml
+```yaml
 tldr: '"Just add a little gamification" sounds like a UX call. It''s actually architectural.'
----
+```
 
 Note the outer single quotes, the inner double quotes kept as literal `"`, and
 every apostrophe written as `''`. Never wrap a value with `"..."` when the
