@@ -1,13 +1,14 @@
-Save as: src/content/posts/builder/data-model-is-the-product.en.md
+---
 title: "The data model is the product: why we don't do gamification"
-tldr: ""Just add a little gamification" sounds like a UX call. It's actually an architectural one. This post uses our decision to reject gamification to unpack how post-centric and person-centric data models unfold into entirely different product logics — including what silent users mean, what hosts accumulate, and why gamification is a compensation mechanism, not an optional feature. The moat lives at the data-model layer."
-description: ""Just add a little gamification" sounds like a UX call — it's actually architectural. A working PM's take on how the data model's centre determines everything downstream."
+tldr: '"Just add a little gamification" sounds like a UX call. It''s actually an architectural one. This post uses our decision to reject gamification to unpack how post-centric and person-centric data models unfold into entirely different product logics — including what silent users mean, what hosts accumulate, and why gamification is a compensation mechanism, not an optional feature. The moat lives at the data-model layer.'
+description: '"Just add a little gamification" sounds like a UX call — it''s actually architectural. A working PM''s take on how the data model''s centre determines everything downstream.'
 category: "Builder"
 tags: ["product-thinking", "architecture", "community-design", "edtech", "learning-design"]
 publishedAt: 2026-09-11
 draft: false
 lang: "en"
-translationKey: "data-model-is-the-product"
+---
+
 A while back the team was discussing: "should we add a bit of gamification? Just a little — nudge people to write more reflections." It sounded like a pure UX call. Add it or don't, depending on aesthetics, user experience, brand voice.
 But the more I sat with it, the more it felt off. Gamification isn't a UX option. It's an architectural inevitability. And rejecting it isn't a design preference — it's acknowledging that we're building a product on a different foundation.
 I want to unpack this, because it applies to any product decision where you're deciding between "community tool" and "learning container" (or any similar opposition). A lot of debates that look like "should we add feature X" are really "where is our data model's centre" debates.
@@ -45,4 +46,3 @@ The dissenting voice can't articulate a specific reason, only "it feels off" —
 When you hit one of these moments, worth stopping and asking one question: what is our data centre? Will this feature reinforce that centre, or quietly pull the weight elsewhere?
 The answer will often disqualify features that seemed perfectly reasonable — as in, "this doesn't belong in our product". That kind of refusal isn't conservatism. It's architectural discipline.
 
-draft: true
