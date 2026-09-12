@@ -1,7 +1,7 @@
 ---
 title: "The data model is the product: why we don't do gamification"
 tldr: 'Just add a little gamification" sounds like a UX call. It''s actually an architectural one. This post uses our decision to reject gamification to unpack how post-centric and person-centric data models unfold into entirely different product logics — including what silent users mean, what hosts accumulate, and why gamification is a compensation mechanism, not an optional feature. The moat lives at the data-model layer.'
-description: '"Just add a little gamification" sounds like a UX call — it''s actually architectural. A working PM''s take on how the data model''s centre determines everything downstream.'
+description: 'Just add a little gamification" sounds like a UX call — it''s actually architectural. A working PM''s take on how the data model''s centre determines everything downstream.'
 category: "Builder"
 tags: ["product-thinking", "architecture", "community-design", "edtech", "learning-design"]
 publishedAt: 2026-09-11
