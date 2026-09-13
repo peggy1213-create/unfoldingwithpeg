@@ -14,14 +14,12 @@ const zh = lang === "zh-TW";
 const base = zh ? "" : "/en";
 const home = zh ? "/" : "/en/";
 
-// Primary nav — Home · Writing · About · Contact, then the language switch
-// (max 5 items). Category and tag pages are reached from posts and the
-// posts index, not from here.
+// Primary nav — Home · Writing · About, then the language switch. Category
+// and tag pages are reached from posts and the posts index, not from here.
 const items = [
   { key: "/", href: home, label: zh ? "首頁" : "Home" },
   { key: "/posts/", href: `${base}/posts/`, label: zh ? "文章" : "Posts" },
   { key: "/about/", href: `${base}/about/`, label: zh ? "關於" : "About" },
-  { key: "/contact/", href: `${base}/contact/`, label: zh ? "聯絡" : "Contact" },
 ];
 
 const navLabel = zh ? "主導覽" : "Primary";
