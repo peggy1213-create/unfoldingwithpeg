@@ -101,6 +101,32 @@ import BaseLayout from "../layouts/BaseLayout.astro";
       </li>
     </ul>
   </section>
+
+  <!-- ==== 4. 外部發表 ================================================= -->
+  <section class="wrap section">
+    <div class="section__head">
+      <p class="section__kicker">Work & Featured</p>
+    </div>
+
+    <ul class="mention-list">
+      <li class="mention-item">
+
+        <a class="uwp-link mention-item__title" href="https://lnkd.in/p/g3S3WBzw" target="_blank" rel="noopener noreferrer">AWS/HKU/NCCU Project →</a>
+      </li>
+      <li class="mention-item">
+
+        <a class="uwp-link mention-item__title" href="https://lnkd.in/p/gsJPNMVu" target="_blank" rel="noopener noreferrer">Explore how asynchronous and synchronous collaboration can create a sense of participation and enhance the learning experience →</a>
+      </li>
+      <li class="mention-item">
+
+        <a class="uwp-link mention-item__title" href="https://web.ncku.edu.tw/p/404-1000-206996.php?Lang=en" target="_blank" rel="noopener noreferrer">2020 NCKU International Virtual Forum on COVID-19 →</a>
+      </li>
+      <li class="mention-item">
+
+        <a class="uwp-link mention-item__title" href="https://web.ncku.edu.tw/p/404-1000-206996.php?Lang=en" target="_blank" rel="noopener noreferrer">2019 SATU Presidents' Forum — Steering Committee Meeting →</a>
+      </li>
+    </ul>
+  </section>
 </BaseLayout>
 
 <style>
@@ -150,6 +176,39 @@ import BaseLayout from "../layouts/BaseLayout.astro";
   .work-card__link {
     margin-top: auto;
     padding-top: var(--uwp-space-2);
+    font-size: var(--uwp-text-sm);
+  }
+  .mention-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--uwp-space-4);
+  }
+  .mention-item {
+    display: flex;
+    flex-direction: column;
+    gap: var(--uwp-space-1);
+    padding: var(--uwp-space-5) var(--uwp-space-6);
+    border: 1px solid var(--uwp-color-border-subtle);
+    border-radius: var(--uwp-radius-lg, 12px);
+    background: var(--uwp-color-surface, transparent);
+  }
+  .mention-item__source {
+    font-size: var(--uwp-text-xs);
+    font-weight: var(--uwp-weight-medium);
+    color: var(--uwp-color-text-subtle);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+  .mention-item__title {
+    font-size: var(--uwp-text-sm);
+    font-weight: var(--uwp-weight-semibold);
+  }
+  .mention-item__desc {
+    color: var(--uwp-color-text-muted);
+    margin: 0;
     font-size: var(--uwp-text-sm);
   }
 </style>
