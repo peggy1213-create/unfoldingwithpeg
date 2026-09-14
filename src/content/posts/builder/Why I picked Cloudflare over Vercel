@@ -1,0 +1,35 @@
+---
+title: "Why I picked Cloudflare over Vercel for my Astro site"
+tldr: "I picked Cloudflare over Vercel for my personal site because I want to add a chat tool later that lets me query my own writing, and Cloudflare has all the pieces for that built in. Vercel is still the nicer everyday experience, I use it for my other site, and would be the better call for something simpler."
+description: "How a non-technical founder picked a hosting company for her personal site, and why Cloudflare turned out to be the right call."
+category: "Builder"
+tags: [cloudflare, vercel, astro, hosting, stack-choice, builder, non-technical-founder]
+publishedAt: 2026-09-14
+updatedAt: 2026-09-14
+draft: true
+lang: "en"
+translationKey: "why-cloudflare-over-vercel"
+---
+
+Before I started building my personal website (unfoldingwithpeg), I got stuck on a boring but real question: which company should host it? I was choosing between Cloudflare and Vercel.
+
+I picked Cloudflare. Not because "Cloudflare is better", but because of one specific thing about my situation that tipped the decision.
+
+My other site [in-betweens.cc](https://in-betweens.cc) runs on Vercel and I'm happy with it. Fast, easy to work with, the dashboard is polished, zero friction to deploy, and site analytics are easy to see.
+
+
+## The deciding factor: what I want to build later
+
+I want to add a chat tool to this site eventually, so I can ask questions across everything I've written and get answers grounded in my actual posts. Not a launch feature. Content has to come first. But that future feature is much cheaper to build if the site is already on Cloudflare, because Cloudflare has all the pieces I'd need already built to talk to each other: D1 (a database to store the posts), Vectorize (a search tool that understands meaning, not just keywords), and Workers AI (the model that generates the answer). They're even bundled into a service called AI Search that wires all three together, so Claude Code can set up the whole thing as one step rather than three.
+
+If I put the site on Vercel, adding that chatbot later means one of two things: split it across two companies (website on Vercel, chatbot on Cloudflare, two dashboards, everything talking across a boundary), or move the whole site to Cloudflare when the time comes and do the work twice.
+
+Learning Cloudflare now (or more accurately, letting Claude Code learn Cloudflare with me) is cheaper than moving everything later.
+
+## When to pick Vercel
+
+**Using Vercel is a nicer experience.** The dashboard is more polished, and every change to the site automatically gets its own preview link you can share, which is genuinely delightful.
+
+**Cloudflare takes longer to set up.** There are more settings to figure out. Claude Code spent about 30 extra minutes on the initial setup compared to what a Vercel deploy would have looked like.
+
+If I were building a simple personal site with no plans for a chatbot or other backend features, Vercel would be a completely reasonable choice, possibly quicker to launch.
