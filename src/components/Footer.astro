@@ -9,36 +9,28 @@ interface Props {
 
 const { lang, route } = Astro.props;
 const zh = lang === "zh-TW";
-const base = zh ? "" : "/en";
-
-const navLabel = zh ? "頁尾導覽" : "Footer";
-const aboutLabel = zh ? "關於" : "About";
-const contactLabel = zh ? "聯絡" : "Contact";
-const meta = zh
-  ? "謝佩君 Peggy 的個人網站——學習體驗設計師，台灣。"
-  : "Personal site of Peggy Pei-Chun Hsieh — learning experience designer, Taiwan.";
 ---
 
 <footer class="site-footer">
   <div class="wrap site-footer__inner">
-    <div>
-      <nav aria-label={navLabel}>
-        <ul>
-          <li><a href={`${base}/about/`}>{aboutLabel}</a></li>
-          <li><a href={`${base}/contact/`}>{contactLabel}</a></li>
-        </ul>
-      </nav>
-      <p class="site-footer__meta">{meta}</p>
-    </div>
     <div class="site-footer__contact">
-      <a class="uwp-link uwp-link--subtle" href="mailto:peichun1213@gmail.com"
-        >peichun1213@gmail.com</a
-      >
-      <a
-        class="uwp-link uwp-link--subtle"
-        href="https://www.linkedin.com/in/peggy-peichun-hsieh"
-        >linkedin.com/in/peggy-peichun-hsieh</a
-      >
+      <ul class="site-footer__icons">
+        <li>
+          <a class="icon-link" href="https://www.linkedin.com/in/peggy-peichun-hsieh" aria-label="LinkedIn" target="_blank" rel="noopener noreferrer">
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor" aria-hidden="true">
+              <path d="M20.45 20.45h-3.55v-5.57c0-1.33-.02-3.04-1.85-3.04-1.85 0-2.13 1.45-2.13 2.94v5.67H9.36V9h3.41v1.56h.05c.48-.9 1.63-1.85 3.36-1.85 3.6 0 4.27 2.37 4.27 5.45v6.29zM5.34 7.43a2.06 2.06 0 1 1 0-4.12 2.06 2.06 0 0 1 0 4.12zM7.12 20.45H3.56V9h3.56v11.45zM22.22 0H1.77C.79 0 0 .77 0 1.72v20.56C0 23.23.79 24 1.77 24h20.45C23.2 24 24 23.23 24 22.28V1.72C24 .77 23.2 0 22.22 0z"/>
+            </svg>
+          </a>
+        </li>
+        <li>
+          <a class="icon-link" href="mailto:peichun1213@gmail.com" aria-label={zh ? "電子郵件" : "Email"}>
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <rect x="3" y="5" width="18" height="14" rx="2"/>
+              <path d="m3 7 9 6 9-6"/>
+            </svg>
+          </a>
+        </li>
+      </ul>
       <LangSwitcher
         lang={lang}
         route={route}
@@ -47,3 +39,13 @@ const meta = zh
     </div>
   </div>
 </footer>
+
+<style>
+  .site-footer__icons {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    gap: var(--uwp-space-2);
+  }
+</style>

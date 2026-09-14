@@ -17,16 +17,10 @@ const tags = await getTagGroups(lang);
 
 <BaseLayout
   lang={lang}
-  title="Writing — Peggy Pei-Chun Hsieh"
-  description="Writing by Peggy Pei-Chun Hsieh, grouped by topic: learning design, building products, tech, investment, and more."
+  title="Writing — Peggy"
+  description="Writing by Peggy, grouped by topic: learning design, building products, tech, investment, and more."
 >
   <div class="wrap wrap--prose">
-    <section class="section--tight">
-      <p class="section__kicker">Writing</p>
-      <h1>Writing</h1>
-      <p class="lede">Grouped by topic, newest first.</p>
-    </section>
-
     <nav class="browse" aria-label="Browse by category or tag">
       <div class="browse__group">
         <h2 class="browse__label">Categories</h2>
@@ -91,7 +85,6 @@ const tags = await getTagGroups(lang);
   .browse {
     margin-top: var(--uwp-space-8);
     padding-block: var(--uwp-space-6);
-    border-top: 1px solid var(--uwp-color-border-subtle);
     border-bottom: 1px solid var(--uwp-color-border-subtle);
     display: flex;
     flex-direction: column;

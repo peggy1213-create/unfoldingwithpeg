@@ -274,7 +274,7 @@ p {
 
 a {
   color: var(--uwp-color-primary-emphasis);
-  text-underline-offset: 0.15em;
+  text-decoration: none;
 }
 
 img {
@@ -344,13 +344,30 @@ img {
   font-family: var(--uwp-font-sans);
   color: var(--uwp-color-primary-emphasis);
   font-weight: var(--uwp-weight-medium);
-  text-decoration: underline;
-  text-decoration-color: color-mix(in srgb, currentColor 35%, transparent);
-  text-underline-offset: 0.15em;
+  text-decoration: none;
   border-radius: var(--uwp-radius-sm);
-  transition: color var(--uwp-transition), text-decoration-color var(--uwp-transition);
+  transition: color var(--uwp-transition);
 }
-.uwp-link:hover { color: var(--uwp-color-primary-active); text-decoration-color: currentColor; }
+.uwp-link:hover { color: var(--uwp-color-primary-active); }
+
+/* Icon-only link buttons (circular, monoline SVG). Used in the footer and
+   anywhere a compact contact/social icon row is wanted. */
+.icon-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 999px;
+  border: 1px solid var(--uwp-color-border-subtle);
+  color: var(--uwp-color-text-muted);
+  transition: color var(--uwp-transition), border-color var(--uwp-transition), background var(--uwp-transition);
+}
+.icon-link:hover {
+  color: var(--uwp-color-primary-emphasis);
+  border-color: var(--uwp-color-primary-emphasis);
+  background: var(--uwp-color-accent-soft);
+}
 .uwp-link:focus-visible { outline: none; box-shadow: var(--uwp-shadow-focus); }
 .uwp-link--subtle { color: var(--uwp-color-text-muted); font-weight: var(--uwp-weight-normal); }
 .uwp-link--subtle:hover { color: var(--uwp-color-text); }
@@ -789,18 +806,42 @@ a.card-link > .uwp-card { height: 100%; }
 .article-list .article-list__note { font-size: var(--uwp-text-sm); color: var(--uwp-color-text-subtle); font-weight: var(--uwp-weight-normal); }
 
 /* --- About timeline ------------------------------------------- */
-.timeline { list-style: none; margin: var(--uwp-space-6) 0 0; padding: 0; }
-.timeline li { display: grid; grid-template-columns: 1fr; gap: var(--uwp-space-1); padding-block: var(--uwp-space-5); border-top: 1px solid var(--uwp-color-border-subtle); }
-.timeline__when { font-size: var(--uwp-text-sm); color: var(--uwp-color-text-subtle); font-weight: var(--uwp-weight-medium); }
+.timeline { list-style: none; margin: var(--uwp-space-6) 0 0; padding: 0 0 0 var(--uwp-space-6); position: relative; }
+.timeline::before {
+  content: "";
+  position: absolute;
+  left: 0.375rem;
+  top: 0.5rem;
+  bottom: 0.5rem;
+  width: 1px;
+  background: var(--uwp-color-border-subtle);
+}
+.timeline li { display: grid; grid-template-columns: 1fr; gap: var(--uwp-space-1); padding-block: var(--uwp-space-5); position: relative; }
+.timeline li::before {
+  content: "";
+  position: absolute;
+  left: calc(-1 * var(--uwp-space-6) + 0.125rem);
+  top: calc(var(--uwp-space-5) + 0.5rem);
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 999px;
+  background: var(--uwp-color-accent-emphasis);
+}
+.timeline__when { font-size: var(--uwp-text-xs); color: var(--uwp-color-text-subtle); font-weight: var(--uwp-weight-medium); letter-spacing: 0.02em; }
 .about-lockup { display: flex; flex-wrap: wrap; align-items: center; gap: var(--uwp-space-6); }
 .about-photo {
   width: 8rem; height: 8rem; flex-shrink: 0;
   border-radius: var(--uwp-radius-full);
-  background-color: var(--uwp-color-surface-sunken);
-  border: 1px dashed var(--uwp-color-border-strong);
-  display: flex; align-items: center; justify-content: center;
-  text-align: center; font-size: var(--uwp-text-xs); color: var(--uwp-color-text-subtle);
-  padding: var(--uwp-space-2);
+}
+.about-photo--img {
+  object-fit: cover;
+  border: 1px solid var(--uwp-color-border-subtle);
+}
+.about-photo--placeholder {
+  background:
+    radial-gradient(circle at 30% 30%, var(--uwp-color-accent-soft), transparent 60%),
+    linear-gradient(135deg, var(--uwp-color-surface-sunken), var(--uwp-color-accent-soft));
+  border: 1px solid var(--uwp-color-border-subtle);
 }
 
 /* --- Contact -------------------------------------------------- */
@@ -854,7 +895,8 @@ a.card-link > .uwp-card { height: 100%; }
 
   .contact-grid { grid-template-columns: 3fr 2fr; }
   .contact-direct dl { grid-template-columns: 1fr; }
-  .timeline li { grid-template-columns: 12rem 1fr; gap: var(--uwp-space-6); }
+  .timeline li { grid-template-columns: 8rem 1fr; gap: var(--uwp-space-6); align-items: baseline; }
+  .timeline li::before { top: calc(var(--uwp-space-5) + 0.4rem); }
   .article-list a { flex-wrap: nowrap; justify-content: space-between; }
 }
 
