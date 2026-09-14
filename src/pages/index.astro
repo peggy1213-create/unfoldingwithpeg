@@ -1,5 +1,6 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
+import PageToc from "../components/PageToc.astro";
 ---
 
 <BaseLayout
@@ -7,6 +8,8 @@ import BaseLayout from "../layouts/BaseLayout.astro";
   title="Peggy Hsieh — 學習體驗設計 · 為讓學習發生的人打造產品"
   description="我設計學習體驗，並運用 AI 為學習工作者打造專屬工具——目前在 TalentLabs 帶專業學員梯隊，並為協助導師管理學員的平台帶產品策略、UX 與研究。"
 >
+  <PageToc lang="zh-TW" />
+
   <!-- ==== 1. 主視覺 ==================================================== -->
   <section class="wrap hero">
     <p class="hero__eyebrow">學習體驗設計 · 為讓學習發生的人打造產品</p>
@@ -18,7 +21,7 @@ import BaseLayout from "../layouts/BaseLayout.astro";
   </section>
 
   <!-- ==== 2. 目前在做的 ================================================= -->
-  <section class="wrap section">
+  <section id="working-on" class="wrap section">
     <div class="section__head">
       <p class="section__kicker">目前在做的</p>
     </div>
@@ -73,7 +76,7 @@ import BaseLayout from "../layouts/BaseLayout.astro";
   </section>
 
   <!-- ==== 3. 工作方式 ================================================= -->
-  <section class="wrap section">
+  <section id="how-i-work" class="wrap section">
     <div class="section__head">
       <p class="section__kicker">工作方式</p>
     </div>
@@ -103,7 +106,7 @@ import BaseLayout from "../layouts/BaseLayout.astro";
   </section>
 
   <!-- ==== 4. 外部發表 ================================================= -->
-  <section class="wrap section">
+  <section id="work-featured" class="wrap section">
     <div class="section__head">
       <p class="section__kicker">Work & Featured</p>
     </div>

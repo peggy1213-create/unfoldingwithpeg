@@ -1,0 +1,109 @@
+---
+interface Props {
+  lang: "zh-TW" | "en";
+}
+
+const { lang } = Astro.props;
+const zh = lang === "zh-TW";
+
+const items = [
+  { id: "working-on", label: zh ? "目前在做的" : "What I'm working on" },
+  { id: "how-i-work", label: zh ? "工作方式" : "How I work" },
+  { id: "work-featured", label: "Work & Featured" },
+];
+---
+
+<nav class="page-toc" aria-label={zh ? "頁面導覽" : "On this page"}>
+  <div class="page-toc__tab" aria-hidden="true">
+    <svg width="4" height="18" viewBox="0 0 4 18" fill="currentColor">
+      <circle cx="2" cy="2" r="1.5" />
+      <circle cx="2" cy="9" r="1.5" />
+      <circle cx="2" cy="16" r="1.5" />
+    </svg>
+  </div>
+  <ul class="page-toc__list">
+    {items.map((item) => (
+      <li>
+        <a href={`#${item.id}`}>{item.label}</a>
+      </li>
+    ))}
+  </ul>
+</nav>
+
+<style>
+  .page-toc {
+    position: fixed;
+    right: var(--uwp-space-4, 16px);
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 100;
+  }
+
+  .page-toc__tab {
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--uwp-color-surface, #1a1a1a);
+    border: 1px solid var(--uwp-color-border-subtle);
+    border-radius: 50%;
+    color: var(--uwp-color-text-muted);
+    cursor: pointer;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+    transition: opacity 0.2s ease, box-shadow 0.2s ease;
+  }
+
+  .page-toc__tab:hover {
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.4);
+  }
+
+  .page-toc__list {
+    position: absolute;
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    list-style: none;
+    margin: 0;
+    padding: var(--uwp-space-3) var(--uwp-space-4);
+    display: flex;
+    flex-direction: column;
+    gap: var(--uwp-space-2);
+    background: var(--uwp-color-surface, #1a1a1a);
+    border: 1px solid var(--uwp-color-border-subtle);
+    border-radius: var(--uwp-radius-lg, 12px);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.2s ease, visibility 0.2s ease;
+  }
+
+  .page-toc:hover .page-toc__list,
+  .page-toc:focus-within .page-toc__list {
+    opacity: 1;
+    visibility: visible;
+  }
+
+  .page-toc:hover .page-toc__tab {
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .page-toc a {
+    font-size: var(--uwp-text-sm, 0.875rem);
+    color: var(--uwp-color-text-muted);
+    text-decoration: none;
+    white-space: nowrap;
+    transition: color 0.15s ease;
+  }
+
+  .page-toc a:hover {
+    color: var(--uwp-color-text, #fff);
+  }
+
+  @media (max-width: 30rem) {
+    .page-toc {
+      display: none;
+    }
+  }
+</style>
