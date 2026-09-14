@@ -6,7 +6,7 @@ category: "Builder"
 tags: [cloudflare, vercel, astro, hosting, stack-choice, builder, non-technical-founder]
 publishedAt: 2026-09-14
 updatedAt: 2026-09-14
-draft: true
+draft: false
 lang: "zh-TW"
 translationKey: "why-cloudflare-over-vercel"
 ---
