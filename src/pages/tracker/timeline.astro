@@ -1,0 +1,263 @@
+---
+import TrackerLayout from "../../layouts/TrackerLayout.astro";
+import { getDb } from "../../db";
+import { getEventsWithJobs } from "../../lib/queries";
+
+const db = getDb((Astro.locals as any).runtime.env.DB);
+const initialEvents = await getEventsWithJobs(db, 0, 20);
+
+const eventTypes = [
+  "applied",
+  "phone_screen",
+  "interview",
+  "take_home",
+  "offer",
+  "follow_up",
+  "rejection",
+  "status_change",
+  "note",
+  "other",
+] as const;
+
+function formatDayHeading(iso: string): string {
+  const d = new Date(iso);
+  const now = new Date();
+  const diff = Math.round((now.getTime() - d.getTime()) / 86_400_000);
+  if (diff === 0) return "Today";
+  if (diff === 1) return "Yesterday";
+  return d.toLocaleDateString("en-US", {
+    weekday: "long",
+    month: "long",
+    day: "numeric",
+    year: "numeric",
+  });
+}
+
+function formatTime(iso: string): string {
+  return new Date(iso).toLocaleTimeString("en-US", {
+    hour: "numeric",
+    minute: "2-digit",
+  });
+}
+
+function dayKey(iso: string): string {
+  return iso.slice(0, 10);
+}
+
+// Group events by day
+const grouped: { day: string; heading: string; events: typeof initialEvents }[] = [];
+let currentDay = "";
+for (const ev of initialEvents) {
+  const dk = dayKey(ev.date);
+  if (dk !== currentDay) {
+    currentDay = dk;
+    grouped.push({ day: dk, heading: formatDayHeading(ev.date), events: [] });
+  }
+  grouped[grouped.length - 1].events.push(ev);
+}
+
+const hasEvents = initialEvents.length > 0;
+---
+
+<TrackerLayout title="Timeline" activePage="timeline">
+  <div class="tracker-page-header">
+    <h1>Timeline</h1>
+  </div>
+
+  <!-- Type filter bar -->
+  <div class="jobs-filter-bar" style="margin-bottom: var(--uwp-space-6);">
+    <div class="jobs-filter-bar__statuses">
+      <button class="tracker-badge jobs-filter-pill jobs-filter-pill--active" data-type="all" type="button">All</button>
+      {eventTypes.map((t) => (
+        <button class="tracker-badge tracker-badge--event jobs-filter-pill" data-type={t} type="button">
+          {t.replace("_", " ")}
+        </button>
+      ))}
+    </div>
+  </div>
+
+  {hasEvents ? (
+    <div id="timeline-feed">
+      {grouped.map((group) => (
+        <div class="timeline-day" data-day={group.day}>
+          <h2 class="timeline-day__heading">{group.heading}</h2>
+          <div class="timeline-day__events">
+            {group.events.map((ev) => (
+              <div class="timeline-event" data-type={ev.type}>
+                <div class="timeline-event__dot" />
+                <div class="timeline-event__content">
+                  <div class="timeline-event__top">
+                    <span class="tracker-badge tracker-badge--event">{ev.type.replace("_", " ")}</span>
+                    <span class="timeline-event__time">{formatTime(ev.date)}</span>
+                  </div>
+                  <div class="timeline-event__title">{ev.title}</div>
+                  <a href={`/tracker/jobs/${ev.job_id}/`} class="timeline-event__job">
+                    {ev.company || "Unknown"} — {ev.role || ""}
+                    {ev.job_status && (
+                      <span class={`tracker-badge tracker-badge--${ev.job_status}`} style="margin-left: var(--uwp-space-2);">
+                        {ev.job_status}
+                      </span>
+                    )}
+                  </a>
+                  {ev.description && (
+                    <p class="timeline-event__desc">{ev.description}</p>
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      ))}
+    </div>
+  ) : (
+    <div class="tracker-empty">
+      <div class="tracker-empty__icon">
+        <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="12" y1="2" x2="12" y2="22" />
+          <circle cx="12" cy="6" r="2" />
+          <circle cx="12" cy="12" r="2" />
+          <circle cx="12" cy="18" r="2" />
+        </svg>
+      </div>
+      <p class="tracker-empty__text">No events yet</p>
+      <p class="tracker-empty__hint">Events are created when you add activities to your tracked jobs.</p>
+    </div>
+  )}
+
+  <div id="timeline-loader" style="text-align: center; padding: var(--uwp-space-6); display: none;">
+    <button class="tracker-btn tracker-btn--secondary" type="button" id="load-more-btn">Load more</button>
+  </div>
+</TrackerLayout>
+
+<script define:vars={{ initialCount: initialEvents.length }}>
+  window.__timelineOffset = initialCount;
+</script>
+
+<script>
+  let offset = (window as any).__timelineOffset || 0;
+  let activeType = "all";
+  let loading = false;
+  const PAGE_SIZE = 20;
+
+  const feed = document.getElementById("timeline-feed");
+  const loader = document.getElementById("timeline-loader")!;
+  const loadMoreBtn = document.getElementById("load-more-btn")!;
+
+  // Show load-more if first batch was full
+  if (offset >= PAGE_SIZE) loader.style.display = "";
+
+  // Type filter
+  const filterPills = document.querySelectorAll<HTMLButtonElement>(".jobs-filter-pill");
+  filterPills.forEach((pill) => {
+    pill.addEventListener("click", () => {
+      activeType = pill.dataset.type!;
+      filterPills.forEach((p) => p.classList.toggle("jobs-filter-pill--active", p === pill));
+      reloadTimeline();
+    });
+  });
+
+  async function reloadTimeline() {
+    offset = 0;
+    if (!feed) return;
+    feed.innerHTML = "";
+    await loadMore();
+  }
+
+  loadMoreBtn.addEventListener("click", loadMore);
+
+  async function loadMore() {
+    if (loading) return;
+    loading = true;
+    loadMoreBtn.textContent = "Loading...";
+
+    const params = new URLSearchParams({ offset: String(offset), limit: String(PAGE_SIZE) });
+    if (activeType !== "all") params.set("type", activeType);
+
+    try {
+      const res = await fetch(`/tracker/api/events?${params}`);
+      if (!res.ok) throw new Error("Failed to load events");
+      const events: any[] = await res.json();
+
+      if (events.length === 0) {
+        loader.style.display = "none";
+        if (offset === 0 && feed) {
+          feed.innerHTML = `
+            <div class="tracker-empty" style="padding: var(--uwp-space-12) var(--uwp-space-6);">
+              <p class="tracker-empty__text">No events match this filter</p>
+            </div>`;
+        }
+        loading = false;
+        return;
+      }
+
+      for (const ev of events) {
+        const dk = ev.date.slice(0, 10);
+        let dayEl = feed?.querySelector(`[data-day="${dk}"]`) as HTMLElement | null;
+        if (!dayEl) {
+          dayEl = document.createElement("div");
+          dayEl.className = "timeline-day";
+          dayEl.dataset.day = dk;
+          dayEl.innerHTML = `<h2 class="timeline-day__heading">${formatDayHeading(ev.date)}</h2><div class="timeline-day__events"></div>`;
+          feed?.appendChild(dayEl);
+        }
+        const eventsContainer = dayEl.querySelector(".timeline-day__events")!;
+        const el = document.createElement("div");
+        el.className = "timeline-event";
+        el.dataset.type = ev.type;
+        const statusBadge = ev.job_status
+          ? `<span class="tracker-badge tracker-badge--${ev.job_status}" style="margin-left: var(--uwp-space-2);">${ev.job_status}</span>`
+          : "";
+        el.innerHTML = `
+          <div class="timeline-event__dot"></div>
+          <div class="timeline-event__content">
+            <div class="timeline-event__top">
+              <span class="tracker-badge tracker-badge--event">${ev.type.replace("_", " ")}</span>
+              <span class="timeline-event__time">${formatTime(ev.date)}</span>
+            </div>
+            <div class="timeline-event__title">${escapeHtml(ev.title)}</div>
+            <a href="/tracker/jobs/${ev.job_id}/" class="timeline-event__job">
+              ${escapeHtml(ev.company || "Unknown")} &mdash; ${escapeHtml(ev.role || "")}
+              ${statusBadge}
+            </a>
+            ${ev.description ? `<p class="timeline-event__desc">${escapeHtml(ev.description)}</p>` : ""}
+          </div>`;
+        eventsContainer.appendChild(el);
+      }
+
+      offset += events.length;
+      loader.style.display = events.length >= PAGE_SIZE ? "" : "none";
+    } catch {
+      loadMoreBtn.textContent = "Error — try again";
+    } finally {
+      loading = false;
+      loadMoreBtn.textContent = "Load more";
+    }
+  }
+
+  function formatDayHeading(iso: string): string {
+    const d = new Date(iso);
+    const now = new Date();
+    const diff = Math.round((now.getTime() - d.getTime()) / 86_400_000);
+    if (diff === 0) return "Today";
+    if (diff === 1) return "Yesterday";
+    return d.toLocaleDateString("en-US", {
+      weekday: "long",
+      month: "long",
+      day: "numeric",
+      year: "numeric",
+    });
+  }
+
+  function formatTime(iso: string): string {
+    return new Date(iso).toLocaleTimeString("en-US", {
+      hour: "numeric",
+      minute: "2-digit",
+    });
+  }
+
+  function escapeHtml(str: string): string {
+    const div = document.createElement("div");
+    div.textContent = str;
+    return div.innerHTML;
+  }
+</script>

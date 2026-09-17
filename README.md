@@ -109,16 +109,43 @@ Actions):
 Add both **before** the first push to `main`, or the deploy step fails for lack
 of credentials. Keep the token private and rotate it in Cloudflare if it leaks.
 
-## D1 binding (future RAG work)
+## Job Tracker
 
-A **Cloudflare D1** database binding is scaffolded — but **commented out** — in
-[`wrangler.jsonc`](wrangler.jsonc), under a `TODO`. It will back the planned
-retrieval-augmented-generation feature over blog posts. To enable it later:
+A private job search tracker lives at `/tracker/`. It uses **Cloudflare D1**
+(SQLite) via **Drizzle ORM** and is English-only (outside the bilingual routing).
 
-1. `npx wrangler d1 create unfoldingwithpeg-rag`
-2. Paste the returned `database_id` into `wrangler.jsonc` and uncomment the
-   `d1_databases` block.
-3. Access it in endpoints via `locals.runtime.env.DB`.
+### Pages
+
+- `/tracker/` — Dashboard with pipeline summary, stats, action items
+- `/tracker/jobs/` — Jobs list (table + board view) with drag-and-drop, filter, sort, CSV export
+- `/tracker/jobs/[id]/` — Job detail with edit mode, notes auto-save, events panel
+- `/tracker/timeline/` — Reverse-chronological event feed with type filter and pagination
+
+### Features
+
+- Global search via **Cmd+K** / **Ctrl+K**
+- Toast notifications for all actions
+- Responsive: sidebar becomes bottom tab bar on mobile
+- Drag-and-drop board with optimistic updates
+- CSV export from the Jobs page
+
+### Setup
+
+1. Create the D1 database: `npx wrangler d1 create job-tracker-db`
+2. Copy the returned `database_id` into `wrangler.jsonc` (replace `placeholder-replace-me`)
+3. Apply the migration: `npx wrangler d1 migrations apply job-tracker-db --local` (for local dev) or without `--local` for production
+4. (Optional) Seed sample data: `npx wrangler d1 execute job-tracker-db --local --file=scripts/seed-tracker.sql`
+5. Run `npm run dev` — visit `http://localhost:4321/tracker/`
+
+### Database schema
+
+Four tables managed by Drizzle ORM (`src/db/schema.ts`):
+- `jobs` — company, role, status, salary, location, source, url, notes, tags
+- `events` — job_id, type, title, description, date, reminder_at
+- `contacts` — name, company, title, email, phone, linkedin_url
+- `job_contacts` — many-to-many link between jobs and contacts
+
+To regenerate migrations after schema changes: `npm run db:generate`
 
 ## Translation status
 

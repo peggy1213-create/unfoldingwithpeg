@@ -1,0 +1,521 @@
+---
+import TrackerLayout from "../../../layouts/TrackerLayout.astro";
+import { getDb } from "../../../db";
+import { getJobs } from "../../../lib/queries";
+
+const db = getDb((Astro.locals as any).runtime.env.DB);
+const allJobs = await getJobs(db);
+
+const statuses = [
+  "saved", "applied", "interview", "offer", "accepted",
+  "rejected", "withdrawn", "ghosted", "archived",
+] as const;
+
+const boardStatuses = ["saved", "applied", "interview", "offer", "accepted"] as const;
+const terminalStatuses = ["rejected", "withdrawn", "ghosted"] as const;
+
+function formatDate(iso: string): string {
+  return new Date(iso).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
+}
+
+function parseTags(raw: string | null): string[] {
+  if (!raw) return [];
+  try { return JSON.parse(raw); } catch { return []; }
+}
+
+const hasJobs = allJobs.length > 0;
+---
+
+<TrackerLayout title="Jobs" activePage="jobs">
+  {hasJobs ? (
+    <>
+      <!-- Header: title + view toggle -->
+      <div class="tracker-page-header">
+        <h1>Jobs</h1>
+        <div style="display: flex; align-items: center; gap: var(--uwp-space-3);">
+          <button class="tracker-btn tracker-btn--ghost" type="button" id="csv-export-btn" title="Export CSV">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            Export
+          </button>
+        <div class="view-toggle" role="group" aria-label="View mode">
+          <button class="view-toggle__btn view-toggle__btn--active" data-view="list" type="button">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+            List
+          </button>
+          <button class="view-toggle__btn" data-view="board" type="button">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="5" height="18" rx="1"/><rect x="10" y="3" width="5" height="12" rx="1"/><rect x="17" y="3" width="5" height="15" rx="1"/></svg>
+            Board
+          </button>
+        </div>
+        </div>
+      </div>
+
+      <!-- Filter bar -->
+      <div class="jobs-filter-bar">
+        <div class="jobs-filter-bar__statuses">
+          <button class="tracker-badge jobs-filter-pill jobs-filter-pill--active" data-status="all" type="button">All</button>
+          {statuses.map((s) => (
+            <button class={`tracker-badge tracker-badge--${s} jobs-filter-pill`} data-status={s} type="button">{s}</button>
+          ))}
+        </div>
+        <input class="tracker-input jobs-filter-bar__search" type="search" placeholder="Search company, role, tags..." id="jobs-search" />
+      </div>
+
+      <!-- LIST VIEW -->
+      <section id="view-list" class="jobs-view">
+        <!-- Desktop table -->
+        <div class="jobs-list-table-wrap">
+          <table class="tracker-table" id="jobs-table">
+            <thead>
+              <tr>
+                <th data-sort="company" class="sortable-th">Company <span class="sort-arrow"></span></th>
+                <th data-sort="role" class="sortable-th">Role <span class="sort-arrow"></span></th>
+                <th data-sort="status">Status</th>
+                <th data-sort="location" class="sortable-th">Location <span class="sort-arrow"></span></th>
+                <th>Source</th>
+                <th data-sort="created_at" class="sortable-th">Added <span class="sort-arrow"></span></th>
+                <th>Tags</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              {allJobs.map((job) => {
+                const tags = parseTags(job.tags);
+                return (
+                  <tr
+                    class="jobs-row"
+                    data-id={job.id}
+                    data-company={job.company.toLowerCase()}
+                    data-role={job.role.toLowerCase()}
+                    data-status={job.status}
+                    data-location={(job.location || "").toLowerCase()}
+                    data-tags={tags.join(" ").toLowerCase()}
+                    data-created={job.created_at}
+                  >
+                    <td>
+                      <a href={`/tracker/jobs/${job.id}/`} class="jobs-row__company">{job.company}</a>
+                    </td>
+                    <td>{job.role}</td>
+                    <td><span class={`tracker-badge tracker-badge--${job.status}`}>{job.status}</span></td>
+                    <td class="jobs-row__muted">{job.location || "—"}</td>
+                    <td class="jobs-row__muted">{job.source || "—"}</td>
+                    <td class="jobs-row__muted">{formatDate(job.created_at)}</td>
+                    <td>
+                      {tags.length > 0 && (
+                        <span class="jobs-row__tags">
+                          {tags.map((t) => <span class="tracker-badge tracker-badge--tag">{t}</span>)}
+                        </span>
+                      )}
+                    </td>
+                    <td>
+                      {job.url && (
+                        <a href={job.url} target="_blank" rel="noopener" class="jobs-row__link" title="Open listing">
+                          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+                        </a>
+                      )}
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Mobile cards -->
+        <div class="jobs-list-cards">
+          {allJobs.map((job) => {
+            const tags = parseTags(job.tags);
+            return (
+              <a
+                href={`/tracker/jobs/${job.id}/`}
+                class="jobs-mobile-card"
+                data-id={job.id}
+                data-company={job.company.toLowerCase()}
+                data-role={job.role.toLowerCase()}
+                data-status={job.status}
+                data-tags={tags.join(" ").toLowerCase()}
+              >
+                <div class="jobs-mobile-card__top">
+                  <span class="jobs-mobile-card__company">{job.company}</span>
+                  <span class={`tracker-badge tracker-badge--${job.status}`}>{job.status}</span>
+                </div>
+                <div class="jobs-mobile-card__role">{job.role}</div>
+                <div class="jobs-mobile-card__meta">{formatDate(job.created_at)}</div>
+              </a>
+            );
+          })}
+        </div>
+      </section>
+
+      <!-- BOARD VIEW -->
+      <section id="view-board" class="jobs-view" style="display:none;">
+        <div class="board">
+          {boardStatuses.map((s) => {
+            const colJobs = allJobs.filter((j) => j.status === s);
+            return (
+              <div class="board__col" data-status={s}>
+                <div class={`board__col-header board__col-header--${s}`}>
+                  <span class="board__col-title">{s}</span>
+                  <span class="board__col-count">{colJobs.length}</span>
+                </div>
+                <div class="board__col-body" data-drop-zone={s}>
+                  {colJobs.map((job) => {
+                    const tags = parseTags(job.tags);
+                    return (
+                      <div
+                        class="board__card"
+                        draggable="true"
+                        data-job-id={job.id}
+                        data-company={job.company.toLowerCase()}
+                        data-role={job.role.toLowerCase()}
+                        data-tags={tags.join(" ").toLowerCase()}
+                      >
+                        <a href={`/tracker/jobs/${job.id}/`} class="board__card-company">{job.company}</a>
+                        <div class="board__card-role">{job.role}</div>
+                        {tags.length > 0 && (
+                          <div class="board__card-tags">
+                            {tags.map((t) => <span class="tracker-badge tracker-badge--tag">{t}</span>)}
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            );
+          })}
+        </div>
+
+        <!-- Terminal statuses -->
+        <div class="board__terminal" id="terminal-section">
+          <button class="board__terminal-toggle" type="button" id="terminal-toggle">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="terminal-chevron"><polyline points="6 9 12 15 18 9"/></svg>
+            {terminalStatuses.map((s) => {
+              const count = allJobs.filter((j) => j.status === s).length;
+              return count > 0 ? (
+                <span class={`tracker-badge tracker-badge--${s}`}>{s} ({count})</span>
+              ) : null;
+            })}
+            {(() => {
+              const archivedCount = allJobs.filter((j) => j.status === "archived").length;
+              return archivedCount > 0 ? (
+                <span class="tracker-badge tracker-badge--archived">archived ({archivedCount})</span>
+              ) : null;
+            })()}
+          </button>
+          <div class="board__terminal-body" id="terminal-body" style="display:none;">
+            <div class="board board--terminal">
+              {([...terminalStatuses, "archived"] as const).map((s) => {
+                const colJobs = allJobs.filter((j) => j.status === s);
+                if (colJobs.length === 0) return null;
+                return (
+                  <div class="board__col board__col--terminal" data-status={s}>
+                    <div class={`board__col-header board__col-header--${s}`}>
+                      <span class="board__col-title">{s}</span>
+                      <span class="board__col-count">{colJobs.length}</span>
+                    </div>
+                    <div class="board__col-body" data-drop-zone={s}>
+                      {colJobs.map((job) => (
+                        <div
+                          class="board__card"
+                          draggable="true"
+                          data-job-id={job.id}
+                          data-company={job.company.toLowerCase()}
+                          data-role={job.role.toLowerCase()}
+                        >
+                          <a href={`/tracker/jobs/${job.id}/`} class="board__card-company">{job.company}</a>
+                          <div class="board__card-role">{job.role}</div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        </div>
+      </section>
+    </>
+  ) : (
+    <div class="tracker-empty">
+      <div class="tracker-empty__icon">
+        <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="2" y="7" width="20" height="14" rx="2" />
+          <path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2" />
+        </svg>
+      </div>
+      <p class="tracker-empty__text">No jobs tracked yet — add your first one</p>
+      <p class="tracker-empty__hint">Click the + button to start tracking your job applications.</p>
+      <button class="tracker-btn tracker-btn--primary" type="button" id="empty-add-btn" style="margin-top: var(--uwp-space-2);">
+        Add your first job
+      </button>
+    </div>
+
+    <script>
+      document.getElementById("empty-add-btn")?.addEventListener("click", () => {
+        const dialog = document.getElementById("add-job-dialog") as HTMLDialogElement;
+        dialog.showModal();
+        (document.getElementById("job-company") as HTMLInputElement).focus();
+      });
+    </script>
+  )}
+</TrackerLayout>
+
+<script>
+  // --- View toggle ---
+  const viewBtns = document.querySelectorAll<HTMLButtonElement>(".view-toggle__btn");
+  const viewSections = document.querySelectorAll<HTMLElement>(".jobs-view");
+
+  function setView(view: string) {
+    viewSections.forEach((s) => {
+      s.style.display = s.id === `view-${view}` ? "" : "none";
+    });
+    viewBtns.forEach((b) => {
+      b.classList.toggle("view-toggle__btn--active", b.dataset.view === view);
+    });
+    const url = new URL(window.location.href);
+    url.searchParams.set("view", view);
+    history.replaceState(null, "", url.toString());
+  }
+
+  viewBtns.forEach((btn) => {
+    btn.addEventListener("click", () => setView(btn.dataset.view!));
+  });
+
+  // Restore from URL
+  const params = new URLSearchParams(window.location.search);
+  const initialView = params.get("view") === "board" ? "board" : "list";
+  setView(initialView);
+
+  // --- Status filter ---
+  const filterPills = document.querySelectorAll<HTMLButtonElement>(".jobs-filter-pill");
+  let activeStatus = "all";
+
+  filterPills.forEach((pill) => {
+    pill.addEventListener("click", () => {
+      activeStatus = pill.dataset.status!;
+      filterPills.forEach((p) => p.classList.toggle("jobs-filter-pill--active", p === pill));
+      const url = new URL(window.location.href);
+      if (activeStatus === "all") url.searchParams.delete("status");
+      else url.searchParams.set("status", activeStatus);
+      history.replaceState(null, "", url.toString());
+      applyFilters();
+    });
+  });
+
+  // Restore status from URL
+  const initialStatus = params.get("status");
+  if (initialStatus) {
+    activeStatus = initialStatus;
+    filterPills.forEach((p) => {
+      p.classList.toggle("jobs-filter-pill--active", p.dataset.status === initialStatus);
+    });
+  }
+
+  // --- Search ---
+  const searchInput = document.getElementById("jobs-search") as HTMLInputElement;
+  let searchTerm = "";
+
+  searchInput.addEventListener("input", () => {
+    searchTerm = searchInput.value.toLowerCase().trim();
+    applyFilters();
+  });
+
+  function applyFilters() {
+    // List table rows
+    document.querySelectorAll<HTMLTableRowElement>("#jobs-table tbody .jobs-row").forEach((row) => {
+      const matchStatus = activeStatus === "all" || row.dataset.status === activeStatus;
+      const matchSearch = !searchTerm ||
+        row.dataset.company!.includes(searchTerm) ||
+        row.dataset.role!.includes(searchTerm) ||
+        (row.dataset.tags || "").includes(searchTerm);
+      row.style.display = matchStatus && matchSearch ? "" : "none";
+    });
+
+    // Mobile cards
+    document.querySelectorAll<HTMLElement>(".jobs-mobile-card").forEach((card) => {
+      const matchStatus = activeStatus === "all" || card.dataset.status === activeStatus;
+      const matchSearch = !searchTerm ||
+        card.dataset.company!.includes(searchTerm) ||
+        card.dataset.role!.includes(searchTerm) ||
+        (card.dataset.tags || "").includes(searchTerm);
+      card.style.display = matchStatus && matchSearch ? "" : "none";
+    });
+
+    // Board cards
+    document.querySelectorAll<HTMLElement>(".board__card").forEach((card) => {
+      const matchSearch = !searchTerm ||
+        (card.dataset.company || "").includes(searchTerm) ||
+        (card.dataset.role || "").includes(searchTerm) ||
+        (card.dataset.tags || "").includes(searchTerm);
+      card.style.display = matchSearch ? "" : "none";
+    });
+  }
+
+  applyFilters();
+
+  // --- Sort ---
+  const table = document.getElementById("jobs-table") as HTMLTableElement;
+  let sortCol = "created_at";
+  let sortDir: "asc" | "desc" = "desc";
+
+  table.querySelectorAll<HTMLTableCellElement>("th[data-sort]").forEach((th) => {
+    th.style.cursor = "pointer";
+    th.addEventListener("click", () => {
+      const col = th.dataset.sort!;
+      if (sortCol === col) {
+        sortDir = sortDir === "asc" ? "desc" : "asc";
+      } else {
+        sortCol = col;
+        sortDir = "asc";
+      }
+      // Update arrows
+      table.querySelectorAll<HTMLElement>(".sort-arrow").forEach((a) => a.textContent = "");
+      const arrow = th.querySelector(".sort-arrow");
+      if (arrow) arrow.textContent = sortDir === "asc" ? " ↑" : " ↓";
+
+      sortTable();
+    });
+  });
+
+  function sortTable() {
+    const tbody = table.querySelector("tbody")!;
+    const rows = Array.from(tbody.querySelectorAll<HTMLTableRowElement>(".jobs-row"));
+    rows.sort((a, b) => {
+      let va: string, vb: string;
+      if (sortCol === "created_at") {
+        va = a.dataset.created || "";
+        vb = b.dataset.created || "";
+      } else if (sortCol === "company") {
+        va = a.dataset.company || "";
+        vb = b.dataset.company || "";
+      } else if (sortCol === "role") {
+        va = a.dataset.role || "";
+        vb = b.dataset.role || "";
+      } else if (sortCol === "location") {
+        va = a.dataset.location || "";
+        vb = b.dataset.location || "";
+      } else if (sortCol === "status") {
+        va = a.dataset.status || "";
+        vb = b.dataset.status || "";
+      } else {
+        va = ""; vb = "";
+      }
+      const cmp = va.localeCompare(vb);
+      return sortDir === "asc" ? cmp : -cmp;
+    });
+    rows.forEach((r) => tbody.appendChild(r));
+  }
+
+  // --- Terminal toggle ---
+  const terminalToggle = document.getElementById("terminal-toggle");
+  const terminalBody = document.getElementById("terminal-body");
+  terminalToggle?.addEventListener("click", () => {
+    const open = terminalBody!.style.display !== "none";
+    terminalBody!.style.display = open ? "none" : "";
+    terminalToggle.querySelector(".terminal-chevron")?.classList.toggle("terminal-chevron--open", !open);
+  });
+
+  // --- Drag and Drop ---
+  let draggedId: string | null = null;
+  let draggedEl: HTMLElement | null = null;
+  let sourceZone: HTMLElement | null = null;
+
+  document.querySelectorAll<HTMLElement>(".board__card").forEach((card) => {
+    card.addEventListener("dragstart", (e) => {
+      draggedId = card.dataset.jobId!;
+      draggedEl = card;
+      sourceZone = card.closest("[data-drop-zone]") as HTMLElement;
+      card.classList.add("board__card--dragging");
+      e.dataTransfer!.effectAllowed = "move";
+      e.dataTransfer!.setData("text/plain", draggedId);
+    });
+    card.addEventListener("dragend", () => {
+      card.classList.remove("board__card--dragging");
+      document.querySelectorAll(".board__col-body--over").forEach((z) => {
+        z.classList.remove("board__col-body--over");
+      });
+      draggedId = null;
+      draggedEl = null;
+      sourceZone = null;
+    });
+  });
+
+  document.querySelectorAll<HTMLElement>("[data-drop-zone]").forEach((zone) => {
+    zone.addEventListener("dragover", (e) => {
+      e.preventDefault();
+      e.dataTransfer!.dropEffect = "move";
+      zone.classList.add("board__col-body--over");
+    });
+    zone.addEventListener("dragleave", (e) => {
+      if (!zone.contains(e.relatedTarget as Node)) {
+        zone.classList.remove("board__col-body--over");
+      }
+    });
+    zone.addEventListener("drop", async (e) => {
+      e.preventDefault();
+      zone.classList.remove("board__col-body--over");
+      const newStatus = zone.dataset.dropZone!;
+      if (!draggedEl || !draggedId) return;
+      const oldSourceZone = sourceZone;
+
+      // Optimistic move
+      zone.appendChild(draggedEl);
+      updateColumnCounts();
+
+      try {
+        const res = await fetch(`/tracker/api/jobs/${draggedId}`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ status: newStatus }),
+        });
+        if (!res.ok) throw new Error("Update failed");
+      } catch {
+        // Revert
+        if (oldSourceZone && draggedEl) {
+          oldSourceZone.appendChild(draggedEl);
+          updateColumnCounts();
+        }
+        (window as any).__showToast?.("Failed to update status. Please try again.", "error");
+      }
+    });
+  });
+
+  function updateColumnCounts() {
+    document.querySelectorAll<HTMLElement>(".board__col").forEach((col) => {
+      const count = col.querySelectorAll(".board__card").length;
+      const countEl = col.querySelector(".board__col-count");
+      if (countEl) countEl.textContent = String(count);
+    });
+  }
+
+  // --- CSV Export ---
+  document.getElementById("csv-export-btn")?.addEventListener("click", async () => {
+    try {
+      const res = await fetch("/tracker/api/jobs");
+      if (!res.ok) throw new Error("Failed to fetch");
+      const jobs: any[] = await res.json();
+      const headers = ["Company", "Role", "Status", "Location", "Source", "URL", "Salary", "Tags", "Notes", "Created", "Updated"];
+      const rows = jobs.map((j: any) => [
+        j.company, j.role, j.status, j.location || "", j.source || "",
+        j.url || "", j.salary || "",
+        (typeof j.tags === "string" ? j.tags : JSON.stringify(j.tags || "[]")).replace(/[\[\]"]/g, ""),
+        (j.notes || "").replace(/"/g, '""'),
+        j.created_at, j.updated_at,
+      ]);
+      const csvContent = [headers, ...rows]
+        .map((r) => r.map((c: string) => `"${c}"`).join(","))
+        .join("\n");
+      const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `job-tracker-${new Date().toISOString().slice(0, 10)}.csv`;
+      a.click();
+      URL.revokeObjectURL(url);
+      (window as any).__showToast?.("CSV exported");
+    } catch {
+      (window as any).__showToast?.("Export failed", "error");
+    }
+  });
+</script>

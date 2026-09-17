@@ -1,0 +1,342 @@
+---
+import "../styles/global.css";
+import "../styles/tracker.css";
+
+interface Props {
+  title: string;
+  activePage?: "dashboard" | "jobs" | "timeline";
+}
+
+const { title, activePage = "dashboard" } = Astro.props;
+const currentPath = Astro.url.pathname;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title} — Job Tracker</title>
+    <link rel="icon" href="/assets/brand/favicon.svg" type="image/svg+xml" />
+  </head>
+  <body>
+    <div class="tracker-shell">
+      <!-- Sidebar / bottom tab bar -->
+      <nav class="tracker-sidebar" aria-label="Tracker navigation">
+        <a href="/tracker/" class="tracker-sidebar__brand">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="3" width="7" height="7" rx="1" />
+            <rect x="14" y="3" width="7" height="7" rx="1" />
+            <rect x="3" y="14" width="7" height="7" rx="1" />
+            <rect x="14" y="14" width="7" height="7" rx="1" />
+          </svg>
+          Job Tracker
+        </a>
+
+        <ul class="tracker-sidebar__nav">
+          <li>
+            <a
+              href="/tracker/"
+              class="tracker-sidebar__link"
+              aria-current={activePage === "dashboard" ? "page" : undefined}
+            >
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="3" y="3" width="7" height="9" rx="1" />
+                <rect x="14" y="3" width="7" height="5" rx="1" />
+                <rect x="14" y="12" width="7" height="9" rx="1" />
+                <rect x="3" y="16" width="7" height="5" rx="1" />
+              </svg>
+              Dashboard
+            </a>
+          </li>
+          <li>
+            <a
+              href="/tracker/jobs/"
+              class="tracker-sidebar__link"
+              aria-current={activePage === "jobs" ? "page" : undefined}
+            >
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="2" y="7" width="20" height="14" rx="2" />
+                <path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2" />
+              </svg>
+              Jobs
+            </a>
+          </li>
+          <li>
+            <a
+              href="/tracker/timeline/"
+              class="tracker-sidebar__link"
+              aria-current={activePage === "timeline" ? "page" : undefined}
+            >
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="12" y1="2" x2="12" y2="22" />
+                <circle cx="12" cy="6" r="2" />
+                <circle cx="12" cy="12" r="2" />
+                <circle cx="12" cy="18" r="2" />
+                <path d="M14 6h6" />
+                <path d="M4 12h6" />
+                <path d="M14 18h6" />
+              </svg>
+              Timeline
+            </a>
+          </li>
+        </ul>
+
+        <div class="tracker-sidebar__back">
+          <a href="/">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M19 12H5" />
+              <path d="M12 19l-7-7 7-7" />
+            </svg>
+            Back to site
+          </a>
+        </div>
+      </nav>
+
+      <!-- Main content -->
+      <div class="tracker-main">
+        <div class="tracker-content">
+          <slot />
+        </div>
+      </div>
+
+      <!-- FAB -->
+      <button class="tracker-fab" type="button" id="fab-add" aria-label="Add job">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+          <line x1="12" y1="5" x2="12" y2="19" />
+          <line x1="5" y1="12" x2="19" y2="12" />
+        </svg>
+      </button>
+
+      <!-- Toast container -->
+      <div class="toast-container" id="toast-container" aria-live="polite"></div>
+
+      <!-- Global search dialog (Cmd+K) -->
+      <dialog class="search-dialog" id="search-dialog">
+        <div class="search-dialog__input-wrap">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="11" cy="11" r="8" />
+            <line x1="21" y1="21" x2="16.65" y2="16.65" />
+          </svg>
+          <input class="search-dialog__input" id="search-input" type="text" placeholder="Search jobs..." autocomplete="off" />
+          <kbd class="search-dialog__kbd">Esc</kbd>
+        </div>
+        <div class="search-dialog__results" id="search-results">
+          <div class="search-dialog__empty">Type to search jobs by company, role, or tags</div>
+        </div>
+      </dialog>
+
+      <!-- Add Job dialog -->
+      <dialog class="tracker-dialog" id="add-job-dialog">
+        <div class="tracker-dialog__header">
+          <h2>Add Job</h2>
+          <button class="tracker-dialog__close" type="button" id="dialog-close" aria-label="Close">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+              <line x1="18" y1="6" x2="6" y2="18" />
+              <line x1="6" y1="6" x2="18" y2="18" />
+            </svg>
+          </button>
+        </div>
+        <form id="add-job-form" method="dialog">
+          <div class="tracker-dialog__body">
+            <div class="tracker-field">
+              <label for="job-company">Company *</label>
+              <input class="tracker-input" id="job-company" name="company" type="text" required placeholder="e.g. Notion" />
+            </div>
+            <div class="tracker-field">
+              <label for="job-role">Role *</label>
+              <input class="tracker-input" id="job-role" name="role" type="text" required placeholder="e.g. Customer Success Manager" />
+            </div>
+            <div class="tracker-field">
+              <label for="job-url">URL</label>
+              <input class="tracker-input" id="job-url" name="url" type="url" placeholder="https://..." />
+            </div>
+            <div class="tracker-field">
+              <label for="job-status">Status</label>
+              <select class="tracker-select" id="job-status" name="status">
+                <option value="saved" selected>Saved</option>
+                <option value="applied">Applied</option>
+                <option value="interview">Interview</option>
+                <option value="offer">Offer</option>
+                <option value="accepted">Accepted</option>
+                <option value="rejected">Rejected</option>
+                <option value="withdrawn">Withdrawn</option>
+                <option value="ghosted">Ghosted</option>
+                <option value="archived">Archived</option>
+              </select>
+            </div>
+            <div class="tracker-field">
+              <label for="job-source">Source</label>
+              <input class="tracker-input" id="job-source" name="source" type="text" placeholder="e.g. LinkedIn, referral" />
+            </div>
+          </div>
+          <div class="tracker-dialog__actions">
+            <button class="tracker-btn tracker-btn--secondary" type="button" id="dialog-cancel">Cancel</button>
+            <button class="tracker-btn tracker-btn--primary" type="submit">Add Job</button>
+          </div>
+        </form>
+      </dialog>
+    </div>
+
+    <script>
+      // --- Toast system ---
+      function showToast(message: string, type: "success" | "error" = "success") {
+        const container = document.getElementById("toast-container")!;
+        const toast = document.createElement("div");
+        toast.className = `toast toast--${type}`;
+        toast.textContent = message;
+        container.appendChild(toast);
+        setTimeout(() => {
+          toast.classList.add("toast--removing");
+          toast.addEventListener("animationend", () => toast.remove());
+        }, 4000);
+      }
+      (window as any).__showToast = showToast;
+
+      // --- Add Job dialog ---
+      const dialog = document.getElementById("add-job-dialog") as HTMLDialogElement;
+      const fab = document.getElementById("fab-add")!;
+      const closeBtn = document.getElementById("dialog-close")!;
+      const cancelBtn = document.getElementById("dialog-cancel")!;
+      const form = document.getElementById("add-job-form") as HTMLFormElement;
+      const companyInput = document.getElementById("job-company") as HTMLInputElement;
+
+      fab.addEventListener("click", () => {
+        dialog.showModal();
+        companyInput.focus();
+      });
+
+      closeBtn.addEventListener("click", () => dialog.close());
+      cancelBtn.addEventListener("click", () => dialog.close());
+
+      dialog.addEventListener("click", (e) => {
+        if (e.target === dialog) dialog.close();
+      });
+
+      form.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const data = Object.fromEntries(new FormData(form));
+        try {
+          const res = await fetch("/tracker/api/jobs", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(data),
+          });
+          if (!res.ok) throw new Error("Failed to create job");
+          showToast("Job added successfully");
+          dialog.close();
+          window.location.reload();
+        } catch {
+          showToast("Failed to add job. Please try again.", "error");
+        }
+      });
+
+      // --- Global search (Cmd+K / Ctrl+K) ---
+      const searchDialog = document.getElementById("search-dialog") as HTMLDialogElement;
+      const searchInput = document.getElementById("search-input") as HTMLInputElement;
+      const searchResults = document.getElementById("search-results")!;
+      let allJobs: any[] | null = null;
+      let activeIndex = -1;
+
+      document.addEventListener("keydown", (e) => {
+        if ((e.metaKey || e.ctrlKey) && e.key === "k") {
+          e.preventDefault();
+          if (searchDialog.open) {
+            searchDialog.close();
+          } else {
+            searchDialog.showModal();
+            searchInput.value = "";
+            searchInput.focus();
+            searchResults.innerHTML = `<div class="search-dialog__empty">Type to search jobs by company, role, or tags</div>`;
+            activeIndex = -1;
+          }
+        }
+      });
+
+      searchDialog.addEventListener("click", (e) => {
+        if (e.target === searchDialog) searchDialog.close();
+      });
+
+      let searchDebounce: ReturnType<typeof setTimeout>;
+      searchInput.addEventListener("input", () => {
+        clearTimeout(searchDebounce);
+        searchDebounce = setTimeout(() => doSearch(searchInput.value.trim()), 150);
+      });
+
+      searchInput.addEventListener("keydown", (e) => {
+        const items = searchResults.querySelectorAll<HTMLAnchorElement>(".search-result");
+        if (e.key === "ArrowDown") {
+          e.preventDefault();
+          activeIndex = Math.min(activeIndex + 1, items.length - 1);
+          updateActiveResult(items);
+        } else if (e.key === "ArrowUp") {
+          e.preventDefault();
+          activeIndex = Math.max(activeIndex - 1, 0);
+          updateActiveResult(items);
+        } else if (e.key === "Enter" && activeIndex >= 0 && items[activeIndex]) {
+          e.preventDefault();
+          items[activeIndex].click();
+        }
+      });
+
+      function updateActiveResult(items: NodeListOf<HTMLAnchorElement>) {
+        items.forEach((el, i) => {
+          el.classList.toggle("search-result--active", i === activeIndex);
+          if (i === activeIndex) el.scrollIntoView({ block: "nearest" });
+        });
+      }
+
+      async function doSearch(query: string) {
+        if (!query) {
+          searchResults.innerHTML = `<div class="search-dialog__empty">Type to search jobs by company, role, or tags</div>`;
+          activeIndex = -1;
+          return;
+        }
+
+        if (!allJobs) {
+          try {
+            const res = await fetch("/tracker/api/jobs");
+            allJobs = await res.json();
+          } catch {
+            searchResults.innerHTML = `<div class="search-dialog__empty">Failed to load jobs</div>`;
+            return;
+          }
+        }
+
+        const q = query.toLowerCase();
+        const matches = allJobs!.filter((j: any) => {
+          const tags = j.tags ? (typeof j.tags === "string" ? j.tags : JSON.stringify(j.tags)) : "";
+          return (
+            j.company.toLowerCase().includes(q) ||
+            j.role.toLowerCase().includes(q) ||
+            (j.location || "").toLowerCase().includes(q) ||
+            tags.toLowerCase().includes(q)
+          );
+        });
+
+        if (matches.length === 0) {
+          searchResults.innerHTML = `<div class="search-dialog__empty">No jobs found for "${escapeHtml(query)}"</div>`;
+          activeIndex = -1;
+          return;
+        }
+
+        activeIndex = 0;
+        searchResults.innerHTML = matches.slice(0, 12).map((j: any, i: number) =>
+          `<a href="/tracker/jobs/${j.id}/" class="search-result ${i === 0 ? "search-result--active" : ""}">
+            <span class="search-result__company">${escapeHtml(j.company)}</span>
+            <span class="search-result__meta">
+              <span class="search-result__role">${escapeHtml(j.role)}</span>
+              <span class="tracker-badge tracker-badge--${j.status}">${j.status}</span>
+            </span>
+          </a>`
+        ).join("");
+      }
+
+      function escapeHtml(str: string): string {
+        const div = document.createElement("div");
+        div.textContent = str;
+        return div.innerHTML;
+      }
+    </script>
+  </body>
+</html>
