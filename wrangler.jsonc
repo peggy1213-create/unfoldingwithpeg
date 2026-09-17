@@ -21,19 +21,14 @@
 	"routes": [
 		{ "pattern": "studiounfolding.cc", "custom_domain": true },
 		{ "pattern": "www.studiounfolding.cc", "custom_domain": true }
-	]
+	],
 
-	// ---------------------------------------------------------------------------
 	// D1 database — job tracker
-	// Uncomment after creating the database:
-	//   npx wrangler d1 create job-tracker-db
-	// Then paste the returned database_id below.
-	// ---------------------------------------------------------------------------
-	// "d1_databases": [
-	// 	{
-	// 		"binding": "DB",
-	// 		"database_name": "job-tracker-db",
-	// 		"database_id": "YOUR-DATABASE-ID-HERE"
-	// 	}
-	// ]
+	"d1_databases": [
+		{
+			"binding": "DB",
+			"database_name": "job-tracker-db",
+			"database_id": "eeacd02d-5001-42a5-8686-1e1b047a6120"
+		}
+	]
 }
