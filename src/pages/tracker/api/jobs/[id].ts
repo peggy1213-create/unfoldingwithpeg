@@ -8,8 +8,8 @@ import {
   deleteEvent,
 } from "../../../../lib/queries";
 
-export const GET: APIRoute = async ({ params, locals }) => {
-  const db = getDb((locals as any).runtime.env.DB);
+export const GET: APIRoute = async ({ params }) => {
+  const db = getDb();
   const job = await getJobById(db, params.id!);
   if (!job) {
     return new Response(JSON.stringify({ error: "Not found" }), {
@@ -23,8 +23,8 @@ export const GET: APIRoute = async ({ params, locals }) => {
   });
 };
 
-export const PUT: APIRoute = async ({ params, locals, request }) => {
-  const db = getDb((locals as any).runtime.env.DB);
+export const PUT: APIRoute = async ({ params, request }) => {
+  const db = getDb();
   const body = await request.json();
   const job = await updateJob(db, params.id!, body);
   if (!job) {
@@ -38,8 +38,8 @@ export const PUT: APIRoute = async ({ params, locals, request }) => {
   });
 };
 
-export const DELETE: APIRoute = async ({ params, locals }) => {
-  const db = getDb((locals as any).runtime.env.DB);
+export const DELETE: APIRoute = async ({ params }) => {
+  const db = getDb();
   const job = await getJobById(db, params.id!);
   if (!job) {
     return new Response(JSON.stringify({ error: "Not found" }), {
