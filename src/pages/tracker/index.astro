@@ -11,7 +11,7 @@ import {
   getJobById,
 } from "../../lib/queries";
 
-const db = getDb((Astro.locals as any).runtime.env.DB);
+const db = getDb();
 
 const [counts, upcoming, overdue, recentEvents, stats, allJobs] =
   await Promise.all([

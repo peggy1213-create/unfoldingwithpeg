@@ -3,7 +3,7 @@ import TrackerLayout from "../../layouts/TrackerLayout.astro";
 import { getDb } from "../../db";
 import { getEventsWithJobs } from "../../lib/queries";
 
-const db = getDb((Astro.locals as any).runtime.env.DB);
+const db = getDb();
 const initialEvents = await getEventsWithJobs(db, 0, 20);
 
 const eventTypes = [

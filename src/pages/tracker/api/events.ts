@@ -2,8 +2,8 @@ import type { APIRoute } from "astro";
 import { getDb } from "../../../db";
 import { createEvent, getEventsWithJobs } from "../../../lib/queries";
 
-export const GET: APIRoute = async ({ locals, url }) => {
-  const db = getDb((locals as any).runtime.env.DB);
+export const GET: APIRoute = async ({ url }) => {
+  const db = getDb();
   const offset = parseInt(url.searchParams.get("offset") || "0", 10);
   const limit = parseInt(url.searchParams.get("limit") || "20", 10);
   const type = url.searchParams.get("type") || undefined;
@@ -14,8 +14,8 @@ export const GET: APIRoute = async ({ locals, url }) => {
   });
 };
 
-export const POST: APIRoute = async ({ locals, request }) => {
-  const db = getDb((locals as any).runtime.env.DB);
+export const POST: APIRoute = async ({ request }) => {
+  const db = getDb();
   const body = await request.json();
 
   const event = await createEvent(db, {
