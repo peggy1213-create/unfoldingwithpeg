@@ -1,0 +1,311 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import jobsData from "../../public/data/jobs.json";
+
+const jobs = jobsData.jobs ?? [];
+const locations = [...new Set(jobs.map((j: any) => {
+  const loc = (j.location || "").trim();
+  if (/remote/i.test(loc)) return "Remote";
+  if (/hybrid/i.test(loc)) return "Hybrid";
+  return loc;
+}).filter(Boolean))].sort();
+---
+
+<BaseLayout lang="en" title="Job Board — unfoldingwithpeg" description="Curated job listings from my daily crawler.">
+  <section class="jobs-page">
+    <header class="jobs-header">
+      <h1>Job Board</h1>
+      <p class="jobs-subtitle">Curated daily from {jobs.length} listings across Remotive, Cake, Yourator, Greenhouse &amp; more.</p>
+      <p class="jobs-updated">Last updated: {new Date(jobsData.generated_at).toLocaleDateString("en-US", { year: "numeric", month: "short", day: "numeric" })}</p>
+    </header>
+
+    <div class="jobs-controls">
+      <div class="jobs-search-wrap">
+        <svg class="jobs-search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input type="search" id="jobs-search" class="jobs-search" placeholder="Search title or company..." autocomplete="off" />
+      </div>
+      <select id="jobs-location-filter" class="jobs-filter-select">
+        <option value="">All locations</option>
+        {locations.map((loc: string) => <option value={loc}>{loc}</option>)}
+      </select>
+    </div>
+
+    <div class="jobs-count" id="jobs-count">{jobs.length} jobs</div>
+
+    <ul class="jobs-list" id="jobs-list">
+      {jobs.map((job: any) => (
+        <li class="jobs-card" data-title={job.title.toLowerCase()} data-company={job.company.toLowerCase()} data-location={job.location || ""}>
+          <div class="jobs-card-main">
+            <a href={job.url} target="_blank" rel="noopener" class="jobs-card-title">{job.title}</a>
+            <div class="jobs-card-meta">
+              <span class="jobs-card-company">{job.company}</span>
+              {job.priority_company && <span class="jobs-card-badge">Top 100</span>}
+              <span class="jobs-card-location">{job.location || "—"}</span>
+              <span class="jobs-card-date">{job.date}</span>
+            </div>
+          </div>
+          <button class="jobs-heart-btn" data-url={job.url} aria-label="Save job" type="button">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+          </button>
+        </li>
+      ))}
+    </ul>
+
+    <p class="jobs-empty" id="jobs-empty" hidden>No jobs match your search.</p>
+  </section>
+</BaseLayout>
+
+<style>
+  .jobs-page {
+    max-width: 48rem;
+    margin: 0 auto;
+    padding: 2rem 1rem 4rem;
+  }
+
+  .jobs-header {
+    margin-bottom: 1.5rem;
+  }
+  .jobs-header h1 {
+    font-family: var(--uwp-font-display);
+    font-size: var(--uwp-text-2xl, 1.5rem);
+    color: var(--uwp-color-text);
+    margin: 0 0 0.25rem;
+  }
+  .jobs-subtitle {
+    color: var(--uwp-color-text-muted);
+    font-size: var(--uwp-text-sm);
+    margin: 0;
+  }
+  .jobs-updated {
+    color: var(--uwp-color-text-subtle);
+    font-size: var(--uwp-text-xs);
+    margin: 0.25rem 0 0;
+  }
+
+  .jobs-controls {
+    display: flex;
+    gap: 0.75rem;
+    margin-bottom: 1rem;
+  }
+  .jobs-search-wrap {
+    flex: 1;
+    position: relative;
+  }
+  .jobs-search-icon {
+    position: absolute;
+    left: 0.75rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--uwp-color-text-subtle);
+    pointer-events: none;
+  }
+  .jobs-search {
+    width: 100%;
+    padding: 0.5rem 0.75rem 0.5rem 2.25rem;
+    border: 1px solid var(--uwp-color-border);
+    border-radius: 0.375rem;
+    font-family: var(--uwp-font-sans);
+    font-size: var(--uwp-text-sm);
+    color: var(--uwp-color-text);
+    background: var(--uwp-color-surface);
+    box-sizing: border-box;
+  }
+  .jobs-search:focus {
+    outline: 2px solid var(--uwp-color-focus-ring);
+    outline-offset: -1px;
+    border-color: var(--uwp-color-focus-ring);
+  }
+  .jobs-search::placeholder {
+    color: var(--uwp-color-text-subtle);
+  }
+
+  .jobs-filter-select {
+    padding: 0.5rem 0.75rem;
+    border: 1px solid var(--uwp-color-border);
+    border-radius: 0.375rem;
+    font-family: var(--uwp-font-sans);
+    font-size: var(--uwp-text-sm);
+    color: var(--uwp-color-text);
+    background: var(--uwp-color-surface);
+    min-width: 10rem;
+  }
+  .jobs-filter-select:focus {
+    outline: 2px solid var(--uwp-color-focus-ring);
+    outline-offset: -1px;
+  }
+
+  .jobs-count {
+    font-size: var(--uwp-text-xs);
+    color: var(--uwp-color-text-subtle);
+    margin-bottom: 0.5rem;
+  }
+
+  .jobs-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+
+  .jobs-card {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.875rem 1rem;
+    border-bottom: 1px solid var(--uwp-color-border-subtle);
+    transition: background 0.15s;
+  }
+  .jobs-card:first-child {
+    border-top: 1px solid var(--uwp-color-border-subtle);
+  }
+  .jobs-card:hover {
+    background: var(--uwp-color-surface-hover);
+  }
+
+  .jobs-card-main {
+    flex: 1;
+    min-width: 0;
+  }
+  .jobs-card-title {
+    display: block;
+    font-weight: 600;
+    font-size: var(--uwp-text-base);
+    color: var(--uwp-color-primary-emphasis);
+    text-decoration: none;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .jobs-card-title:hover {
+    color: var(--uwp-color-primary-hover);
+    text-decoration: underline;
+  }
+
+  .jobs-card-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem 0.75rem;
+    margin-top: 0.25rem;
+    font-size: var(--uwp-text-sm);
+    color: var(--uwp-color-text-muted);
+  }
+  .jobs-card-company {
+    font-weight: 600;
+    color: var(--uwp-color-text);
+  }
+  .jobs-card-badge {
+    display: inline-block;
+    font-size: var(--uwp-text-xs);
+    padding: 0.0625rem 0.375rem;
+    border-radius: 999px;
+    background: var(--uwp-color-accent-soft);
+    color: var(--uwp-color-accent-soft-text);
+    font-weight: 600;
+    line-height: 1.4;
+  }
+
+  .jobs-heart-btn {
+    flex-shrink: 0;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0.375rem;
+    border-radius: 0.25rem;
+    color: var(--uwp-color-text-subtle);
+    transition: color 0.15s;
+  }
+  .jobs-heart-btn:hover {
+    color: var(--uwp-color-accent);
+  }
+  .jobs-heart-btn.saved {
+    color: var(--uwp-color-accent);
+  }
+  .jobs-heart-btn.saved svg {
+    fill: var(--uwp-color-accent);
+  }
+
+  .jobs-empty {
+    text-align: center;
+    padding: 3rem 1rem;
+    color: var(--uwp-color-text-muted);
+    font-size: var(--uwp-text-sm);
+  }
+
+  @media (max-width: 600px) {
+    .jobs-controls {
+      flex-direction: column;
+    }
+    .jobs-filter-select {
+      min-width: 0;
+      width: 100%;
+    }
+    .jobs-card-title {
+      white-space: normal;
+    }
+  }
+</style>
+
+<script>
+  const searchInput = document.getElementById("jobs-search") as HTMLInputElement;
+  const filterSelect = document.getElementById("jobs-location-filter") as HTMLSelectElement;
+  const list = document.getElementById("jobs-list")!;
+  const cards = Array.from(list.querySelectorAll<HTMLLIElement>(".jobs-card"));
+  const countEl = document.getElementById("jobs-count")!;
+  const emptyEl = document.getElementById("jobs-empty")!;
+
+  let saved: Set<string>;
+  try {
+    saved = new Set(JSON.parse(localStorage.getItem("jobs-saved") || "[]"));
+  } catch {
+    saved = new Set();
+  }
+
+  function persistSaved() {
+    try { localStorage.setItem("jobs-saved", JSON.stringify([...saved])); } catch {}
+  }
+
+  // Init heart states
+  cards.forEach((card) => {
+    const btn = card.querySelector<HTMLButtonElement>(".jobs-heart-btn")!;
+    const url = btn.dataset.url || "";
+    if (saved.has(url)) btn.classList.add("saved");
+
+    btn.addEventListener("click", () => {
+      if (saved.has(url)) {
+        saved.delete(url);
+        btn.classList.remove("saved");
+      } else {
+        saved.add(url);
+        btn.classList.add("saved");
+      }
+      persistSaved();
+    });
+  });
+
+  function filterCards() {
+    const q = searchInput.value.toLowerCase().trim();
+    const loc = filterSelect.value.toLowerCase();
+    let visible = 0;
+
+    cards.forEach((card) => {
+      const title = card.dataset.title || "";
+      const company = card.dataset.company || "";
+      const cardLoc = (card.dataset.location || "").toLowerCase();
+
+      const matchesSearch = !q || title.includes(q) || company.includes(q);
+      const matchesLoc = !loc || cardLoc.includes(loc.toLowerCase());
+
+      const show = matchesSearch && matchesLoc;
+      card.style.display = show ? "" : "none";
+      if (show) visible++;
+    });
+
+    countEl.textContent = `${visible} job${visible !== 1 ? "s" : ""}`;
+    emptyEl.hidden = visible > 0;
+  }
+
+  searchInput.addEventListener("input", filterCards);
+  filterSelect.addEventListener("change", filterCards);
+</script>
