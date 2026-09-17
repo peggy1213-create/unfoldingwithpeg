@@ -1,6 +1,6 @@
 {
-  "generated_at": "2026-09-17T23:23:51.918334+08:00",
-  "count": 37,
+  "generated_at": "2026-09-18T07:20:14.157240+08:00",
+  "count": 34,
   "jobs": [
     {
       "title": "2025 Micron Summer Internship Program",
@@ -36,23 +36,10 @@
       "location": "新北市",
       "url": "https://www.yourator.co/companies/a6577eba/jobs/47831",
       "source": "yourator",
-      "date": "2026-09-17",
+      "date": "2026-09-18",
       "fit_score": 3,
       "keyword_groups": [
         "community"
-      ],
-      "priority_company": false
-    },
-    {
-      "title": "AI Architect / AI Product Manager (AI PM)",
-      "company": "SKS 新光保全",
-      "location": "臺北市",
-      "url": "https://www.yourator.co/companies/skstaiwan/jobs/46038",
-      "source": "yourator",
-      "date": "2026-09-17",
-      "fit_score": 3,
-      "keyword_groups": [
-        "edtech_pm"
       ],
       "priority_company": false
     },
@@ -89,7 +76,7 @@
       "location": "臺北市",
       "url": "https://www.yourator.co/companies/PicCollage/jobs/48248",
       "source": "yourator",
-      "date": "2026-09-17",
+      "date": "2026-09-18",
       "fit_score": 2,
       "keyword_groups": [
         "edtech_pm"
@@ -102,7 +89,7 @@
       "location": "新北市",
       "url": "https://www.yourator.co/companies/AmazingTalker/jobs/43100",
       "source": "yourator",
-      "date": "2026-09-17",
+      "date": "2026-09-18",
       "fit_score": 2,
       "keyword_groups": [
         "edtech_pm"
@@ -115,36 +102,10 @@
       "location": "臺北市",
       "url": "https://www.yourator.co/companies/PicCollage/jobs/42000",
       "source": "yourator",
-      "date": "2026-09-17",
+      "date": "2026-09-18",
       "fit_score": 2,
       "keyword_groups": [
         "hr_people"
-      ],
-      "priority_company": false
-    },
-    {
-      "title": "SaaS Product Manager",
-      "company": "SKS 新光保全",
-      "location": "臺北市",
-      "url": "https://www.yourator.co/companies/skstaiwan/jobs/38355",
-      "source": "yourator",
-      "date": "2026-09-17",
-      "fit_score": 2,
-      "keyword_groups": [
-        "edtech_pm"
-      ],
-      "priority_company": false
-    },
-    {
-      "title": "專案業務（客戶經營 / 業務開發）",
-      "company": "智林國際股份有限公司",
-      "location": "臺北市",
-      "url": "https://www.yourator.co/companies/linkst/jobs/46725",
-      "source": "yourator",
-      "date": "2026-09-17",
-      "fit_score": 2,
-      "keyword_groups": [
-        "customer_success"
       ],
       "priority_company": false
     },
