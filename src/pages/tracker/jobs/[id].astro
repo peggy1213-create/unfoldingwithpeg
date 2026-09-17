@@ -1,0 +1,479 @@
+---
+import TrackerLayout from "../../../layouts/TrackerLayout.astro";
+import { getDb } from "../../../db";
+import { getJobById, getEventsByJobId } from "../../../lib/queries";
+
+const db = getDb((Astro.locals as any).runtime.env.DB);
+const { id } = Astro.params;
+const job = await getJobById(db, id!);
+
+if (!job) {
+  return new Response("Not found", { status: 404 });
+}
+
+const jobEvents = await getEventsByJobId(db, id!);
+
+const statuses = [
+  "saved", "applied", "interview", "offer", "accepted",
+  "rejected", "withdrawn", "ghosted", "archived",
+] as const;
+
+const eventTypes = [
+  "applied", "phone_screen", "interview", "take_home", "offer",
+  "follow_up", "rejection", "status_change", "note", "other",
+] as const;
+
+function parseTags(raw: string | null): string[] {
+  if (!raw) return [];
+  try { return JSON.parse(raw); } catch { return []; }
+}
+
+function formatDate(iso: string): string {
+  return new Date(iso).toLocaleDateString("en-US", {
+    month: "short", day: "numeric", year: "numeric",
+  });
+}
+
+function formatDateShort(iso: string): string {
+  return new Date(iso).toLocaleDateString("en-US", {
+    month: "short", day: "numeric",
+  });
+}
+
+function toInputDate(iso: string): string {
+  return iso.slice(0, 10);
+}
+
+const tags = parseTags(job.tags);
+const today = new Date().toISOString().slice(0, 10);
+---
+
+<TrackerLayout title={`${job.company} — ${job.role}`} activePage="jobs">
+  <!-- Back link -->
+  <a href="/tracker/jobs/" class="detail-back">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M19 12H5" /><path d="M12 19l-7-7 7-7" />
+    </svg>
+    Back to Jobs
+  </a>
+
+  <div class="detail-grid">
+    <!-- LEFT COLUMN — Job Info -->
+    <div class="detail-left">
+      <div class="tracker-card">
+        <div class="tracker-card__header">
+          <h3>Job Details</h3>
+          <button class="tracker-btn tracker-btn--ghost" type="button" id="edit-toggle">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+            Edit
+          </button>
+        </div>
+
+        <!-- View mode -->
+        <div class="tracker-card__body" id="job-view">
+          <dl class="detail-dl">
+            <div class="detail-dl__row">
+              <dt>Company</dt>
+              <dd id="v-company">{job.company}</dd>
+            </div>
+            <div class="detail-dl__row">
+              <dt>Role</dt>
+              <dd id="v-role">{job.role}</dd>
+            </div>
+            <div class="detail-dl__row">
+              <dt>Status</dt>
+              <dd><span class={`tracker-badge tracker-badge--${job.status}`} id="v-status">{job.status}</span></dd>
+            </div>
+            <div class="detail-dl__row">
+              <dt>Salary</dt>
+              <dd id="v-salary">{job.salary || "—"}</dd>
+            </div>
+            <div class="detail-dl__row">
+              <dt>Location</dt>
+              <dd id="v-location">{job.location || "—"}</dd>
+            </div>
+            <div class="detail-dl__row">
+              <dt>Source</dt>
+              <dd id="v-source">{job.source || "—"}</dd>
+            </div>
+            <div class="detail-dl__row">
+              <dt>URL</dt>
+              <dd id="v-url">
+                {job.url ? (
+                  <a href={job.url} target="_blank" rel="noopener" class="detail-link">{job.url}</a>
+                ) : "—"}
+              </dd>
+            </div>
+            <div class="detail-dl__row">
+              <dt>Tags</dt>
+              <dd id="v-tags">
+                {tags.length > 0 ? (
+                  <span class="detail-tags">
+                    {tags.map((t) => <span class="tracker-badge tracker-badge--tag">{t}</span>)}
+                  </span>
+                ) : "—"}
+              </dd>
+            </div>
+            <div class="detail-dl__row">
+              <dt>Added</dt>
+              <dd>{formatDate(job.created_at)}</dd>
+            </div>
+            <div class="detail-dl__row">
+              <dt>Updated</dt>
+              <dd>{formatDate(job.updated_at)}</dd>
+            </div>
+          </dl>
+        </div>
+
+        <!-- Edit mode -->
+        <div class="tracker-card__body" id="job-edit" style="display:none;">
+          <form id="edit-form" class="detail-edit-form">
+            <div class="tracker-field">
+              <label for="e-company">Company</label>
+              <input class="tracker-input" id="e-company" name="company" value={job.company} required />
+            </div>
+            <div class="tracker-field">
+              <label for="e-role">Role</label>
+              <input class="tracker-input" id="e-role" name="role" value={job.role} required />
+            </div>
+            <div class="tracker-field">
+              <label for="e-status">Status</label>
+              <select class="tracker-select" id="e-status" name="status">
+                {statuses.map((s) => (
+                  <option value={s} selected={s === job.status}>{s}</option>
+                ))}
+              </select>
+            </div>
+            <div class="tracker-field">
+              <label for="e-salary">Salary</label>
+              <input class="tracker-input" id="e-salary" name="salary" value={job.salary || ""} />
+            </div>
+            <div class="tracker-field">
+              <label for="e-location">Location</label>
+              <input class="tracker-input" id="e-location" name="location" value={job.location || ""} />
+            </div>
+            <div class="tracker-field">
+              <label for="e-source">Source</label>
+              <input class="tracker-input" id="e-source" name="source" value={job.source || ""} />
+            </div>
+            <div class="tracker-field">
+              <label for="e-url">URL</label>
+              <input class="tracker-input" id="e-url" name="url" type="url" value={job.url || ""} />
+            </div>
+            <div class="tracker-field">
+              <label>Tags</label>
+              <div class="detail-tag-editor" id="tag-editor">
+                <div class="detail-tag-editor__list" id="tag-list">
+                  {tags.map((t) => (
+                    <span class="detail-tag-editor__tag" data-tag={t}>
+                      {t}
+                      <button type="button" class="detail-tag-editor__remove" aria-label={`Remove ${t}`}>&times;</button>
+                    </span>
+                  ))}
+                </div>
+                <input class="tracker-input detail-tag-editor__input" id="tag-input" placeholder="Type and press Enter" />
+              </div>
+            </div>
+
+            <div class="detail-edit-actions">
+              <button class="tracker-btn tracker-btn--primary" type="submit">Save</button>
+              <button class="tracker-btn tracker-btn--secondary" type="button" id="edit-cancel">Cancel</button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <!-- Notes -->
+      <div class="tracker-card" style="margin-top: var(--uwp-space-5);">
+        <div class="tracker-card__header">
+          <h3>Notes</h3>
+          <span class="detail-save-indicator" id="notes-indicator"></span>
+        </div>
+        <div class="tracker-card__body">
+          <textarea
+            class="tracker-textarea"
+            id="notes-textarea"
+            placeholder="Add notes about this opportunity..."
+          >{job.notes || ""}</textarea>
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT COLUMN — Events -->
+    <div class="detail-right">
+      <div class="tracker-card">
+        <div class="tracker-card__header">
+          <h3>Events</h3>
+          <button class="tracker-btn tracker-btn--ghost" type="button" id="add-event-btn">+ Add</button>
+        </div>
+        <div class="tracker-card__body tracker-card__body--flush">
+          {jobEvents.length > 0 ? (
+            <ul class="detail-events">
+              {jobEvents.map((ev) => (
+                <li class="detail-event">
+                  <div class="detail-event__date">{formatDateShort(ev.date)}</div>
+                  <div class="detail-event__body">
+                    <div class="detail-event__top">
+                      <span class="tracker-badge tracker-badge--event">{ev.type.replace("_", " ")}</span>
+                      <span class="detail-event__title">{ev.title}</span>
+                    </div>
+                    {ev.description && <p class="detail-event__desc">{ev.description}</p>}
+                    {ev.reminder_at && (
+                      <p class="detail-event__reminder">
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+                        Reminder: {formatDateShort(ev.reminder_at)}
+                      </p>
+                    )}
+                  </div>
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <p class="card-empty">No events yet. Add one to start tracking progress.</p>
+          )}
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bottom actions -->
+  <div class="detail-bottom-actions">
+    <button class="tracker-btn tracker-btn--secondary" type="button" id="archive-btn">
+      {job.status === "archived" ? "Unarchive" : "Archive"}
+    </button>
+    <button class="tracker-btn tracker-btn--destructive" type="button" id="delete-btn">Delete Job</button>
+  </div>
+
+  <!-- Add Event dialog -->
+  <dialog class="tracker-dialog" id="event-dialog">
+    <div class="tracker-dialog__header">
+      <h2>Add Event</h2>
+      <button class="tracker-dialog__close" type="button" id="event-dialog-close" aria-label="Close">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <form id="event-form" method="dialog">
+      <div class="tracker-dialog__body">
+        <div class="tracker-field">
+          <label for="ev-type">Type *</label>
+          <select class="tracker-select" id="ev-type" name="type" required>
+            {eventTypes.map((t) => (
+              <option value={t}>{t.replace("_", " ")}</option>
+            ))}
+          </select>
+        </div>
+        <div class="tracker-field">
+          <label for="ev-title">Title *</label>
+          <input class="tracker-input" id="ev-title" name="title" required placeholder="e.g. Phone screen with recruiter" />
+        </div>
+        <div class="tracker-field">
+          <label for="ev-date">Date</label>
+          <input class="tracker-input" id="ev-date" name="date" type="date" value={today} />
+        </div>
+        <div class="tracker-field">
+          <label for="ev-desc">Description</label>
+          <textarea class="tracker-textarea" id="ev-desc" name="description" placeholder="Optional details..." rows="3"></textarea>
+        </div>
+        <div class="tracker-field">
+          <label for="ev-reminder">Reminder date</label>
+          <input class="tracker-input" id="ev-reminder" name="reminder_at" type="date" />
+        </div>
+      </div>
+      <div class="tracker-dialog__actions">
+        <button class="tracker-btn tracker-btn--secondary" type="button" id="event-dialog-cancel">Cancel</button>
+        <button class="tracker-btn tracker-btn--primary" type="submit">Add Event</button>
+      </div>
+    </form>
+  </dialog>
+
+  <!-- Delete confirm dialog -->
+  <dialog class="tracker-dialog" id="delete-dialog">
+    <div class="tracker-dialog__header">
+      <h2>Delete Job</h2>
+      <button class="tracker-dialog__close" type="button" id="delete-dialog-close" aria-label="Close">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div class="tracker-dialog__body">
+      <p>Are you sure you want to delete <strong>{job.company} — {job.role}</strong>? This will also remove all associated events. This cannot be undone.</p>
+    </div>
+    <div class="tracker-dialog__actions">
+      <button class="tracker-btn tracker-btn--secondary" type="button" id="delete-dialog-cancel">Cancel</button>
+      <button class="tracker-btn tracker-btn--destructive" type="button" id="delete-confirm">Delete</button>
+    </div>
+  </dialog>
+</TrackerLayout>
+
+<script define:vars={{ jobId: id }}>
+  // --- Edit toggle ---
+  const viewEl = document.getElementById("job-view");
+  const editEl = document.getElementById("job-edit");
+  const editToggle = document.getElementById("edit-toggle");
+  const editCancel = document.getElementById("edit-cancel");
+  const editForm = document.getElementById("edit-form");
+
+  editToggle.addEventListener("click", () => {
+    viewEl.style.display = "none";
+    editEl.style.display = "";
+  });
+
+  editCancel.addEventListener("click", () => {
+    window.location.reload();
+  });
+
+  // --- Tag editor ---
+  const tagInput = document.getElementById("tag-input");
+  const tagList = document.getElementById("tag-list");
+
+  function getCurrentTags() {
+    return Array.from(tagList.querySelectorAll("[data-tag]")).map((el) => el.dataset.tag);
+  }
+
+  tagInput.addEventListener("keydown", (e) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      const val = tagInput.value.trim().toLowerCase();
+      if (!val || getCurrentTags().includes(val)) {
+        tagInput.value = "";
+        return;
+      }
+      const span = document.createElement("span");
+      span.className = "detail-tag-editor__tag";
+      span.dataset.tag = val;
+      span.innerHTML = `${val}<button type="button" class="detail-tag-editor__remove" aria-label="Remove ${val}">&times;</button>`;
+      span.querySelector("button").addEventListener("click", () => span.remove());
+      tagList.appendChild(span);
+      tagInput.value = "";
+    }
+  });
+
+  tagList.querySelectorAll(".detail-tag-editor__remove").forEach((btn) => {
+    btn.addEventListener("click", () => btn.closest("[data-tag]").remove());
+  });
+
+  // --- Save edit form ---
+  editForm.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const fd = new FormData(editForm);
+    const data = Object.fromEntries(fd);
+    data.tags = JSON.stringify(getCurrentTags());
+    // Remove empty strings as null
+    for (const k of ["salary", "location", "source", "url"]) {
+      if (!data[k]) data[k] = null;
+    }
+    try {
+      const res = await fetch(`/tracker/api/jobs/${jobId}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+      });
+      if (!res.ok) throw new Error("Failed");
+      window.__showToast?.("Changes saved");
+      window.location.reload();
+    } catch {
+      window.__showToast?.("Failed to save. Please try again.", "error");
+    }
+  });
+
+  // --- Notes auto-save ---
+  const notesArea = document.getElementById("notes-textarea");
+  const notesIndicator = document.getElementById("notes-indicator");
+  let saveTimer = null;
+
+  notesArea.addEventListener("input", () => {
+    notesIndicator.textContent = "";
+    clearTimeout(saveTimer);
+    saveTimer = setTimeout(() => saveNotes(), 1000);
+  });
+
+  notesArea.addEventListener("blur", () => {
+    clearTimeout(saveTimer);
+    saveNotes();
+  });
+
+  async function saveNotes() {
+    notesIndicator.textContent = "Saving...";
+    try {
+      const res = await fetch(`/tracker/api/jobs/${jobId}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ notes: notesArea.value }),
+      });
+      if (!res.ok) throw new Error("Failed");
+      notesIndicator.textContent = "Saved";
+      setTimeout(() => { notesIndicator.textContent = ""; }, 2000);
+    } catch {
+      notesIndicator.textContent = "Failed to save";
+    }
+  }
+
+  // --- Add Event dialog ---
+  const eventDialog = document.getElementById("event-dialog");
+  const eventForm = document.getElementById("event-form");
+  document.getElementById("add-event-btn").addEventListener("click", () => {
+    eventDialog.showModal();
+    document.getElementById("ev-title").focus();
+  });
+  document.getElementById("event-dialog-close").addEventListener("click", () => eventDialog.close());
+  document.getElementById("event-dialog-cancel").addEventListener("click", () => eventDialog.close());
+  eventDialog.addEventListener("click", (e) => { if (e.target === eventDialog) eventDialog.close(); });
+
+  eventForm.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const fd = new FormData(eventForm);
+    const data = Object.fromEntries(fd);
+    data.job_id = jobId;
+    if (data.date) data.date = new Date(data.date).toISOString();
+    if (data.reminder_at) data.reminder_at = new Date(data.reminder_at).toISOString();
+    else delete data.reminder_at;
+    if (!data.description) delete data.description;
+
+    try {
+      const res = await fetch("/tracker/api/events", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+      });
+      if (!res.ok) throw new Error("Failed");
+      window.__showToast?.("Event added");
+      window.location.reload();
+    } catch {
+      window.__showToast?.("Failed to add event. Please try again.", "error");
+    }
+  });
+
+  // --- Archive ---
+  document.getElementById("archive-btn").addEventListener("click", async () => {
+    const currentStatus = document.getElementById("v-status")?.textContent?.trim();
+    const newStatus = currentStatus === "archived" ? "saved" : "archived";
+    try {
+      const res = await fetch(`/tracker/api/jobs/${jobId}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ status: newStatus }),
+      });
+      if (!res.ok) throw new Error("Failed");
+      window.__showToast?.("Job archived");
+      window.location.href = "/tracker/jobs/";
+    } catch {
+      window.__showToast?.("Failed to update. Please try again.", "error");
+    }
+  });
+
+  // --- Delete ---
+  const deleteDialog = document.getElementById("delete-dialog");
+  document.getElementById("delete-btn").addEventListener("click", () => deleteDialog.showModal());
+  document.getElementById("delete-dialog-close").addEventListener("click", () => deleteDialog.close());
+  document.getElementById("delete-dialog-cancel").addEventListener("click", () => deleteDialog.close());
+  deleteDialog.addEventListener("click", (e) => { if (e.target === deleteDialog) deleteDialog.close(); });
+
+  document.getElementById("delete-confirm").addEventListener("click", async () => {
+    try {
+      const res = await fetch(`/tracker/api/jobs/${jobId}`, { method: "DELETE" });
+      if (!res.ok) throw new Error("Failed");
+      window.location.href = "/tracker/jobs/";
+    } catch {
+      window.__showToast?.("Failed to delete. Please try again.", "error");
+    }
+  });
+</script>

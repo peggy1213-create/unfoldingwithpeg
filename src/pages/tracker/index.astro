@@ -1,0 +1,242 @@
+---
+import TrackerLayout from "../../layouts/TrackerLayout.astro";
+import { getDb } from "../../db";
+import {
+  getJobs,
+  getJobCountsByStatus,
+  getUpcomingEvents,
+  getOverdueFollowUps,
+  getRecentEvents,
+  getStats,
+  getJobById,
+} from "../../lib/queries";
+
+const db = getDb((Astro.locals as any).runtime.env.DB);
+
+const [counts, upcoming, overdue, recentEvents, stats, allJobs] =
+  await Promise.all([
+    getJobCountsByStatus(db),
+    getUpcomingEvents(db, 7),
+    getOverdueFollowUps(db),
+    getRecentEvents(db, 5),
+    getStats(db),
+    getJobs(db),
+  ]);
+
+const statusOrder = [
+  "saved",
+  "applied",
+  "interview",
+  "offer",
+  "accepted",
+  "rejected",
+  "withdrawn",
+  "ghosted",
+  "archived",
+] as const;
+
+const hasJobs = allJobs.length > 0;
+
+// Enrich events with company name
+const enrichedRecent = await Promise.all(
+  recentEvents.map(async (ev) => {
+    const job = await getJobById(db, ev.job_id);
+    return { ...ev, company: job?.company ?? "Unknown" };
+  }),
+);
+
+// Merge overdue + upcoming into action items
+const actionItems = [
+  ...overdue.map((ev) => ({ ...ev, overdue: true })),
+  ...upcoming.map((ev) => ({ ...ev, overdue: false })),
+];
+
+function formatDate(iso: string): string {
+  const d = new Date(iso);
+  return d.toLocaleDateString("en-US", { month: "short", day: "numeric" });
+}
+
+function formatDateRelative(iso: string): string {
+  const d = new Date(iso);
+  const now = new Date();
+  const diffMs = d.getTime() - now.getTime();
+  const diffDays = Math.round(diffMs / 86_400_000);
+  if (diffDays === 0) return "Today";
+  if (diffDays === 1) return "Tomorrow";
+  if (diffDays === -1) return "Yesterday";
+  if (diffDays < -1) return `${Math.abs(diffDays)}d overdue`;
+  return `In ${diffDays}d`;
+}
+---
+
+<TrackerLayout title="Dashboard" activePage="dashboard">
+  {hasJobs ? (
+    <>
+      <div class="tracker-page-header">
+        <h1>Dashboard</h1>
+      </div>
+
+      <div class="dash-grid">
+        <!-- Pipeline Summary -->
+        <div class="tracker-card dash-grid__full">
+          <div class="tracker-card__header">
+            <h3>Pipeline</h3>
+          </div>
+          <div class="tracker-card__body">
+            <div class="pipeline-row">
+              {statusOrder.map((s) => {
+                const count = counts[s] ?? 0;
+                return (
+                  <a
+                    href={`/tracker/jobs/?status=${s}`}
+                    class={`pipeline-item tracker-badge tracker-badge--${s}`}
+                  >
+                    <span class="pipeline-item__count">{count}</span>
+                    {s}
+                  </a>
+                );
+              })}
+            </div>
+          </div>
+        </div>
+
+        <!-- Action Items -->
+        <div class="tracker-card">
+          <div class="tracker-card__header">
+            <h3>Action Items</h3>
+          </div>
+          <div class="tracker-card__body tracker-card__body--flush">
+            {actionItems.length > 0 ? (
+              <ul class="action-list" style="padding: 0 var(--uwp-space-5);">
+                {actionItems.map((item) => (
+                  <li class="action-list__item">
+                    <span class="action-list__date" style={item.overdue ? "color: var(--status-rejected);" : ""}>
+                      {formatDateRelative(item.date)}
+                    </span>
+                    <span>
+                      <a href={`/tracker/jobs/${item.job_id}/`}>{item.title}</a>
+                    </span>
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <p class="card-empty">You're all caught up &#10003;</p>
+            )}
+          </div>
+        </div>
+
+        <!-- Upcoming Events -->
+        <div class="tracker-card">
+          <div class="tracker-card__header">
+            <h3>Upcoming Events</h3>
+          </div>
+          <div class="tracker-card__body tracker-card__body--flush">
+            {upcoming.length > 0 ? (
+              <ul class="action-list" style="padding: 0 var(--uwp-space-5);">
+                {upcoming.map((ev) => (
+                  <li class="action-list__item">
+                    <span class="action-list__date">{formatDate(ev.date)}</span>
+                    <span>
+                      <a href={`/tracker/jobs/${ev.job_id}/`}>{ev.title}</a>
+                      <span class="tracker-badge tracker-badge--event" style="margin-left: var(--uwp-space-2);">
+                        {ev.type.replace("_", " ")}
+                      </span>
+                    </span>
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <p class="card-empty">No upcoming events.</p>
+            )}
+          </div>
+        </div>
+
+        <!-- Stats -->
+        <div class="tracker-card dash-grid__full">
+          <div class="tracker-card__header">
+            <h3>Stats</h3>
+          </div>
+          <div class="tracker-card__body">
+            <div class="stats-row">
+              <div class="stat-item">
+                <div class="stat-item__value">{stats.total}</div>
+                <div class="stat-item__label">Total tracked</div>
+              </div>
+              <div class="stat-item">
+                <div class="stat-item__value">{stats.applied}</div>
+                <div class="stat-item__label">Applications sent</div>
+              </div>
+              <div class="stat-item">
+                <div class="stat-item__value">{stats.responseRate}%</div>
+                <div class="stat-item__label">Response rate</div>
+              </div>
+              <div class="stat-item">
+                <div class="stat-item__value">{stats.streak}</div>
+                <div class="stat-item__label">Active streak (days)</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Recent Activity -->
+        <div class="tracker-card dash-grid__full">
+          <div class="tracker-card__header">
+            <h3>Recent Activity</h3>
+          </div>
+          <div class="tracker-card__body tracker-card__body--flush">
+            <table class="tracker-table">
+              <thead>
+                <tr>
+                  <th>Date</th>
+                  <th>Type</th>
+                  <th>Event</th>
+                  <th>Company</th>
+                </tr>
+              </thead>
+              <tbody>
+                {enrichedRecent.map((ev) => (
+                  <tr>
+                    <td class="action-list__date">{formatDate(ev.date)}</td>
+                    <td>
+                      <span class="tracker-badge tracker-badge--event">
+                        {ev.type.replace("_", " ")}
+                      </span>
+                    </td>
+                    <td>
+                      <a href={`/tracker/jobs/${ev.job_id}/`} style="color: var(--tracker-text); text-decoration: none;">
+                        {ev.title}
+                      </a>
+                    </td>
+                    <td class="action-list__company">{ev.company}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </>
+  ) : (
+    <div class="tracker-empty">
+      <div class="tracker-empty__icon">
+        <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="2" y="7" width="20" height="14" rx="2" />
+          <path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2" />
+        </svg>
+      </div>
+      <p class="tracker-empty__text">Start tracking your job search</p>
+      <p class="tracker-empty__hint">Add your first job to get started with pipeline tracking, event timelines, and stats.</p>
+      <button class="tracker-btn tracker-btn--primary" type="button" id="empty-add-btn" style="margin-top: var(--uwp-space-2);">
+        Add your first job
+      </button>
+    </div>
+
+    <script>
+      document.getElementById("empty-add-btn")?.addEventListener("click", () => {
+        const dialog = document.getElementById("add-job-dialog") as HTMLDialogElement;
+        dialog.showModal();
+        (document.getElementById("job-company") as HTMLInputElement).focus();
+      });
+    </script>
+  )}
+</TrackerLayout>
