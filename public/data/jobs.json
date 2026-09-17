@@ -1,0 +1,72 @@
+{
+  "generated_at": "2026-09-17T05:00:00+08:00",
+  "count": 6,
+  "jobs": [
+    {
+      "title": "Customer Success Manager",
+      "company": "Coursera",
+      "location": "Remote",
+      "url": "https://example.com/job/1",
+      "source": "greenhouse:coursera",
+      "date": "2026-09-16",
+      "fit_score": 4,
+      "keyword_groups": ["customer_success"],
+      "priority_company": false
+    },
+    {
+      "title": "Learning Experience Designer",
+      "company": "Duolingo",
+      "location": "Remote",
+      "url": "https://example.com/job/2",
+      "source": "greenhouse:duolingo",
+      "date": "2026-09-16",
+      "fit_score": 3,
+      "keyword_groups": ["learning_design"],
+      "priority_company": false
+    },
+    {
+      "title": "Customer Success Specialist",
+      "company": "Intercom",
+      "location": "Remote, APAC",
+      "url": "https://example.com/job/3",
+      "source": "greenhouse:intercom",
+      "date": "2026-09-15",
+      "fit_score": 5,
+      "keyword_groups": ["customer_success"],
+      "priority_company": false
+    },
+    {
+      "title": "社群經理",
+      "company": "momo.com",
+      "location": "Taipei",
+      "url": "https://example.com/job/4",
+      "source": "cake",
+      "date": "2026-09-15",
+      "fit_score": 3,
+      "keyword_groups": ["community"],
+      "priority_company": true
+    },
+    {
+      "title": "教學設計師",
+      "company": "HTC",
+      "location": "Taipei, Hybrid",
+      "url": "https://example.com/job/5",
+      "source": "yourator",
+      "date": "2026-09-14",
+      "fit_score": 4,
+      "keyword_groups": ["learning_design"],
+      "priority_company": true
+    },
+    {
+      "title": "Product Manager, Edtech",
+      "company": "Pearson",
+      "location": "Remote",
+      "url": "https://example.com/job/6",
+      "source": "remotive",
+      "date": "2026-09-14",
+      "fit_score": 3,
+      "keyword_groups": ["edtech_pm"],
+      "priority_company": true
+    }
+  ]
+}
