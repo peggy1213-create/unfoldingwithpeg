@@ -30,6 +30,14 @@ const skip = lang === "zh-TW" ? "跳到主要內容" : "Skip to content";
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-KBXF2CYC43"></script>
+    <script is:inline>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-KBXF2CYC43');
+    </script>
     <title>{title}</title>
     <meta name="description" content={description} />
     <link rel="icon" href="/assets/brand/favicon.svg" type="image/svg+xml" />
