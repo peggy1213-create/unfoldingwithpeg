@@ -19,6 +19,14 @@ const locations = [...new Set(jobs.map((j: any) => {
       <p class="jobs-updated">Last updated: {new Date(jobsData.generated_at).toLocaleDateString("en-US", { year: "numeric", month: "short", day: "numeric" })}</p>
     </header>
 
+    <nav class="jobs-tabs" id="jobs-tabs">
+      <button class="jobs-tab active" data-tab="all" type="button">All</button>
+      <button class="jobs-tab" data-tab="saved" type="button">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+        Saved <span class="jobs-tab-count" id="jobs-saved-count">0</span>
+      </button>
+    </nav>
+
     <div class="jobs-controls">
       <div class="jobs-search-wrap">
         <svg class="jobs-search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
@@ -28,13 +36,21 @@ const locations = [...new Set(jobs.map((j: any) => {
         <option value="">All locations</option>
         {locations.map((loc: string) => <option value={loc}>{loc}</option>)}
       </select>
+      <button id="jobs-sort-btn" class="jobs-sort-btn" type="button" aria-label="Sort by date">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 3 18 9"/><polyline points="6 15 12 21 18 15"/></svg>
+        <span id="jobs-sort-label">Newest</span>
+      </button>
+      <label class="jobs-toggle-label">
+        <input type="checkbox" id="jobs-priority-filter" class="jobs-toggle-input" />
+        <span class="jobs-toggle-badge">Top 100</span>
+      </label>
     </div>
 
     <div class="jobs-count" id="jobs-count">{jobs.length} jobs</div>
 
     <ul class="jobs-list" id="jobs-list">
       {jobs.map((job: any) => (
-        <li class="jobs-card" data-title={job.title.toLowerCase()} data-company={job.company.toLowerCase()} data-location={job.location || ""}>
+        <li class="jobs-card" data-title={job.title.toLowerCase()} data-company={job.company.toLowerCase()} data-location={job.location || ""} data-date={job.date || ""} data-priority={job.priority_company ? "1" : "0"}>
           <div class="jobs-card-main">
             <a href={job.url} target="_blank" rel="noopener" class="jobs-card-title">{job.title}</a>
             <div class="jobs-card-meta">
@@ -80,6 +96,51 @@ const locations = [...new Set(jobs.map((j: any) => {
     color: var(--uwp-color-text-subtle);
     font-size: var(--uwp-text-xs);
     margin: 0.25rem 0 0;
+  }
+
+  .jobs-tabs {
+    display: flex;
+    gap: 0;
+    border-bottom: 1px solid var(--uwp-color-border-subtle);
+    margin-bottom: 1rem;
+  }
+  .jobs-tab {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+    padding: 0.5rem 1rem;
+    border: none;
+    background: none;
+    font-family: var(--uwp-font-sans);
+    font-size: var(--uwp-text-sm);
+    color: var(--uwp-color-text-muted);
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    margin-bottom: -1px;
+    transition: color 0.15s, border-color 0.15s;
+  }
+  .jobs-tab:hover {
+    color: var(--uwp-color-text);
+  }
+  .jobs-tab.active {
+    color: var(--uwp-color-primary-emphasis);
+    border-bottom-color: var(--uwp-color-primary-emphasis);
+    font-weight: 600;
+  }
+  .jobs-tab svg {
+    flex-shrink: 0;
+  }
+  .jobs-tab-count {
+    font-size: var(--uwp-text-xs);
+    background: var(--uwp-color-surface-hover);
+    padding: 0.0625rem 0.375rem;
+    border-radius: 999px;
+    min-width: 1.25rem;
+    text-align: center;
+  }
+  .jobs-tab.active .jobs-tab-count {
+    background: var(--uwp-color-accent-soft);
+    color: var(--uwp-color-accent-soft-text);
   }
 
   .jobs-controls {
@@ -130,6 +191,65 @@ const locations = [...new Set(jobs.map((j: any) => {
     min-width: 10rem;
   }
   .jobs-filter-select:focus {
+    outline: 2px solid var(--uwp-color-focus-ring);
+    outline-offset: -1px;
+  }
+
+  .jobs-sort-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+    padding: 0.5rem 0.75rem;
+    border: 1px solid var(--uwp-color-border);
+    border-radius: 0.375rem;
+    font-family: var(--uwp-font-sans);
+    font-size: var(--uwp-text-sm);
+    color: var(--uwp-color-text);
+    background: var(--uwp-color-surface);
+    cursor: pointer;
+    white-space: nowrap;
+  }
+  .jobs-sort-btn:hover {
+    background: var(--uwp-color-surface-hover);
+  }
+  .jobs-sort-btn:focus {
+    outline: 2px solid var(--uwp-color-focus-ring);
+    outline-offset: -1px;
+  }
+
+  .jobs-toggle-label {
+    display: inline-flex;
+    align-items: center;
+    cursor: pointer;
+    white-space: nowrap;
+  }
+  .jobs-toggle-input {
+    position: absolute;
+    opacity: 0;
+    width: 0;
+    height: 0;
+  }
+  .jobs-toggle-badge {
+    display: inline-block;
+    padding: 0.5rem 0.75rem;
+    border: 1px solid var(--uwp-color-border);
+    border-radius: 0.375rem;
+    font-family: var(--uwp-font-sans);
+    font-size: var(--uwp-text-sm);
+    color: var(--uwp-color-text-muted);
+    background: var(--uwp-color-surface);
+    transition: background 0.15s, color 0.15s, border-color 0.15s;
+  }
+  .jobs-toggle-badge:hover {
+    background: var(--uwp-color-surface-hover);
+  }
+  .jobs-toggle-input:checked + .jobs-toggle-badge {
+    background: var(--uwp-color-accent-soft);
+    color: var(--uwp-color-accent-soft-text);
+    border-color: var(--uwp-color-accent-soft);
+    font-weight: 600;
+  }
+  .jobs-toggle-input:focus-visible + .jobs-toggle-badge {
     outline: 2px solid var(--uwp-color-focus-ring);
     outline-offset: -1px;
   }
@@ -235,11 +355,14 @@ const locations = [...new Set(jobs.map((j: any) => {
 
   @media (max-width: 600px) {
     .jobs-controls {
-      flex-direction: column;
+      flex-wrap: wrap;
+    }
+    .jobs-search-wrap {
+      width: 100%;
     }
     .jobs-filter-select {
       min-width: 0;
-      width: 100%;
+      flex: 1;
     }
     .jobs-card-title {
       white-space: normal;
@@ -250,10 +373,17 @@ const locations = [...new Set(jobs.map((j: any) => {
 <script>
   const searchInput = document.getElementById("jobs-search") as HTMLInputElement;
   const filterSelect = document.getElementById("jobs-location-filter") as HTMLSelectElement;
+  const sortBtn = document.getElementById("jobs-sort-btn") as HTMLButtonElement;
+  const priorityCheckbox = document.getElementById("jobs-priority-filter") as HTMLInputElement;
   const list = document.getElementById("jobs-list")!;
   const cards = Array.from(list.querySelectorAll<HTMLLIElement>(".jobs-card"));
   const countEl = document.getElementById("jobs-count")!;
   const emptyEl = document.getElementById("jobs-empty")!;
+  const tabs = document.querySelectorAll<HTMLButtonElement>(".jobs-tab");
+  const savedCountEl = document.getElementById("jobs-saved-count")!;
+
+  let sortNewest = true;
+  let activeTab = "all";
 
   let saved: Set<string>;
   try {
@@ -264,6 +394,14 @@ const locations = [...new Set(jobs.map((j: any) => {
 
   function persistSaved() {
     try { localStorage.setItem("jobs-saved", JSON.stringify([...saved])); } catch {}
+  }
+
+  function updateSavedCount() {
+    const count = cards.filter(c => {
+      const url = c.querySelector<HTMLButtonElement>(".jobs-heart-btn")?.dataset.url || "";
+      return saved.has(url);
+    }).length;
+    savedCountEl.textContent = String(count);
   }
 
   // Init heart states
@@ -281,23 +419,41 @@ const locations = [...new Set(jobs.map((j: any) => {
         btn.classList.add("saved");
       }
       persistSaved();
+      updateSavedCount();
+      filterCards();
     });
   });
+
+  function sortCards() {
+    const sorted = [...cards].sort((a, b) => {
+      const da = a.dataset.date || "";
+      const db = b.dataset.date || "";
+      return sortNewest ? db.localeCompare(da) : da.localeCompare(db);
+    });
+    sorted.forEach((card) => list.appendChild(card));
+  }
 
   function filterCards() {
     const q = searchInput.value.toLowerCase().trim();
     const loc = filterSelect.value.toLowerCase();
+    const priorityOnly = priorityCheckbox.checked;
+    const savedOnly = activeTab === "saved";
     let visible = 0;
 
     cards.forEach((card) => {
       const title = card.dataset.title || "";
       const company = card.dataset.company || "";
       const cardLoc = (card.dataset.location || "").toLowerCase();
+      const isPriority = card.dataset.priority === "1";
+      const url = card.querySelector<HTMLButtonElement>(".jobs-heart-btn")?.dataset.url || "";
+      const isSaved = saved.has(url);
 
       const matchesSearch = !q || title.includes(q) || company.includes(q);
       const matchesLoc = !loc || cardLoc.includes(loc.toLowerCase());
+      const matchesPriority = !priorityOnly || isPriority;
+      const matchesSaved = !savedOnly || isSaved;
 
-      const show = matchesSearch && matchesLoc;
+      const show = matchesSearch && matchesLoc && matchesPriority && matchesSaved;
       card.style.display = show ? "" : "none";
       if (show) visible++;
     });
@@ -306,6 +462,27 @@ const locations = [...new Set(jobs.map((j: any) => {
     emptyEl.hidden = visible > 0;
   }
 
+  const sortLabel = document.getElementById("jobs-sort-label")!;
+
+  sortBtn.addEventListener("click", () => {
+    sortNewest = !sortNewest;
+    sortLabel.textContent = sortNewest ? "Newest" : "Oldest";
+    sortCards();
+  });
+
+  tabs.forEach((tab) => {
+    tab.addEventListener("click", () => {
+      tabs.forEach((t) => t.classList.remove("active"));
+      tab.classList.add("active");
+      activeTab = tab.dataset.tab || "all";
+      filterCards();
+    });
+  });
+
   searchInput.addEventListener("input", filterCards);
   filterSelect.addEventListener("change", filterCards);
+  priorityCheckbox.addEventListener("change", filterCards);
+
+  updateSavedCount();
+  sortCards();
 </script>
