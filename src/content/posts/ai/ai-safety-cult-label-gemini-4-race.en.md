@@ -1,7 +1,7 @@
 ---
 title: "While Washington Brands AI Safety a 'Cult,' Google Races Toward Gemini 4"
-tldr: "A White House memo describes effective altruism as a fringe, dangerous cult that built the 'AI-doom pipeline,' naming Anthropic's Dario Amodei as a central figure. The same week, Google kept shipping: Gemini 3.8 Live added a lip-syncing, expressive avatar, and DeepMind leadership says Gemini 4 is already in early post-training, with hopes to ship earlier than planned. Safety politics and the product race are both accelerating right now."
-description: "A White House memo brands the AI-safety camp a cult and names Dario Amodei, while Google keeps shipping Gemini 3.8 Live and pushes toward an earlier Gemini 4: two tracks moving at very different speeds."
+tldr: "A White House memo brands effective altruism a dangerous cult behind the 'AI-doom pipeline,' naming Anthropic's Dario Amodei. The same week, Google shipped Gemini 3.8 Live with an expressive avatar, and DeepMind says Gemini 4 is already in early post-training. Safety politics and the product race are both accelerating."
+description: "A White House memo brands the AI-safety camp a cult and names Dario Amodei, while Google keeps shipping Gemini 3.8 Live and pushes toward an earlier Gemini 4: two tracks moving at different speeds."
 category: "AI"
 tags: ["ai-safety", "gemini", "anthropic", "ai-policy", "google-deepmind"]
 publishedAt: 2026-09-25
