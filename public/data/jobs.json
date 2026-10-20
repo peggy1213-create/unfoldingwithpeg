@@ -1,6 +1,6 @@
 {
-  "generated_at": "2026-10-20T08:09:02.736513+08:00",
-  "count": 159,
+  "generated_at": "2026-10-21T07:40:20.515481+08:00",
+  "count": 163,
   "jobs": [
     {
       "title": "全支付- Product Manager (內部系統、串接)",
@@ -37,7 +37,7 @@
       "location": "新北市",
       "url": "https://www.yourator.co/companies/honhai/jobs/41836",
       "source": "yourator",
-      "date": "2026-10-20",
+      "date": "2026-10-21",
       "fit_score": 4,
       "keyword_groups": [
         "edtech_pm"
@@ -50,7 +50,7 @@
       "location": "臺北市",
       "url": "https://www.yourator.co/companies/compal/jobs/47139",
       "source": "yourator",
-      "date": "2026-10-20",
+      "date": "2026-10-21",
       "fit_score": 4,
       "keyword_groups": [
         "learning_design",
@@ -64,7 +64,7 @@
       "location": "新北市",
       "url": "https://www.yourator.co/companies/upyoung/jobs/39893",
       "source": "yourator",
-      "date": "2026-10-20",
+      "date": "2026-10-21",
       "fit_score": 4,
       "keyword_groups": [
         "learning_design",
@@ -78,7 +78,7 @@
       "location": "臺北市",
       "url": "https://www.yourator.co/companies/Cathay-Financial-Holding/jobs/19799",
       "source": "yourator",
-      "date": "2026-10-20",
+      "date": "2026-10-21",
       "fit_score": 4,
       "keyword_groups": [
         "edtech_pm"
@@ -91,7 +91,7 @@
       "location": "臺北市",
       "url": "https://www.yourator.co/companies/Cathay-Financial-Holding/jobs/19803",
       "source": "yourator",
-      "date": "2026-10-20",
+      "date": "2026-10-21",
       "fit_score": 4,
       "keyword_groups": [
         "edtech_pm"
@@ -104,7 +104,7 @@
       "location": "臺北市",
       "url": "https://www.yourator.co/companies/Cathay-Financial-Holding/jobs/19855",
       "source": "yourator",
-      "date": "2026-10-20",
+      "date": "2026-10-21",
       "fit_score": 4,
       "keyword_groups": [
         "edtech_pm"
@@ -123,20 +123,6 @@
         "edtech_pm"
       ],
       "priority_company": true
-    },
-    {
-      "title": "【上市公司擴編招募｜人資招募管理師】",
-      "company": "尖點科技股份有限公司",
-      "location": "Zhongli District, Taoyuan City, Taiwan",
-      "url": "https://www.cake.me/companies/d23/jobs/3add3052-a1d9-4ec2-941a-ceb82c12fa8f-listed-company-39-s-zhongli-ne-bdbf3de576003820e45d8c8e19e853",
-      "source": "cake:broad",
-      "date": "2026-08-24",
-      "fit_score": 3,
-      "keyword_groups": [
-        "learning_design",
-        "hr_people"
-      ],
-      "priority_company": false
     },
     {
       "title": "Sr. Software Engineer - Backend 資深後端工程師",
@@ -165,15 +151,41 @@
       "priority_company": false
     },
     {
-      "title": "Product Manager, Detection Pipeline",
-      "company": "Expel",
-      "location": "Anywhere in the World",
-      "url": "https://weworkremotely.com/remote-jobs/expel-product-manager-detection-pipeline",
-      "source": "rss:weworkremotely",
+      "title": "企業合作夥伴經理",
+      "company": "財團法人均一平台教育基金會",
+      "location": "Taipei City, Taiwan",
+      "url": "https://www.cake.me/companies/official-junyiacademy-org-job/jobs/customer-success-manager-2025",
+      "source": "cake:broad",
+      "date": "2026-09-18",
+      "fit_score": 3,
+      "keyword_groups": [
+        "customer_success"
+      ],
+      "priority_company": false
+    },
+    {
+      "title": "『Hahow for Business』產品設計師 Product Designer",
+      "company": "Hahow 好學校",
+      "location": "Songshan District, Taipei City, Taiwan",
+      "url": "https://www.cake.me/companies/hahow/jobs/f164dc07-b2ae-455c-912d-b043c209d933-hahow-for-business-product-des-6034abdfc22c115be197da2ef4b6be",
+      "source": "cake:broad",
       "date": "2026-10-07",
       "fit_score": 3,
       "keyword_groups": [
         "customer_success",
+        "edtech_pm"
+      ],
+      "priority_company": false
+    },
+    {
+      "title": "【前端軟體測試工程師/資深測試工程師】 Quality Assurance Engineer jr./sr.",
+      "company": "智鈦星平台服務有限公司",
+      "location": "Taipei City, Taiwan",
+      "url": "https://www.cake.me/companies/gtstw/jobs/03810c",
+      "source": "cake:broad",
+      "date": "2026-10-08",
+      "fit_score": 3,
+      "keyword_groups": [
         "edtech_pm"
       ],
       "priority_company": false
@@ -184,11 +196,50 @@
       "location": "New Taipei City, Taiwan",
       "url": "https://www.cake.me/companies/h2-inc/jobs/taozhu-miao-district-sales-representative",
       "source": "cake:broad",
-      "date": "2026-10-19",
+      "date": "2026-10-20",
       "fit_score": 3,
       "keyword_groups": [
         "customer_success",
         "learning_design",
+        "hr_people"
+      ],
+      "priority_company": false
+    },
+    {
+      "title": "Business Development Manager/ Partnership Manager, Cymetrics",
+      "company": "AIFT",
+      "location": "Xinyi District, Taipei City, Taiwan",
+      "url": "https://www.cake.me/companies/aift/jobs/business-development-manager-cymetrics",
+      "source": "cake:broad",
+      "date": "2026-10-20",
+      "fit_score": 3,
+      "keyword_groups": [
+        "customer_success"
+      ],
+      "priority_company": false
+    },
+    {
+      "title": "[專案部]  軟體專案經理 (Software PM)~加入Ai3，成為主導專案的關鍵角色",
+      "company": "人工智能股份有限公司",
+      "location": "臺北市",
+      "url": "https://www.yourator.co/companies/8d8a33fc/jobs/47376",
+      "source": "yourator",
+      "date": "2026-10-21",
+      "fit_score": 3,
+      "keyword_groups": [
+        "edtech_pm"
+      ],
+      "priority_company": false
+    },
+    {
+      "title": "[人資部]HR專員(招募為主/訓練+員工關係為輔)~歡迎加入有溫度/主管同事好相處的公司，運用AI工具發揮你的影響力~",
+      "company": "人工智能股份有限公司",
+      "location": "臺北市",
+      "url": "https://www.yourator.co/companies/8d8a33fc/jobs/47385",
+      "source": "yourator",
+      "date": "2026-10-21",
+      "fit_score": 3,
+      "keyword_groups": [
         "hr_people"
       ],
       "priority_company": false
@@ -199,20 +250,7 @@
       "location": "臺南市",
       "url": "https://www.yourator.co/companies/KdanMobile/jobs/48226",
       "source": "yourator",
-      "date": "2026-10-20",
-      "fit_score": 3,
-      "keyword_groups": [
-        "edtech_pm"
-      ],
-      "priority_company": false
-    },
-    {
-      "title": "研發中心 - Mid - Sr. 產品經理 Product Manager",
-      "company": "浪LIVE",
-      "location": "臺北市",
-      "url": "https://www.yourator.co/companies/langlive/jobs/41041",
-      "source": "yourator",
-      "date": "2026-10-20",
+      "date": "2026-10-21",
       "fit_score": 3,
       "keyword_groups": [
         "edtech_pm"
@@ -225,10 +263,36 @@
       "location": "臺北市",
       "url": "https://www.yourator.co/companies/prohallmarks/jobs/36510",
       "source": "yourator",
-      "date": "2026-10-20",
+      "date": "2026-10-21",
       "fit_score": 3,
       "keyword_groups": [
         "community"
+      ],
+      "priority_company": false
+    },
+    {
+      "title": "研發中心 - Mid - Sr. 產品經理 Product Manager",
+      "company": "浪LIVE",
+      "location": "臺北市",
+      "url": "https://www.yourator.co/companies/langlive/jobs/41041",
+      "source": "yourator",
+      "date": "2026-10-21",
+      "fit_score": 3,
+      "keyword_groups": [
+        "edtech_pm"
+      ],
+      "priority_company": false
+    },
+    {
+      "title": "【TPD1501】Product Manager (Open Platform)",
+      "company": "SHOPLINE 商線科技股份有限公司",
+      "location": "臺北市",
+      "url": "https://www.yourator.co/companies/shopline/jobs/48508",
+      "source": "yourator",
+      "date": "2026-10-21",
+      "fit_score": 3,
+      "keyword_groups": [
+        "edtech_pm"
       ],
       "priority_company": false
     },
@@ -238,7 +302,7 @@
       "location": "臺北市",
       "url": "https://www.yourator.co/companies/Pinkoi/jobs/38997",
       "source": "yourator",
-      "date": "2026-10-20",
+      "date": "2026-10-21",
       "fit_score": 3,
       "keyword_groups": [
         "customer_success"
@@ -246,51 +310,12 @@
       "priority_company": false
     },
     {
-      "title": "《天下雜誌》AI 專案經理 ｜ AI PM",
-      "company": "天下雜誌股份有限公司",
-      "location": "臺北市",
-      "url": "https://www.yourator.co/companies/COMMONWEALTH/jobs/46715",
-      "source": "yourator",
-      "date": "2026-10-20",
-      "fit_score": 3,
-      "keyword_groups": [
-        "edtech_pm"
-      ],
-      "priority_company": false
-    },
-    {
-      "title": "【海外】IE PM",
-      "company": "鴻海科技集團 FOXCONN",
-      "location": "新北市",
-      "url": "https://www.yourator.co/companies/honhai/jobs/41891",
-      "source": "yourator",
-      "date": "2026-10-20",
-      "fit_score": 3,
-      "keyword_groups": [
-        "edtech_pm"
-      ],
-      "priority_company": true
-    },
-    {
-      "title": "【海外】PM 工程師",
-      "company": "鴻海科技集團 FOXCONN",
-      "location": "新北市",
-      "url": "https://www.yourator.co/companies/honhai/jobs/41895",
-      "source": "yourator",
-      "date": "2026-10-20",
-      "fit_score": 3,
-      "keyword_groups": [
-        "edtech_pm"
-      ],
-      "priority_company": true
-    },
-    {
       "title": "【NPI-PM】項目管理工程師-海外",
       "company": "鴻海科技集團 FOXCONN",
       "location": "新北市",
       "url": "https://www.yourator.co/companies/honhai/jobs/46919",
       "source": "yourator",
-      "date": "2026-10-20",
+      "date": "2026-10-21",
       "fit_score": 3,
       "keyword_groups": [
         "edtech_pm"
@@ -303,7 +328,7 @@
       "location": "臺北市",
       "url": "https://www.yourator.co/companies/DrRight/jobs/44291",
       "source": "yourator",
-      "date": "2026-10-20",
+      "date": "2026-10-21",
       "fit_score": 3,
       "keyword_groups": [
         "customer_success"
@@ -316,7 +341,46 @@
       "location": "新北市",
       "url": "https://www.yourator.co/companies/honhai/jobs/46915",
       "source": "yourator",
-      "date": "2026-10-20",
+      "date": "2026-10-21",
+      "fit_score": 3,
+      "keyword_groups": [
+        "edtech_pm"
+      ],
+      "priority_company": true
+    },
+    {
+      "title": "《天下雜誌》AI 專案經理 ｜ AI PM",
+      "company": "天下雜誌股份有限公司",
+      "location": "臺北市",
+      "url": "https://www.yourator.co/companies/COMMONWEALTH/jobs/46715",
+      "source": "yourator",
+      "date": "2026-10-21",
+      "fit_score": 3,
+      "keyword_groups": [
+        "edtech_pm"
+      ],
+      "priority_company": false
+    },
+    {
+      "title": "【海外】IE PM",
+      "company": "鴻海科技集團 FOXCONN",
+      "location": "新北市",
+      "url": "https://www.yourator.co/companies/honhai/jobs/41891",
+      "source": "yourator",
+      "date": "2026-10-21",
+      "fit_score": 3,
+      "keyword_groups": [
+        "edtech_pm"
+      ],
+      "priority_company": true
+    },
+    {
+      "title": "【海外】PM 工程師",
+      "company": "鴻海科技集團 FOXCONN",
+      "location": "新北市",
+      "url": "https://www.yourator.co/companies/honhai/jobs/41895",
+      "source": "yourator",
+      "date": "2026-10-21",
       "fit_score": 3,
       "keyword_groups": [
         "edtech_pm"
@@ -329,7 +393,7 @@
       "location": "臺北市",
       "url": "https://www.yourator.co/companies/awoo/jobs/48071",
       "source": "yourator",
-      "date": "2026-10-20",
+      "date": "2026-10-21",
       "fit_score": 3,
       "keyword_groups": [
         "customer_success"
@@ -342,20 +406,7 @@
       "location": "高雄市",
       "url": "https://www.yourator.co/companies/awoo/jobs/48073",
       "source": "yourator",
-      "date": "2026-10-20",
-      "fit_score": 3,
-      "keyword_groups": [
-        "customer_success"
-      ],
-      "priority_company": false
-    },
-    {
-      "title": "客戶服務專員｜把複雜財稅講成白話的人",
-      "company": "Simpany 簡單開公司",
-      "location": "臺北市",
-      "url": "https://www.yourator.co/companies/Simpany/jobs/47659",
-      "source": "yourator",
-      "date": "2026-10-20",
+      "date": "2026-10-21",
       "fit_score": 3,
       "keyword_groups": [
         "customer_success"
@@ -368,7 +419,7 @@
       "location": "臺北市",
       "url": "https://www.yourator.co/companies/shopline/jobs/47814",
       "source": "yourator",
-      "date": "2026-10-20",
+      "date": "2026-10-21",
       "fit_score": 3,
       "keyword_groups": [
         "edtech_pm"
@@ -381,7 +432,7 @@
       "location": "新北市",
       "url": "https://www.yourator.co/companies/jubohealth/jobs/46909",
       "source": "yourator",
-      "date": "2026-10-20",
+      "date": "2026-10-21",
       "fit_score": 3,
       "keyword_groups": [
         "community"
@@ -394,7 +445,7 @@
       "location": "新北市",
       "url": "https://www.yourator.co/companies/Sat-Knowledge/jobs/47966",
       "source": "yourator",
-      "date": "2026-10-20",
+      "date": "2026-10-21",
       "fit_score": 3,
       "keyword_groups": [
         "customer_success"
@@ -407,7 +458,7 @@
       "location": "新北市",
       "url": "https://www.yourator.co/companies/Sat-Knowledge/jobs/47976",
       "source": "yourator",
-      "date": "2026-10-20",
+      "date": "2026-10-21",
       "fit_score": 3,
       "keyword_groups": [
         "edtech_pm"
@@ -420,7 +471,7 @@
       "location": "臺北市",
       "url": "https://www.yourator.co/companies/radiantmkgt/jobs/48121",
       "source": "yourator",
-      "date": "2026-10-20",
+      "date": "2026-10-21",
       "fit_score": 3,
       "keyword_groups": [
         "customer_success"
@@ -433,7 +484,7 @@
       "location": "臺北市",
       "url": "https://www.yourator.co/companies/PressPlay/jobs/43797",
       "source": "yourator",
-      "date": "2026-10-20",
+      "date": "2026-10-21",
       "fit_score": 3,
       "keyword_groups": [
         "customer_success"
@@ -446,33 +497,7 @@
       "location": "臺中市",
       "url": "https://www.yourator.co/companies/jambolive/jobs/47821",
       "source": "yourator",
-      "date": "2026-10-20",
-      "fit_score": 3,
-      "keyword_groups": [
-        "customer_success"
-      ],
-      "priority_company": false
-    },
-    {
-      "title": "Customer Success Manager 客戶成功經理",
-      "company": "Profet AI 杰倫智能科技股份有限公司",
-      "location": "臺北市",
-      "url": "https://www.yourator.co/companies/profetai/jobs/38956",
-      "source": "yourator",
-      "date": "2026-10-20",
-      "fit_score": 3,
-      "keyword_groups": [
-        "customer_success"
-      ],
-      "priority_company": false
-    },
-    {
-      "title": "Account Manager",
-      "company": "Flexii | 飛來速科技股份有限公司",
-      "location": "高雄市",
-      "url": "https://www.yourator.co/companies/flexii/jobs/47339",
-      "source": "yourator",
-      "date": "2026-10-20",
+      "date": "2026-10-21",
       "fit_score": 3,
       "keyword_groups": [
         "customer_success"
@@ -485,7 +510,7 @@
       "location": "臺北市",
       "url": "https://www.yourator.co/companies/anrotec/jobs/48363",
       "source": "yourator",
-      "date": "2026-10-20",
+      "date": "2026-10-21",
       "fit_score": 3,
       "keyword_groups": [
         "edtech_pm"
@@ -493,15 +518,28 @@
       "priority_company": false
     },
     {
-      "title": "志祺七七｜專案經理 Project Manager（PM）",
-      "company": "簡訊設計｜圖文不符",
-      "location": "臺北市",
-      "url": "https://www.yourator.co/companies/simpleinfo/jobs/48359",
+      "title": "Account Manager",
+      "company": "Flexii | 飛來速科技股份有限公司",
+      "location": "高雄市",
+      "url": "https://www.yourator.co/companies/flexii/jobs/47339",
       "source": "yourator",
-      "date": "2026-10-20",
+      "date": "2026-10-21",
       "fit_score": 3,
       "keyword_groups": [
-        "edtech_pm"
+        "customer_success"
+      ],
+      "priority_company": false
+    },
+    {
+      "title": "Customer Success Manager 客戶成功經理",
+      "company": "Profet AI 杰倫智能科技股份有限公司",
+      "location": "臺北市",
+      "url": "https://www.yourator.co/companies/profetai/jobs/38956",
+      "source": "yourator",
+      "date": "2026-10-21",
+      "fit_score": 3,
+      "keyword_groups": [
+        "customer_success"
       ],
       "priority_company": false
     },
@@ -511,10 +549,23 @@
       "location": "新北市",
       "url": "https://www.yourator.co/companies/a6577eba/jobs/47831",
       "source": "yourator",
-      "date": "2026-10-20",
+      "date": "2026-10-21",
       "fit_score": 3,
       "keyword_groups": [
         "community"
+      ],
+      "priority_company": false
+    },
+    {
+      "title": "志祺七七｜專案經理 Project Manager（PM）",
+      "company": "簡訊設計｜圖文不符",
+      "location": "臺北市",
+      "url": "https://www.yourator.co/companies/simpleinfo/jobs/48359",
+      "source": "yourator",
+      "date": "2026-10-21",
+      "fit_score": 3,
+      "keyword_groups": [
+        "edtech_pm"
       ],
       "priority_company": false
     },
@@ -524,7 +575,7 @@
       "location": "臺北市",
       "url": "https://www.yourator.co/companies/simpleinfo/jobs/47819",
       "source": "yourator",
-      "date": "2026-10-20",
+      "date": "2026-10-21",
       "fit_score": 3,
       "keyword_groups": [
         "edtech_pm"
@@ -537,7 +588,7 @@
       "location": "臺北市",
       "url": "https://www.yourator.co/companies/dentaltw/jobs/10458",
       "source": "yourator",
-      "date": "2026-10-20",
+      "date": "2026-10-21",
       "fit_score": 3,
       "keyword_groups": [
         "customer_success"
@@ -550,7 +601,7 @@
       "location": "臺北市",
       "url": "https://www.yourator.co/companies/pic-net/jobs/47706",
       "source": "yourator",
-      "date": "2026-10-20",
+      "date": "2026-10-21",
       "fit_score": 3,
       "keyword_groups": [
         "customer_success"
@@ -563,20 +614,7 @@
       "location": "臺北市",
       "url": "https://www.yourator.co/companies/pic-net/jobs/47709",
       "source": "yourator",
-      "date": "2026-10-20",
-      "fit_score": 3,
-      "keyword_groups": [
-        "customer_success"
-      ],
-      "priority_company": false
-    },
-    {
-      "title": "Project Manager 專案經理",
-      "company": "OakMega 大橡科技",
-      "location": "臺北市",
-      "url": "https://www.yourator.co/companies/OakMega/jobs/19685",
-      "source": "yourator",
-      "date": "2026-10-20",
+      "date": "2026-10-21",
       "fit_score": 3,
       "keyword_groups": [
         "customer_success"
@@ -589,10 +627,23 @@
       "location": "臺北市",
       "url": "https://www.yourator.co/companies/OakMega/jobs/7406",
       "source": "yourator",
-      "date": "2026-10-20",
+      "date": "2026-10-21",
       "fit_score": 3,
       "keyword_groups": [
         "edtech_pm"
+      ],
+      "priority_company": false
+    },
+    {
+      "title": "Project Manager 專案經理",
+      "company": "OakMega 大橡科技",
+      "location": "臺北市",
+      "url": "https://www.yourator.co/companies/OakMega/jobs/19685",
+      "source": "yourator",
+      "date": "2026-10-21",
+      "fit_score": 3,
+      "keyword_groups": [
+        "customer_success"
       ],
       "priority_company": false
     },
@@ -602,7 +653,7 @@
       "location": "臺北市",
       "url": "https://www.yourator.co/companies/PressPlay/jobs/43780",
       "source": "yourator",
-      "date": "2026-10-20",
+      "date": "2026-10-21",
       "fit_score": 3,
       "keyword_groups": [
         "community"
@@ -615,7 +666,7 @@
       "location": "臺北市",
       "url": "https://www.yourator.co/companies/PressPlay/jobs/25382",
       "source": "yourator",
-      "date": "2026-10-20",
+      "date": "2026-10-21",
       "fit_score": 3,
       "keyword_groups": [
         "edtech_pm"
@@ -628,7 +679,7 @@
       "location": "臺北市",
       "url": "https://www.yourator.co/companies/ph2/jobs/46124",
       "source": "yourator",
-      "date": "2026-10-20",
+      "date": "2026-10-21",
       "fit_score": 3,
       "keyword_groups": [
         "hr_people"
@@ -641,7 +692,7 @@
       "location": "臺北市",
       "url": "https://www.yourator.co/companies/PChome/jobs/40562",
       "source": "yourator",
-      "date": "2026-10-20",
+      "date": "2026-10-21",
       "fit_score": 3,
       "keyword_groups": [
         "edtech_pm"
@@ -654,23 +705,10 @@
       "location": "臺北市",
       "url": "https://www.yourator.co/companies/thingnario/jobs/48043",
       "source": "yourator",
-      "date": "2026-10-20",
+      "date": "2026-10-21",
       "fit_score": 3,
       "keyword_groups": [
         "edtech_pm"
-      ],
-      "priority_company": false
-    },
-    {
-      "title": "人力資源專員 / 助理 Human Executive/Assistant",
-      "company": "新加坡商星沃恪股份有限公司台灣分公司",
-      "location": "臺北市",
-      "url": "https://www.yourator.co/companies/Salesworks/jobs/47804",
-      "source": "yourator",
-      "date": "2026-10-20",
-      "fit_score": 3,
-      "keyword_groups": [
-        "hr_people"
       ],
       "priority_company": false
     },
@@ -680,7 +718,7 @@
       "location": "新北市",
       "url": "https://www.yourator.co/companies/PERFECTcorp/jobs/46863",
       "source": "yourator",
-      "date": "2026-10-20",
+      "date": "2026-10-21",
       "fit_score": 3,
       "keyword_groups": [
         "edtech_pm"
@@ -693,7 +731,7 @@
       "location": "臺北市",
       "url": "https://www.yourator.co/companies/CrescendoLab/jobs/48293",
       "source": "yourator",
-      "date": "2026-10-20",
+      "date": "2026-10-21",
       "fit_score": 3,
       "keyword_groups": [
         "customer_success"
@@ -706,7 +744,7 @@
       "location": "新北市",
       "url": "https://www.yourator.co/companies/PERFECTcorp/jobs/39006",
       "source": "yourator",
-      "date": "2026-10-20",
+      "date": "2026-10-21",
       "fit_score": 3,
       "keyword_groups": [
         "edtech_pm"
@@ -719,7 +757,7 @@
       "location": "臺北市",
       "url": "https://www.yourator.co/companies/fusionmedium/jobs/46214",
       "source": "yourator",
-      "date": "2026-10-20",
+      "date": "2026-10-21",
       "fit_score": 3,
       "keyword_groups": [
         "customer_success"
@@ -732,7 +770,7 @@
       "location": "臺北市",
       "url": "https://www.yourator.co/companies/UCCapital/jobs/48264",
       "source": "yourator",
-      "date": "2026-10-20",
+      "date": "2026-10-21",
       "fit_score": 3,
       "keyword_groups": [
         "edtech_pm"
@@ -745,7 +783,7 @@
       "location": "臺中市",
       "url": "https://www.yourator.co/companies/TITANSOFT/jobs/47491",
       "source": "yourator",
-      "date": "2026-10-20",
+      "date": "2026-10-21",
       "fit_score": 3,
       "keyword_groups": [
         "edtech_pm"
@@ -758,7 +796,7 @@
       "location": "臺中市",
       "url": "https://www.yourator.co/companies/TITANSOFT/jobs/9138",
       "source": "yourator",
-      "date": "2026-10-20",
+      "date": "2026-10-21",
       "fit_score": 3,
       "keyword_groups": [
         "edtech_pm"
@@ -771,7 +809,7 @@
       "location": "臺北市",
       "url": "https://www.yourator.co/companies/TITANSOFT/jobs/9336",
       "source": "yourator",
-      "date": "2026-10-20",
+      "date": "2026-10-21",
       "fit_score": 3,
       "keyword_groups": [
         "edtech_pm"
@@ -784,7 +822,7 @@
       "location": "高雄市",
       "url": "https://www.yourator.co/companies/TITANSOFT/jobs/30491",
       "source": "yourator",
-      "date": "2026-10-20",
+      "date": "2026-10-21",
       "fit_score": 3,
       "keyword_groups": [
         "edtech_pm"
@@ -797,7 +835,7 @@
       "location": "新北市",
       "url": "https://www.yourator.co/companies/MrLiving/jobs/48089",
       "source": "yourator",
-      "date": "2026-10-20",
+      "date": "2026-10-21",
       "fit_score": 3,
       "keyword_groups": [
         "customer_success"
@@ -810,7 +848,7 @@
       "location": "臺北市",
       "url": "https://www.yourator.co/companies/skstaiwan/jobs/46038",
       "source": "yourator",
-      "date": "2026-10-20",
+      "date": "2026-10-21",
       "fit_score": 3,
       "keyword_groups": [
         "edtech_pm"
@@ -823,7 +861,7 @@
       "location": "臺北市",
       "url": "https://www.yourator.co/companies/compal/jobs/46991",
       "source": "yourator",
-      "date": "2026-10-20",
+      "date": "2026-10-21",
       "fit_score": 3,
       "keyword_groups": [
         "edtech_pm"
@@ -836,7 +874,7 @@
       "location": "臺北市",
       "url": "https://www.yourator.co/companies/compal/jobs/47134",
       "source": "yourator",
-      "date": "2026-10-20",
+      "date": "2026-10-21",
       "fit_score": 3,
       "keyword_groups": [
         "learning_design"
@@ -849,7 +887,7 @@
       "location": "臺北市",
       "url": "https://www.yourator.co/companies/compal/jobs/47140",
       "source": "yourator",
-      "date": "2026-10-20",
+      "date": "2026-10-21",
       "fit_score": 3,
       "keyword_groups": [
         "learning_design",
@@ -863,7 +901,7 @@
       "location": "臺北市",
       "url": "https://www.yourator.co/companies/compal/jobs/47103",
       "source": "yourator",
-      "date": "2026-10-20",
+      "date": "2026-10-21",
       "fit_score": 3,
       "keyword_groups": [
         "edtech_pm"
@@ -876,7 +914,7 @@
       "location": "臺北市",
       "url": "https://www.yourator.co/companies/techtanium/jobs/48083",
       "source": "yourator",
-      "date": "2026-10-20",
+      "date": "2026-10-21",
       "fit_score": 3,
       "keyword_groups": [
         "edtech_pm"
@@ -889,7 +927,7 @@
       "location": "臺中市",
       "url": "https://www.yourator.co/companies/jambolive/jobs/46423",
       "source": "yourator",
-      "date": "2026-10-20",
+      "date": "2026-10-21",
       "fit_score": 3,
       "keyword_groups": [
         "customer_success"
@@ -902,7 +940,7 @@
       "location": "臺北市",
       "url": "https://www.yourator.co/companies/jambolive/jobs/46424",
       "source": "yourator",
-      "date": "2026-10-20",
+      "date": "2026-10-21",
       "fit_score": 3,
       "keyword_groups": [
         "customer_success"
@@ -915,7 +953,7 @@
       "location": "臺中市",
       "url": "https://www.yourator.co/companies/jambolive/jobs/46471",
       "source": "yourator",
-      "date": "2026-10-20",
+      "date": "2026-10-21",
       "fit_score": 3,
       "keyword_groups": [
         "customer_success"
@@ -928,7 +966,7 @@
       "location": "臺中市",
       "url": "https://www.yourator.co/companies/jambolive/jobs/46668",
       "source": "yourator",
-      "date": "2026-10-20",
+      "date": "2026-10-21",
       "fit_score": 3,
       "keyword_groups": [
         "customer_success"
@@ -941,7 +979,7 @@
       "location": "新北市",
       "url": "https://www.yourator.co/companies/upyoung/jobs/47824",
       "source": "yourator",
-      "date": "2026-10-20",
+      "date": "2026-10-21",
       "fit_score": 3,
       "keyword_groups": [
         "edtech_pm"
@@ -954,37 +992,11 @@
       "location": "臺北市",
       "url": "https://www.yourator.co/companies/may4s/jobs/47722",
       "source": "yourator",
-      "date": "2026-10-20",
+      "date": "2026-10-21",
       "fit_score": 3,
       "keyword_groups": [
         "hr_people",
         "edtech_pm"
-      ],
-      "priority_company": false
-    },
-    {
-      "title": "[專案部]  軟體專案經理 (Software PM)~加入Ai3，成為主導專案的關鍵角色",
-      "company": "人工智能股份有限公司",
-      "location": "臺北市",
-      "url": "https://www.yourator.co/companies/8d8a33fc/jobs/47376",
-      "source": "yourator",
-      "date": "2026-10-20",
-      "fit_score": 3,
-      "keyword_groups": [
-        "edtech_pm"
-      ],
-      "priority_company": false
-    },
-    {
-      "title": "[人資部]HR專員(招募為主/訓練+員工關係為輔)~歡迎加入有溫度/主管同事好相處的公司，運用AI工具發揮你的影響力~",
-      "company": "人工智能股份有限公司",
-      "location": "臺北市",
-      "url": "https://www.yourator.co/companies/8d8a33fc/jobs/47385",
-      "source": "yourator",
-      "date": "2026-10-20",
-      "fit_score": 3,
-      "keyword_groups": [
-        "hr_people"
       ],
       "priority_company": false
     },
@@ -994,7 +1006,7 @@
       "location": "臺北市",
       "url": "https://www.yourator.co/companies/Cathay-Financial-Holding/jobs/34506",
       "source": "yourator",
-      "date": "2026-10-20",
+      "date": "2026-10-21",
       "fit_score": 3,
       "keyword_groups": [
         "hr_people"
@@ -1007,7 +1019,7 @@
       "location": "臺北市",
       "url": "https://www.yourator.co/companies/Cathay-Financial-Holding/jobs/34875",
       "source": "yourator",
-      "date": "2026-10-20",
+      "date": "2026-10-21",
       "fit_score": 3,
       "keyword_groups": [
         "hr_people"
@@ -1020,7 +1032,7 @@
       "location": "臺北市",
       "url": "https://www.yourator.co/companies/Cathay-Financial-Holding/jobs/34927",
       "source": "yourator",
-      "date": "2026-10-20",
+      "date": "2026-10-21",
       "fit_score": 3,
       "keyword_groups": [
         "hr_people"
@@ -1033,7 +1045,7 @@
       "location": "臺北市",
       "url": "https://www.yourator.co/companies/Cathay-Financial-Holding/jobs/34928",
       "source": "yourator",
-      "date": "2026-10-20",
+      "date": "2026-10-21",
       "fit_score": 3,
       "keyword_groups": [
         "hr_people"
@@ -1046,7 +1058,7 @@
       "location": "臺北市",
       "url": "https://www.yourator.co/companies/Cathay-Financial-Holding/jobs/19828",
       "source": "yourator",
-      "date": "2026-10-20",
+      "date": "2026-10-21",
       "fit_score": 3,
       "keyword_groups": [
         "edtech_pm"
@@ -1059,7 +1071,7 @@
       "location": "臺北市",
       "url": "https://www.yourator.co/companies/CrescendoLab/jobs/48203",
       "source": "yourator",
-      "date": "2026-10-20",
+      "date": "2026-10-21",
       "fit_score": 3,
       "keyword_groups": [
         "customer_success"
@@ -1072,7 +1084,7 @@
       "location": "臺北市",
       "url": "https://www.yourator.co/companies/Yourator/jobs/48094",
       "source": "yourator",
-      "date": "2026-10-20",
+      "date": "2026-10-21",
       "fit_score": 3,
       "keyword_groups": [
         "customer_success"
@@ -1085,7 +1097,7 @@
       "location": "新北市",
       "url": "https://www.yourator.co/companies/cyberon/jobs/47642",
       "source": "yourator",
-      "date": "2026-10-20",
+      "date": "2026-10-21",
       "fit_score": 3,
       "keyword_groups": [
         "edtech_pm"
@@ -1098,7 +1110,7 @@
       "location": "新北市",
       "url": "https://www.yourator.co/companies/cyberon/jobs/47742",
       "source": "yourator",
-      "date": "2026-10-20",
+      "date": "2026-10-21",
       "fit_score": 3,
       "keyword_groups": [
         "edtech_pm"
@@ -1111,7 +1123,7 @@
       "location": "臺北市",
       "url": "https://www.yourator.co/companies/PChome/jobs/40535",
       "source": "yourator",
-      "date": "2026-10-20",
+      "date": "2026-10-21",
       "fit_score": 3,
       "keyword_groups": [
         "edtech_pm"
@@ -1124,7 +1136,7 @@
       "location": "臺北市",
       "url": "https://www.yourator.co/companies/kkco/jobs/46221",
       "source": "yourator",
-      "date": "2026-10-20",
+      "date": "2026-10-21",
       "fit_score": 3,
       "keyword_groups": [
         "customer_success"
@@ -1137,7 +1149,7 @@
       "location": "臺北市",
       "url": "https://www.yourator.co/companies/wordup/jobs/43128",
       "source": "yourator",
-      "date": "2026-10-20",
+      "date": "2026-10-21",
       "fit_score": 3,
       "keyword_groups": [
         "edtech_pm"
@@ -1150,7 +1162,7 @@
       "location": "臺北市",
       "url": "https://www.yourator.co/companies/sinopac/jobs/42069",
       "source": "yourator",
-      "date": "2026-10-20",
+      "date": "2026-10-21",
       "fit_score": 3,
       "keyword_groups": [
         "edtech_pm"
@@ -1163,10 +1175,23 @@
       "location": "臺北市",
       "url": "https://www.yourator.co/companies/WritePath/jobs/43798",
       "source": "yourator",
-      "date": "2026-10-20",
+      "date": "2026-10-21",
       "fit_score": 3,
       "keyword_groups": [
         "edtech_pm"
+      ],
+      "priority_company": false
+    },
+    {
+      "title": "Cloud Business Development Representative",
+      "company": "TDCX",
+      "location": "Taiwan",
+      "url": "https://www.cake.me/companies/tdcx-malaysia/jobs/cloud-business-development-representative",
+      "source": "cake:broad",
+      "date": "2026-06-17",
+      "fit_score": 2,
+      "keyword_groups": [
+        "customer_success"
       ],
       "priority_company": false
     },
@@ -1304,12 +1329,26 @@
       "priority_company": false
     },
     {
-      "title": "Senior Product Manager - Monetization and Expansion",
-      "company": "Novakid School",
+      "title": "Threat Detection Analyst (Japanese Speaking desirable)",
+      "company": "Fastly",
+      "location": "Anywhere in the World",
+      "url": "https://weworkremotely.com/remote-jobs/fastly-threat-detection-analyst-japanese-speaking-desirable",
+      "source": "rss:weworkremotely",
+      "date": "2026-10-20",
+      "fit_score": 2,
+      "keyword_groups": [
+        "hr_people",
+        "edtech_pm"
+      ],
+      "priority_company": false
+    },
+    {
+      "title": "Paid Ads Specialist",
+      "company": "JLV Construction",
       "location": "Worldwide",
-      "url": "https://himalayas.app/companies/novakid-school/jobs/senior-product-manager-monetization-and-expansion",
+      "url": "https://himalayas.app/companies/jlv-construction/jobs/paid-ads-specialist",
       "source": "himalayas",
-      "date": "2026-10-19",
+      "date": "2026-10-20",
       "fit_score": 2,
       "keyword_groups": [
         "edtech_pm"
@@ -1317,15 +1356,28 @@
       "priority_company": false
     },
     {
-      "title": "Senior Customer Support Specialist",
-      "company": "Flexii | 飛來速科技股份有限公司",
+      "title": "【TPD1601】Product Manager (CRM)",
+      "company": "SHOPLINE 商線科技股份有限公司",
       "location": "臺北市",
-      "url": "https://www.yourator.co/companies/flexii/jobs/48504",
+      "url": "https://www.yourator.co/companies/shopline/jobs/48509",
       "source": "yourator",
-      "date": "2026-10-20",
+      "date": "2026-10-21",
       "fit_score": 2,
       "keyword_groups": [
-        "customer_success"
+        "edtech_pm"
+      ],
+      "priority_company": false
+    },
+    {
+      "title": "【TPD1401】Product Manager（廣告、第三方）",
+      "company": "SHOPLINE 商線科技股份有限公司",
+      "location": "臺北市",
+      "url": "https://www.yourator.co/companies/shopline/jobs/40650",
+      "source": "yourator",
+      "date": "2026-10-21",
+      "fit_score": 2,
+      "keyword_groups": [
+        "edtech_pm"
       ],
       "priority_company": false
     },
@@ -1335,10 +1387,36 @@
       "location": "新北市",
       "url": "https://www.yourator.co/companies/AmazingTalker/jobs/43100",
       "source": "yourator",
-      "date": "2026-10-20",
+      "date": "2026-10-21",
       "fit_score": 2,
       "keyword_groups": [
         "edtech_pm"
+      ],
+      "priority_company": false
+    },
+    {
+      "title": "Customer Service Specialist (Entry-Level)",
+      "company": "Flexii | 飛來速科技股份有限公司",
+      "location": "臺北市",
+      "url": "https://www.yourator.co/companies/flexii/jobs/48511",
+      "source": "yourator",
+      "date": "2026-10-21",
+      "fit_score": 2,
+      "keyword_groups": [
+        "customer_success"
+      ],
+      "priority_company": false
+    },
+    {
+      "title": "Senior Customer Support Specialist",
+      "company": "Flexii | 飛來速科技股份有限公司",
+      "location": "臺北市",
+      "url": "https://www.yourator.co/companies/flexii/jobs/48504",
+      "source": "yourator",
+      "date": "2026-10-21",
+      "fit_score": 2,
+      "keyword_groups": [
+        "customer_success"
       ],
       "priority_company": false
     },
@@ -1348,7 +1426,7 @@
       "location": "臺北市",
       "url": "https://www.yourator.co/companies/COMMONWEALTH/jobs/42018",
       "source": "yourator",
-      "date": "2026-10-20",
+      "date": "2026-10-21",
       "fit_score": 2,
       "keyword_groups": [
         "community"
@@ -1361,7 +1439,7 @@
       "location": "臺北市",
       "url": "https://www.yourator.co/companies/HardCoreTechnology/jobs/48182",
       "source": "yourator",
-      "date": "2026-10-20",
+      "date": "2026-10-21",
       "fit_score": 2,
       "keyword_groups": [
         "edtech_pm"
@@ -1374,7 +1452,7 @@
       "location": "臺北市",
       "url": "https://www.yourator.co/companies/seeds/jobs/35616",
       "source": "yourator",
-      "date": "2026-10-20",
+      "date": "2026-10-21",
       "fit_score": 2,
       "keyword_groups": [
         "customer_success"
@@ -1387,23 +1465,10 @@
       "location": "臺北市",
       "url": "https://www.yourator.co/companies/shopline/jobs/20470",
       "source": "yourator",
-      "date": "2026-10-20",
+      "date": "2026-10-21",
       "fit_score": 2,
       "keyword_groups": [
         "customer_success"
-      ],
-      "priority_company": false
-    },
-    {
-      "title": "【TPD1401】Product Manager（廣告、第三方）",
-      "company": "SHOPLINE 商線科技股份有限公司",
-      "location": "臺北市",
-      "url": "https://www.yourator.co/companies/shopline/jobs/40650",
-      "source": "yourator",
-      "date": "2026-10-20",
-      "fit_score": 2,
-      "keyword_groups": [
-        "edtech_pm"
       ],
       "priority_company": false
     },
@@ -1413,7 +1478,7 @@
       "location": "臺北市",
       "url": "https://www.yourator.co/companies/PicCollage/jobs/48248",
       "source": "yourator",
-      "date": "2026-10-20",
+      "date": "2026-10-21",
       "fit_score": 2,
       "keyword_groups": [
         "edtech_pm"
@@ -1426,7 +1491,7 @@
       "location": "臺北市",
       "url": "https://www.yourator.co/companies/PicCollage/jobs/42000",
       "source": "yourator",
-      "date": "2026-10-20",
+      "date": "2026-10-21",
       "fit_score": 2,
       "keyword_groups": [
         "hr_people"
@@ -1439,7 +1504,7 @@
       "location": "臺北市",
       "url": "https://www.yourator.co/companies/qantech/jobs/47327",
       "source": "yourator",
-      "date": "2026-10-20",
+      "date": "2026-10-21",
       "fit_score": 2,
       "keyword_groups": [
         "customer_success"
@@ -1452,7 +1517,7 @@
       "location": "臺北市",
       "url": "https://www.yourator.co/companies/ucgroup/jobs/47725",
       "source": "yourator",
-      "date": "2026-10-20",
+      "date": "2026-10-21",
       "fit_score": 2,
       "keyword_groups": [
         "community"
@@ -1465,7 +1530,7 @@
       "location": "臺北市",
       "url": "https://www.yourator.co/companies/PressPlay/jobs/48376",
       "source": "yourator",
-      "date": "2026-10-20",
+      "date": "2026-10-21",
       "fit_score": 2,
       "keyword_groups": [
         "customer_success"
@@ -1478,7 +1543,7 @@
       "location": "臺北市",
       "url": "https://www.yourator.co/companies/WONDERLAND/jobs/48375",
       "source": "yourator",
-      "date": "2026-10-20",
+      "date": "2026-10-21",
       "fit_score": 2,
       "keyword_groups": [
         "edtech_pm"
@@ -1491,7 +1556,7 @@
       "location": "新北市",
       "url": "https://www.yourator.co/companies/vitabox/jobs/41148",
       "source": "yourator",
-      "date": "2026-10-20",
+      "date": "2026-10-21",
       "fit_score": 2,
       "keyword_groups": [
         "hr_people"
@@ -1504,7 +1569,7 @@
       "location": "高雄市",
       "url": "https://www.yourator.co/companies/hourloop/jobs/41366",
       "source": "yourator",
-      "date": "2026-10-20",
+      "date": "2026-10-21",
       "fit_score": 2,
       "keyword_groups": [
         "edtech_pm"
@@ -1517,7 +1582,7 @@
       "location": "臺中市",
       "url": "https://www.yourator.co/companies/hourloop/jobs/41367",
       "source": "yourator",
-      "date": "2026-10-20",
+      "date": "2026-10-21",
       "fit_score": 2,
       "keyword_groups": [
         "edtech_pm"
@@ -1530,7 +1595,7 @@
       "location": "臺南市",
       "url": "https://www.yourator.co/companies/hourloop/jobs/41373",
       "source": "yourator",
-      "date": "2026-10-20",
+      "date": "2026-10-21",
       "fit_score": 2,
       "keyword_groups": [
         "edtech_pm"
@@ -1543,7 +1608,7 @@
       "location": "臺北市",
       "url": "https://www.yourator.co/companies/hourloop/jobs/41379",
       "source": "yourator",
-      "date": "2026-10-20",
+      "date": "2026-10-21",
       "fit_score": 2,
       "keyword_groups": [
         "edtech_pm"
@@ -1556,7 +1621,7 @@
       "location": "新北市",
       "url": "https://www.yourator.co/companies/qoooq/jobs/48244",
       "source": "yourator",
-      "date": "2026-10-20",
+      "date": "2026-10-21",
       "fit_score": 2,
       "keyword_groups": [
         "community"
@@ -1569,7 +1634,7 @@
       "location": "臺北市",
       "url": "https://www.yourator.co/companies/ogilvy/jobs/36912",
       "source": "yourator",
-      "date": "2026-10-20",
+      "date": "2026-10-21",
       "fit_score": 2,
       "keyword_groups": [
         "customer_success"
@@ -1582,7 +1647,7 @@
       "location": "臺北市",
       "url": "https://www.yourator.co/companies/ogilvy/jobs/36924",
       "source": "yourator",
-      "date": "2026-10-20",
+      "date": "2026-10-21",
       "fit_score": 2,
       "keyword_groups": [
         "customer_success"
@@ -1595,7 +1660,7 @@
       "location": "臺北市",
       "url": "https://www.yourator.co/companies/linkst/jobs/46725",
       "source": "yourator",
-      "date": "2026-10-20",
+      "date": "2026-10-21",
       "fit_score": 2,
       "keyword_groups": [
         "customer_success"
@@ -1608,7 +1673,7 @@
       "location": "臺北市",
       "url": "https://www.yourator.co/companies/PressPlay/jobs/25878",
       "source": "yourator",
-      "date": "2026-10-20",
+      "date": "2026-10-21",
       "fit_score": 2,
       "keyword_groups": [
         "hr_people"
@@ -1621,7 +1686,7 @@
       "location": "臺北市",
       "url": "https://www.yourator.co/companies/PressPlay/jobs/29241",
       "source": "yourator",
-      "date": "2026-10-20",
+      "date": "2026-10-21",
       "fit_score": 2,
       "keyword_groups": [
         "customer_success"
@@ -1634,7 +1699,7 @@
       "location": "臺北市",
       "url": "https://www.yourator.co/companies/WONDERLAND/jobs/46646",
       "source": "yourator",
-      "date": "2026-10-20",
+      "date": "2026-10-21",
       "fit_score": 2,
       "keyword_groups": [
         "edtech_pm"
@@ -1647,7 +1712,7 @@
       "location": "臺北市",
       "url": "https://www.yourator.co/companies/WONDERLAND/jobs/47570",
       "source": "yourator",
-      "date": "2026-10-20",
+      "date": "2026-10-21",
       "fit_score": 2,
       "keyword_groups": [
         "edtech_pm"
@@ -1660,7 +1725,7 @@
       "location": "臺北市",
       "url": "https://www.yourator.co/companies/WONDERLAND/jobs/47691",
       "source": "yourator",
-      "date": "2026-10-20",
+      "date": "2026-10-21",
       "fit_score": 2,
       "keyword_groups": [
         "edtech_pm"
@@ -1673,7 +1738,7 @@
       "location": "臺北市",
       "url": "https://www.yourator.co/companies/skstaiwan/jobs/38355",
       "source": "yourator",
-      "date": "2026-10-20",
+      "date": "2026-10-21",
       "fit_score": 2,
       "keyword_groups": [
         "edtech_pm"
@@ -1686,7 +1751,7 @@
       "location": "臺北市",
       "url": "https://www.yourator.co/companies/compal/jobs/47210",
       "source": "yourator",
-      "date": "2026-10-20",
+      "date": "2026-10-21",
       "fit_score": 2,
       "keyword_groups": [
         "customer_success"
@@ -1699,7 +1764,7 @@
       "location": "新北市",
       "url": "https://www.yourator.co/companies/MrLiving/jobs/48090",
       "source": "yourator",
-      "date": "2026-10-20",
+      "date": "2026-10-21",
       "fit_score": 2,
       "keyword_groups": [
         "customer_success"
@@ -1712,7 +1777,7 @@
       "location": "新北市",
       "url": "https://www.yourator.co/companies/upyoung/jobs/40270",
       "source": "yourator",
-      "date": "2026-10-20",
+      "date": "2026-10-21",
       "fit_score": 2,
       "keyword_groups": [
         "edtech_pm"
@@ -1725,23 +1790,10 @@
       "location": "臺北市",
       "url": "https://www.yourator.co/companies/Pacston/jobs/40135",
       "source": "yourator",
-      "date": "2026-10-20",
+      "date": "2026-10-21",
       "fit_score": 2,
       "keyword_groups": [
         "edtech_pm"
-      ],
-      "priority_company": false
-    },
-    {
-      "title": "Entry-Level Account Manager",
-      "company": "NoGigiddy",
-      "location": "Anywhere in the World",
-      "url": "https://weworkremotely.com/remote-jobs/nogigiddy-entry-level-account-manager-4",
-      "source": "rss:weworkremotely",
-      "date": "2026-05-20",
-      "fit_score": 1,
-      "keyword_groups": [
-        "customer_success"
       ],
       "priority_company": false
     },
@@ -1825,19 +1877,6 @@
       "priority_company": false
     },
     {
-      "title": "Enterprise Account Manager - Riyadh (Saudi National)",
-      "company": "BeyondTrust",
-      "location": "Anywhere in the World",
-      "url": "https://weworkremotely.com/remote-jobs/beyondtrust-enterprise-account-manager-riyadh-saudi-national",
-      "source": "rss:weworkremotely",
-      "date": "2026-10-17",
-      "fit_score": 1,
-      "keyword_groups": [
-        "customer_success"
-      ],
-      "priority_company": false
-    },
-    {
       "title": "Senior Benefits Administrator",
       "company": "Tebra",
       "location": "Anywhere in the World",
@@ -1847,32 +1886,6 @@
       "fit_score": 1,
       "keyword_groups": [
         "hr_people"
-      ],
-      "priority_company": false
-    },
-    {
-      "title": "Founding Forward Deployed Engineer",
-      "company": "Alloy",
-      "location": "Anywhere in the World",
-      "url": "https://weworkremotely.com/remote-jobs/alloy-founding-forward-deployed-engineer",
-      "source": "rss:weworkremotely",
-      "date": "2026-10-18",
-      "fit_score": 1,
-      "keyword_groups": [
-        "edtech_pm"
-      ],
-      "priority_company": false
-    },
-    {
-      "title": "Senior Software Engineer, Processing",
-      "company": "Lithic",
-      "location": "Anywhere in the World",
-      "url": "https://weworkremotely.com/remote-jobs/lithic-senior-software-engineer-processing",
-      "source": "rss:weworkremotely",
-      "date": "2026-10-18",
-      "fit_score": 1,
-      "keyword_groups": [
-        "edtech_pm"
       ],
       "priority_company": false
     },
@@ -1890,12 +1903,12 @@
       "priority_company": false
     },
     {
-      "title": "Technical Account Manager",
-      "company": "Expel",
+      "title": "Manager II, Developer Advocacy",
+      "company": "Datadog",
       "location": "Anywhere in the World",
-      "url": "https://weworkremotely.com/remote-jobs/expel-technical-account-manager",
+      "url": "https://weworkremotely.com/remote-jobs/datadog-manager-ii-developer-advocacy",
       "source": "rss:weworkremotely",
-      "date": "2026-10-19",
+      "date": "2026-10-20",
       "fit_score": 1,
       "keyword_groups": [
         "customer_success"
@@ -1903,12 +1916,26 @@
       "priority_company": false
     },
     {
-      "title": "Care Coordinator",
-      "company": "Talkspace",
+      "title": "Developer Engagement Team  (Contract)",
+      "company": "Roblox",
       "location": "Anywhere in the World",
-      "url": "https://weworkremotely.com/remote-jobs/talkspace-care-coordinator",
+      "url": "https://weworkremotely.com/remote-jobs/roblox-developer-engagement-team-contract",
       "source": "rss:weworkremotely",
-      "date": "2026-10-19",
+      "date": "2026-10-20",
+      "fit_score": 1,
+      "keyword_groups": [
+        "customer_success",
+        "community"
+      ],
+      "priority_company": false
+    },
+    {
+      "title": "Senior Customer Engineer - Collibra Public Sector",
+      "company": "Collibra",
+      "location": "Anywhere in the World",
+      "url": "https://weworkremotely.com/remote-jobs/collibra-senior-customer-engineer-collibra-public-sector",
+      "source": "rss:weworkremotely",
+      "date": "2026-10-20",
       "fit_score": 1,
       "keyword_groups": [
         "customer_success"
@@ -1916,12 +1943,51 @@
       "priority_company": false
     },
     {
-      "title": "Senior Technical Support Engineer",
-      "company": "Alloy",
+      "title": "Account Executive, Commercial",
+      "company": "Samsara",
       "location": "Anywhere in the World",
-      "url": "https://weworkremotely.com/remote-jobs/alloy-senior-technical-support-engineer",
+      "url": "https://weworkremotely.com/remote-jobs/samsara-account-executive-commercial",
       "source": "rss:weworkremotely",
-      "date": "2026-10-19",
+      "date": "2026-10-20",
+      "fit_score": 1,
+      "keyword_groups": [
+        "customer_success"
+      ],
+      "priority_company": true
+    },
+    {
+      "title": "Community Manager, Dutch Speaking (Contract)",
+      "company": "Reddit",
+      "location": "Anywhere in the World",
+      "url": "https://weworkremotely.com/remote-jobs/reddit-community-manager-dutch-speaking-contract",
+      "source": "rss:weworkremotely",
+      "date": "2026-10-20",
+      "fit_score": 1,
+      "keyword_groups": [
+        "community"
+      ],
+      "priority_company": false
+    },
+    {
+      "title": "Account Development Representative II",
+      "company": "Samsara",
+      "location": "Anywhere in the World",
+      "url": "https://weworkremotely.com/remote-jobs/samsara-account-development-representative-ii",
+      "source": "rss:weworkremotely",
+      "date": "2026-10-20",
+      "fit_score": 1,
+      "keyword_groups": [
+        "learning_design"
+      ],
+      "priority_company": true
+    },
+    {
+      "title": "Senior Account Manager",
+      "company": "Adikteev",
+      "location": "Worldwide",
+      "url": "https://himalayas.app/companies/adikteev/jobs/senior-account-manager",
+      "source": "himalayas",
+      "date": "2026-10-20",
       "fit_score": 1,
       "keyword_groups": [
         "customer_success"
@@ -1934,7 +2000,7 @@
       "location": "臺北市",
       "url": "https://www.yourator.co/companies/compal/jobs/47070",
       "source": "yourator",
-      "date": "2026-10-20",
+      "date": "2026-10-21",
       "fit_score": 1,
       "keyword_groups": [
         "hr_people"
@@ -1947,7 +2013,7 @@
       "location": "臺北市",
       "url": "https://www.yourator.co/companies/compal/jobs/47030",
       "source": "yourator",
-      "date": "2026-10-20",
+      "date": "2026-10-21",
       "fit_score": 1,
       "keyword_groups": [
         "hr_people"
@@ -2046,38 +2112,25 @@
       "priority_company": false
     },
     {
-      "title": "Atomic Construction, LLC",
-      "company": "Marketing/Appt Setting",
-      "location": "Anywhere in the World",
-      "url": "https://weworkremotely.com/remote-jobs/atomic-construction-llc-marketing-appt-setting",
-      "source": "rss:weworkremotely",
-      "date": "2026-10-17",
-      "fit_score": 0,
-      "keyword_groups": [
-        "customer_success"
-      ],
-      "priority_company": false
-    },
-    {
-      "title": "Mid-Market Account Executive, EMEA",
-      "company": "Customer.io",
-      "location": "Anywhere in the World",
-      "url": "https://weworkremotely.com/remote-jobs/customer-io-mid-market-account-executive-emea",
-      "source": "rss:weworkremotely",
-      "date": "2026-10-17",
-      "fit_score": 0,
-      "keyword_groups": [
-        "customer_success"
-      ],
-      "priority_company": false
-    },
-    {
       "title": "International Direct Sales Representative",
       "company": "Prodware Group",
       "location": "Anywhere in the World",
       "url": "https://weworkremotely.com/remote-jobs/prodware-group-international-direct-sales-representative",
       "source": "rss:weworkremotely",
       "date": "2026-10-19",
+      "fit_score": 0,
+      "keyword_groups": [
+        "customer_success"
+      ],
+      "priority_company": false
+    },
+    {
+      "title": "NA Enterprise Expansion Account Executive, Strategic - Future Opportunities",
+      "company": "Lucid Software",
+      "location": "Anywhere in the World",
+      "url": "https://weworkremotely.com/remote-jobs/lucid-software-na-enterprise-expansion-account-executive-strategic-future-opportunities",
+      "source": "rss:weworkremotely",
+      "date": "2026-10-20",
       "fit_score": 0,
       "keyword_groups": [
         "customer_success"
