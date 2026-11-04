@@ -63,6 +63,9 @@ rules) is identical in both modes.
    instead). So the author only thinks about the tldr; the description is its
    trimmed shadow.
 
+   Follow the **House style** section below in both languages, in the body and
+   in `title`, `tldr` and `description`. Run its checklist before emitting.
+
 3. **Emit both files** (see paths and frontmatter below). Default both to
    `draft: false`. If the user specifically wants the post staged without going
    live yet, use `draft: true`.
@@ -82,6 +85,81 @@ rules) is identical in both modes.
      in the repo, commit, and deploy (`npm run deploy`, or merge to the branch
      that deploys). Remind them a `draft: true` post won't appear anywhere until
      flipped to `false`.
+
+## House style — punctuation and headings
+
+The author edits every draft to these rules, so write them in from the start.
+They apply to both languages, in the body and in `title`, `tldr` and
+`description`. They never apply to YAML syntax: keys keep their `key: value`
+colon.
+
+### 1. No colons inside sentences or paragraphs
+
+Use a comma instead: `,` in English, `，` in zh-TW. This includes a sentence
+that introduces a list (`In my own words,` / `用我自己的話說，`).
+
+| Instead of | Write |
+|-|-|
+| `Felix offers a useful tell: if you're…` | `Felix offers a useful tell, if you're…` |
+| `問自己：這件事做完之後…` | `問自己，這件事做完之後…` |
+
+Keep a colon only in these places:
+- The label separator in a bullet or numbered list item (rule 2).
+- The real title of someone else's work, quoted or linked exactly as published,
+  e.g. `[How to be more ambitious: A tutorial for humans with models](…)`.
+- URLs and YAML keys.
+
+### 2. No em dashes
+
+Never use `—` (English) or `——` (zh-TW).
+- **In a sentence:** replace it with a comma. `self-efficacy — mastery
+  experience — is…` becomes `self-efficacy, mastery experience, is…`;
+  `自我效能感——我們不會…` becomes `自我效能感，我們不會…`.
+- **In a bullet or numbered list item** that pairs a bold label with its
+  explanation: separate them with a colon, `:` in English and `：` in zh-TW.
+
+```markdown
+- **Speed**: the same work, done faster.
+- **速度（Speed）**：同樣的工作，做得更快。
+1. **Mastery experiences**: having succeeded at something similar yourself.
+```
+
+### 3. Bold lead-in headings sit on their own line
+
+A paragraph that opens with a bold lead-in (`**Altitude.** The low-altitude
+request…`) is written as a small heading instead:
+- No trailing period: no `.` in English, no `。` in zh-TW.
+- The paragraph text starts on the next line. End the heading line with a
+  backslash, which is a Markdown hard line break, so the heading and its text
+  stay in one paragraph with a line break between them.
+
+```markdown
+**Altitude**\
+The low-altitude request is "draft an agenda and slides."…
+
+**縮小步伐，不縮小目標**\
+每週挑一件你平常會用慣性完成的任務…
+```
+
+The backslash must be the last character on the line, with no trailing space.
+Without it, the text joins the heading on one line.
+
+### 4. zh-TW punctuation
+
+Use full-width punctuation in zh-TW prose: `，。「」（）；？`. Keep ASCII
+punctuation inside the frontmatter syntax.
+
+### Checklist before you emit
+
+Search both files' bodies and their `title`, `tldr` and `description` values:
+- `—` → none left.
+- `: ` and `：` → only after a bold label in a list item, inside a quoted or
+  linked title of someone else's work, or in a URL.
+- A line ending in `:` or `：` → none (a sentence that introduces a list ends
+  with a comma).
+- `**….**` or `**…。**` → none. Each bold lead-in is on its own line ending in
+  `\`, with the text on the next line.
+- Re-count `tldr` and `description` after these edits (YAML rule 4).
 
 ## YAML formatting — check BEFORE you output
 
@@ -207,7 +285,7 @@ Save as: src/content/posts/builder/the-safe-example.en.md
 ---
 title: "The safe example"
 tldr: '"Just an example" sounds fine. It''s fine because the outer quotes are single, inner quotes stay as ", and every apostrophe is doubled.'
-description: 'A single sentence — under 200 characters, condensed from the tldr, safe to parse.'
+description: 'A single sentence, under 200 characters, condensed from the tldr and safe to parse.'
 category: "Builder"
 tags: ["writing", "example"]
 publishedAt: 2026-09-11
