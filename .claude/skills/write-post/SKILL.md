@@ -17,7 +17,9 @@ This skill runs in two environments. Detect which one you're in before Step 3:
   filesystem tools (Write/Edit) and this repo is present. **Write the files
   directly** to disk and offer to preview/deploy.
 - **Manual mode** (plain claude.ai chat, or anywhere without repo file access) —
-  you CANNOT write files. Instead, **output each file as a Markdown artifact**
+  you cannot write to the repo. Put both files in the **side-panel editor** (see
+  "Side-panel editor" below) so the user can edit them there. Only if the
+  Artifact tool is not available, **output each file as a Markdown artifact**
   (two artifacts, one per language) whose very first line is a save-path header:
 
   ```
@@ -70,8 +72,12 @@ rules) is identical in both modes.
    `draft: false`. If the user specifically wants the post staged without going
    live yet, use `draft: true`.
    - **Claude Code mode:** write the two files to disk with your file tools.
-   - **Manual mode:** output the two files as Markdown artifacts, each led by its
-     `Save as:` header line (see Execution mode above).
+   - **Both modes:** whenever the Artifact tool is available, also open the two
+     files in the side-panel editor (see "Side-panel editor" below) so the user
+     can edit them in Claude's side panel. Do this every time you hand over the
+     Markdown files, not only when asked.
+   - **Manual mode without the Artifact tool:** output the two files as Markdown
+     artifacts, each led by its `Save as:` header line (see Execution mode above).
 
 4. **Tell the user how to preview and publish:**
    - **Claude Code mode:** preview at `/posts/<slug>` (zh-TW) and
@@ -81,10 +87,58 @@ rules) is identical in both modes.
      `draft: true` post returns **404** at its own URL. There is no draft-preview
      mode. Publishing = building and deploying with `draft: false` via
      `npm run deploy`.
-   - **Manual mode:** tell the user to save each artifact at its `Save as:` path
-     in the repo, commit, and deploy (`npm run deploy`, or merge to the branch
-     that deploys). Remind them a `draft: true` post won't appear anywhere until
-     flipped to `false`.
+   - **Manual mode:** once the user confirms the text in the editor, publish it
+     with the `post-to-unfoldingwithpeg` skill if it is available. Otherwise tell
+     the user to save each file at its repo path, commit, and deploy
+     (`npm run deploy`, or merge to `main`, which deploys). Remind them a
+     `draft: true` post won't appear anywhere until flipped to `false`.
+
+## Side-panel editor
+
+The user edits drafts in a published Artifact page: language tabs (中文 /
+English), a Markdown editor beside a live preview, frontmatter checks (required
+keys, tldr ≤ 400, description ≤ 200, category, tags, matching
+`translationKey`), and Save (Cmd/Ctrl+S), Copy and Download .md buttons. Save
+stores both `.md` files inside the artifact.
+
+**Template:** the editor built for the first post, "Ambition Post Editor",
+`https://claude.ai/artifact/9bDeJf16taJiW6GtK6YLrF`. Its page is generic: it
+reads `post.json` to know which post it holds.
+
+### Open a new post in the editor
+
+1. Read the template's page: Artifact `action: "read"`, that URL, `path:
+   "index.html"`. Copy the saved file into your working folder as `index.html`.
+2. Change only the `<title>` to a short name for this post plus "Post Editor",
+   two to four words in all (e.g. `Feedback Loops Post Editor`).
+3. Write `post.json`: `{ "slug": "<slug>", "folder": "<category-folder>" }`.
+4. Put the drafts at `posts/<slug>.zh-tw.md` and `posts/<slug>.en.md`.
+5. Publish as a **new** artifact. Never publish a new post to the template's
+   URL, because that would replace the earlier post's editor. Pass
+   `file_path: "index.html"`, `icon: "edit"`,
+   `capabilities: {"artifact": {}, "downloads": true}`, and `files` mapping
+   `post.json` and both `posts/…md` paths. Use `contentType: "text/markdown"`
+   for the `.md` files.
+6. Tell the user in one line that the editor is open in the side panel and Save
+   keeps their changes.
+
+If the template can't be read, build an equivalent page: load the
+`artifact-design` and `artifact-capabilities` skills first, save with the
+`artifact` capability's files form (`publish({ "posts/…md": … })`), and keep
+the features listed above.
+
+### Every later change
+
+- The user may have edited and saved since your last turn. Before changing a
+  post, read both saved files back (Artifact `action: "read"` with `paths` for
+  the two `.md` files) and build on that text, never on your earlier draft.
+- Apply the change, then republish only the `.md` files to the same artifact
+  (same `file_path` this session, or its `url` from another chat).
+- If the publish is refused because the user saved a newer version, the refusal
+  counts as reading it. Merge your change onto that version and publish again.
+- Keep any local or repo copies of the two files in sync with the editor.
+- When the user confirms the post is final, the editor's saved files are the
+  text to publish.
 
 ## House style — punctuation and headings
 
