@@ -9,6 +9,13 @@ Turn the current conversation into a publishable post for this site: a **pair**
 of Markdown files (Traditional Chinese + English) that share a `translationKey`,
 placed under `src/content/posts/<category-folder>/<slug>.<lang>.md`.
 
+**The user edits drafts in Claude's side panel.** Whenever the Artifact tool is
+available (claude.ai, the Claude apps), hand over every draft by opening it in
+the side-panel editor (see "Side-panel editor" below), in every mode, even when
+you also write or send the `.md` files. Sending files or pasting Markdown in
+the reply is not a substitute. Your reply is not done until the editor's
+artifact card is in it.
+
 ## Execution mode — decide this FIRST
 
 This skill runs in two environments. Detect which one you're in before Step 3:
@@ -72,10 +79,11 @@ rules) is identical in both modes.
    `draft: false`. If the user specifically wants the post staged without going
    live yet, use `draft: true`.
    - **Claude Code mode:** write the two files to disk with your file tools.
-   - **Both modes:** whenever the Artifact tool is available, also open the two
-     files in the side-panel editor (see "Side-panel editor" below) so the user
-     can edit them in Claude's side panel. Do this every time you hand over the
-     Markdown files, not only when asked.
+   - **Both modes, required:** whenever the Artifact tool is available, open the
+     two files in the side-panel editor (see "Side-panel editor" below) so the
+     user can edit them in Claude's side panel. Do this every time you hand over
+     the Markdown files, not only when asked. Having file tools does not make a
+     claude.ai chat "Claude Code mode" for this step.
    - **Manual mode without the Artifact tool:** output the two files as Markdown
      artifacts, each led by its `Save as:` header line (see Execution mode above).
 
