@@ -1,0 +1,30 @@
+# unfolding with Peg — Peggy Pei-Chun Hsieh (謝佩君)
+
+> Bilingual (繁體中文 / English) personal site of Peggy Pei-Chun Hsieh, a
+> learning experience designer in Taiwan who builds products with AI for the
+> people who make learning happen. Currently at TalentLabs. The site covers her
+> work, writing on learning design, AI, and building, and a job tracker.
+
+Peggy designs learning experiences and builds AI-assisted tools for educators,
+mentors, and L&D teams. She writes about learning experience design, AI in
+education and safety, and shipping products as a solo builder.
+
+## Key pages
+
+- [Home (繁中)](https://studiounfolding.cc/): Who Peggy is and what she is working on.
+- [Home (English)](https://studiounfolding.cc/en/): English introduction and current work.
+- [About (繁中)](https://studiounfolding.cc/about/): Background and approach.
+- [About (English)](https://studiounfolding.cc/en/about/): Background and approach in English.
+- [Writing (繁中)](https://studiounfolding.cc/posts/): All posts, newest first.
+- [Writing (English)](https://studiounfolding.cc/en/posts/): All posts in English.
+
+## Reference
+
+- [Sitemap](https://studiounfolding.cc/sitemap.xml): Full list of indexable URLs.
+- [LinkedIn](https://www.linkedin.com/in/peggy-pei-chun-hsieh/)
+- [GitHub](https://github.com/peggy1213-create)
+
+## Notes
+
+- Posts are published in paired zh-TW and English versions where a translation exists.
+- The /tracker/ section is a private tool and is not part of the public content.

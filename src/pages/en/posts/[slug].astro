@@ -31,9 +31,34 @@ const published = df.format(post.data.publishedAt);
 const updated = df.format(post.data.updatedAt);
 const showUpdated =
   post.data.updatedAt.getTime() !== post.data.publishedAt.getTime();
+
+// BlogPosting structured data for this article. Author/publisher reference the
+// site-wide Person node (@id) emitted by BaseLayout.
+const site = Astro.site ?? new URL("https://studiounfolding.cc");
+const articleLd = {
+  "@type": "BlogPosting",
+  headline: post.data.title,
+  description: post.data.description,
+  inLanguage: "en",
+  datePublished: post.data.publishedAt.toISOString(),
+  dateModified: post.data.updatedAt.toISOString(),
+  author: { "@id": `${site.origin}/#person` },
+  publisher: { "@id": `${site.origin}/#person` },
+  mainEntityOfPage: new URL(`/en/posts/${postSlug(post)}/`, site).href,
+  articleSection: post.data.category,
+  keywords: post.data.tags,
+};
 ---
 
-<BaseLayout lang="en" title={post.data.title} description={post.data.description}>
+<BaseLayout
+  lang="en"
+  title={post.data.title}
+  description={post.data.description}
+  ogType="article"
+  publishedTime={post.data.publishedAt.toISOString()}
+  modifiedTime={post.data.updatedAt.toISOString()}
+  jsonLd={articleLd}
+>
   <article class="wrap wrap--prose post">
     <header class="post__head">
       <p class="post__meta">
