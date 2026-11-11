@@ -5,6 +5,10 @@ import validateTranslations from "./integrations/validate-translations.mjs";
 
 // https://astro.build/config
 export default defineConfig({
+  // Canonical production origin. Used to build absolute canonical/Open Graph
+  // URLs, hreflang alternates and the sitemap. Must have no trailing path.
+  site: "https://studiounfolding.cc",
+
   // Server-rendered on Cloudflare Workers via the Cloudflare adapter.
   output: "server",
   adapter: cloudflare(),
