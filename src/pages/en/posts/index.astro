@@ -3,11 +3,12 @@ export const prerender = true;
 
 import BaseLayout from "../../../layouts/BaseLayout.astro";
 import PostCard from "../../../components/PostCard.astro";
+import Search from "../../../components/Search.astro";
+import TagFilter from "../../../components/TagFilter.astro";
 import {
   getCategoryGroups,
   getTagGroups,
   categoryHref,
-  tagHref,
 } from "../../../utils/i18n";
 
 const lang = "en";
@@ -17,10 +18,12 @@ const tags = await getTagGroups(lang);
 
 <BaseLayout
   lang={lang}
-  title="Writing — Peggy"
-  description="Writing by Peggy, grouped by topic: learning design, building products, tech, investment, and more."
+  title="Knowledge hub — Peggy"
+  description="Peggy's knowledge hub: a weekly piece unpacking AI, learning design, products, and tech. Search, or browse by topic."
 >
-  <div class="wrap wrap--prose">
+  <div class="wrap wrap--prose" data-hub>
+    <Search lang={lang} />
+
     <nav class="browse" aria-label="Browse by category or tag">
       <div class="browse__group">
         <h2 class="browse__label">Categories</h2>
@@ -40,20 +43,7 @@ const tags = await getTagGroups(lang);
           }
         </ul>
       </div>
-      <div class="browse__group">
-        <h2 class="browse__label">Tags</h2>
-        <ul class="chips">
-          {
-            tags.map((t) => (
-              <li>
-                <a class="uwp-tag uwp-tag--outline" href={tagHref(t.tag, lang)}>
-                  #{t.tag}
-                </a>
-              </li>
-            ))
-          }
-        </ul>
-      </div>
+      <TagFilter tags={tags} lang={lang} />
     </nav>
 
     {
@@ -78,10 +68,6 @@ const tags = await getTagGroups(lang);
 </BaseLayout>
 
 <style>
-  .lede {
-    margin-top: var(--uwp-space-2);
-    color: var(--uwp-color-text-muted);
-  }
   .browse {
     margin-top: var(--uwp-space-8);
     padding-block: var(--uwp-space-6);
@@ -123,5 +109,10 @@ const tags = await getTagGroups(lang);
     font-size: var(--uwp-text-sm);
     font-weight: var(--uwp-weight-normal);
     color: var(--uwp-color-text-subtle);
+  }
+  /* While a tag filter is active the per-category counts are the full totals,
+     which would misread next to a filtered subset — hide them. */
+  [data-hub].is-filtering .cat-group__count {
+    display: none;
   }
 </style>
