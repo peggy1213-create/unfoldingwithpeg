@@ -21,12 +21,10 @@ interface Props {
 
 const { tags, lang } = Astro.props;
 const en = lang === "en";
-const label = en ? "Tags" : "標籤";
 const clearLabel = en ? "Clear filters" : "清除篩選";
 ---
 
 <div class="browse__group">
-  <h2 class="browse__label">{label}</h2>
   <ul class="chips" data-tag-list>
     {
       tags.map((t) => (
