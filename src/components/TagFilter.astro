@@ -1,0 +1,183 @@
+---
+/**
+ * Tag browse group for the knowledge hub, upgraded to an in-place toggle filter.
+ *
+ * Progressive enhancement: each chip is a real link to its /tag/<tag>/ page, so
+ * with no JavaScript (and for crawlers) tags still navigate as before. When JS
+ * runs, clicks are intercepted to toggle the tag as a live filter over the post
+ * cards on the page (matching is OR — a card shows if it carries ANY active tag),
+ * clicking an active chip again unselects it, and a status line offers "clear".
+ *
+ * The script scopes all its queries to the `[data-hub]` container so it never
+ * touches the nav/footer, and reads/writes `?tags=a,b` so a filtered view is
+ * shareable and survives reload.
+ */
+import { tagHref, type Lang, type TagGroup } from "../utils/i18n";
+
+interface Props {
+  tags: TagGroup[];
+  lang: Lang;
+}
+
+const { tags, lang } = Astro.props;
+const en = lang === "en";
+const label = en ? "Tags" : "標籤";
+const clearLabel = en ? "Clear filters" : "清除篩選";
+---
+
+<div class="browse__group">
+  <h2 class="browse__label">{label}</h2>
+  <ul class="chips" data-tag-list>
+    {
+      tags.map((t) => (
+        <li>
+          <a
+            class="uwp-tag uwp-tag--outline tag-chip"
+            href={tagHref(t.tag, lang)}
+            data-tag={t.tag}
+            aria-pressed="false"
+          >
+            #{t.tag}
+          </a>
+        </li>
+      ))
+    }
+  </ul>
+  <p class="filter-status" data-filter-status data-lang={lang} aria-live="polite" hidden>
+    <span data-filter-count></span>
+    <button type="button" class="filter-clear uwp-link" data-filter-clear>
+      {clearLabel}
+    </button>
+  </p>
+</div>
+
+<script>
+  (() => {
+    const hub = document.querySelector("[data-hub]");
+    if (!hub) return;
+
+    const chips = Array.from(
+      hub.querySelectorAll<HTMLAnchorElement>(".tag-chip[data-tag]"),
+    );
+    if (!chips.length) return;
+
+    const cards = Array.from(
+      hub.querySelectorAll<HTMLElement>("[data-tags]"),
+    );
+    const groups = Array.from(hub.querySelectorAll<HTMLElement>(".cat-group"));
+    const status = hub.querySelector<HTMLElement>("[data-filter-status]");
+    const countEl = hub.querySelector<HTMLElement>("[data-filter-count]");
+    const clearBtn = hub.querySelector<HTMLElement>("[data-filter-clear]");
+    const lang = status?.dataset.lang ?? "zh-TW";
+
+    const active = new Set<string>();
+
+    const cardTags = (card: HTMLElement) =>
+      (card.getAttribute("data-tags") ?? "").split(" ").filter(Boolean);
+
+    function countLabel(n: number) {
+      if (lang === "en") return `${n} ${n === 1 ? "post" : "posts"}`;
+      return `${n} 篇`;
+    }
+
+    function apply() {
+      const act = [...active];
+      const filtering = act.length > 0;
+
+      for (const card of cards) {
+        const tags = cardTags(card);
+        card.hidden = filtering && !act.some((a) => tags.includes(a));
+      }
+
+      // Hide category sections that have no visible cards while filtering.
+      for (const g of groups) {
+        g.hidden = filtering && !g.querySelector("[data-tags]:not([hidden])");
+      }
+
+      for (const chip of chips) {
+        chip.setAttribute(
+          "aria-pressed",
+          chip.dataset.tag && active.has(chip.dataset.tag) ? "true" : "false",
+        );
+      }
+
+      hub!.classList.toggle("is-filtering", filtering);
+      if (status) status.hidden = !filtering;
+      if (countEl) {
+        const n = cards.filter((c) => !c.hidden).length;
+        countEl.textContent = countLabel(n);
+      }
+
+      const url = new URL(location.href);
+      if (filtering) url.searchParams.set("tags", act.join(","));
+      else url.searchParams.delete("tags");
+      history.replaceState(null, "", url);
+    }
+
+    for (const chip of chips) {
+      chip.addEventListener("click", (e) => {
+        e.preventDefault();
+        const t = chip.dataset.tag;
+        if (!t) return;
+        active.has(t) ? active.delete(t) : active.add(t);
+        apply();
+      });
+    }
+
+    clearBtn?.addEventListener("click", (e) => {
+      e.preventDefault();
+      active.clear();
+      apply();
+    });
+
+    // Restore from ?tags=a,b on load.
+    const initial = new URL(location.href).searchParams.get("tags");
+    if (initial) {
+      const known = new Set(chips.map((c) => c.dataset.tag));
+      for (const t of initial.split(",").filter(Boolean)) {
+        if (known.has(t)) active.add(t);
+      }
+    }
+    apply();
+  })();
+</script>
+
+<style>
+  /* These chips live in this component now, so the hub index's scoped `.chips`
+     rules don't reach them — restate the horizontal, unbulleted layout here. */
+  .chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--uwp-space-2);
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  .filter-status {
+    display: none;
+    margin: var(--uwp-space-3) 0 0;
+    align-items: baseline;
+    gap: var(--uwp-space-3);
+    font-size: var(--uwp-text-sm);
+    color: var(--uwp-color-text-muted);
+  }
+  /* Revealed by JS (removes [hidden]); keeps it invisible for no-JS users. */
+  .filter-status:not([hidden]) {
+    display: flex;
+  }
+  .filter-clear {
+    appearance: none;
+    background: none;
+    border: 0;
+    padding: 0;
+    font: inherit;
+    cursor: pointer;
+  }
+
+  /* Active tag chips: filled to read as "selected". */
+  .tag-chip[aria-pressed="true"] {
+    background-color: var(--uwp-color-primary-soft);
+    border-color: var(--uwp-color-primary);
+    color: var(--uwp-color-primary-soft-text);
+  }
+</style>

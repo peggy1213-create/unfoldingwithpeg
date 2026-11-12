@@ -1,0 +1,130 @@
+---
+/**
+ * Site search for the knowledge hub, backed by Pagefind.
+ *
+ * Pagefind indexes the prerendered article HTML at build time (see the
+ * `pagefind` step in package.json) and ships a tiny client runtime from
+ * `/pagefind/`. Those files only exist AFTER a production build, so in
+ * `astro dev` the loader 404s and the search box hides itself gracefully —
+ * run `npm run build` + `npm run preview` to exercise search locally.
+ *
+ * Results are scoped to the current language via Pagefind's `lang` filter,
+ * which each post page sets with `data-pagefind-filter` (see posts/[slug].astro).
+ */
+interface Props {
+  lang: "zh-TW" | "en";
+}
+
+const { lang } = Astro.props;
+const en = lang === "en";
+
+const label = en ? "Search" : "搜尋";
+const placeholder = en ? "Search articles…" : "搜尋文章⋯";
+const clearLabel = en ? "Clear" : "清除";
+const zeroResults = en ? "No results for [SEARCH_TERM]" : "找不到「[SEARCH_TERM]」的相關文章";
+const noscript = en
+  ? "Search needs JavaScript — browse by category or tag below."
+  : "搜尋需要 JavaScript，可改用下方分類或標籤瀏覽。";
+---
+
+<section class="hub-search" aria-label={label}>
+  <div
+    id="hub-search-ui"
+    data-lang={lang}
+    data-placeholder={placeholder}
+    data-clear={clearLabel}
+    data-zero={zeroResults}
+  >
+  </div>
+  <noscript><p class="hub-search__noscript">{noscript}</p></noscript>
+</section>
+
+<link rel="stylesheet" href="/pagefind/pagefind-ui.css" />
+
+<script is:inline>
+  (function () {
+    var el = document.getElementById("hub-search-ui");
+    if (!el) return;
+    var d = el.dataset;
+    function init() {
+      if (!window.PagefindUI) return;
+      new window.PagefindUI({
+        element: "#hub-search-ui",
+        showSubResults: true,
+        showImages: false,
+        pageSize: 5,
+        mergeFilter: { lang: d.lang },
+        translations: {
+          placeholder: d.placeholder,
+          clear_search: d.clear,
+          zero_results: d.zero,
+        },
+        resetStyles: false,
+      });
+    }
+    var s = document.createElement("script");
+    s.src = "/pagefind/pagefind-ui.js";
+    s.onload = init;
+    s.onerror = function () {
+      // Index not built yet (e.g. `astro dev`): hide the search UI.
+      var box = el.closest(".hub-search");
+      if (box) box.setAttribute("hidden", "");
+    };
+    document.head.appendChild(s);
+  })();
+</script>
+
+<style>
+  .hub-search {
+    margin-top: var(--uwp-space-6);
+  }
+  .hub-search[hidden] {
+    display: none;
+  }
+  .hub-search__noscript {
+    margin: 0;
+    color: var(--uwp-color-text-muted);
+    font-size: var(--uwp-text-sm);
+  }
+
+  /* Map Pagefind's default UI onto the site's design tokens so it matches the
+     brand and follows light/dark automatically. The runtime injects
+     `.pagefind-ui` inside this component's element, so it carries the scope. */
+  .hub-search :global(.pagefind-ui) {
+    --pagefind-ui-primary: var(--uwp-color-primary);
+    --pagefind-ui-text: var(--uwp-color-text);
+    --pagefind-ui-background: var(--uwp-color-surface);
+    --pagefind-ui-border: var(--uwp-color-border);
+    --pagefind-ui-tag: var(--uwp-color-surface-sunken);
+    --pagefind-ui-border-width: 1px;
+    --pagefind-ui-border-radius: var(--uwp-radius-md);
+    --pagefind-ui-font: inherit;
+  }
+
+  /* Results are already locked to the page's language via `mergeFilter`, so the
+     `lang` facet panel would only ever show the current language — hide it and
+     let the results use the full width. */
+  .hub-search :global(.pagefind-ui__filter-panel) {
+    /* Pagefind's own rule doubles its scope class to specificity 0,3,0 and loads
+       after this style, so `!important` is needed to override it. */
+    display: none !important;
+  }
+
+  /* Show the clear control as an ✕ icon instead of the word "Clear". The text
+     node stays in the DOM (hidden via font-size:0) so it remains the button's
+     accessible label for screen readers. */
+  .hub-search :global(.pagefind-ui__search-clear) {
+    font-size: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding-inline: 0.65rem;
+    border: 0;
+    background: transparent;
+  }
+  .hub-search :global(.pagefind-ui__search-clear)::after {
+    content: "✕";
+    font-size: 0.95rem;
+    line-height: 1;
+  }
+</style>

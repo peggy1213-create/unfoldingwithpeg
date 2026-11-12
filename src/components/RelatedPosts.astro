@@ -1,0 +1,96 @@
+---
+/**
+ * "Related posts" block for the foot of an article. Picks the most topically
+ * similar posts in the same language via `getRelatedPosts` (shared tags, then
+ * category, then recency) and renders them as internal links. Sits OUTSIDE the
+ * article's `data-pagefind-body`, so these links aren't indexed as article text.
+ * Renders nothing when there are no other posts in the language.
+ */
+import {
+  getRelatedPosts,
+  postHref,
+  categorySlug,
+  categoryHref,
+  type Post,
+  type Lang,
+} from "../utils/i18n";
+
+interface Props {
+  post: Post;
+  lang: Lang;
+  limit?: number;
+}
+
+const { post, lang, limit = 3 } = Astro.props;
+const related = await getRelatedPosts(post, limit);
+const en = lang === "en";
+const heading = en ? "Related posts" : "相關文章";
+const df = new Intl.DateTimeFormat(en ? "en" : "zh-TW", { dateStyle: "long" });
+---
+
+{
+  related.length > 0 && (
+    <aside class="related" aria-labelledby="related-head">
+      <h2 class="related__head" id="related-head">
+        {heading}
+      </h2>
+      <ul class="related__list">
+        {related.map((p) => (
+          <li class="related__item">
+            <a class="related__link uwp-link" href={postHref(p)}>
+              {p.data.title}
+            </a>
+            <p class="related__meta">
+              <a
+                class="uwp-tag uwp-tag--blue"
+                href={categoryHref(categorySlug(p), lang)}
+              >
+                {p.data.category}
+              </a>
+              <time datetime={p.data.publishedAt.toISOString()}>
+                {df.format(p.data.publishedAt)}
+              </time>
+            </p>
+          </li>
+        ))}
+      </ul>
+    </aside>
+  )
+}
+
+<style>
+  .related {
+    margin-top: var(--uwp-space-12);
+    padding-top: var(--uwp-space-8);
+    border-top: 1px solid var(--uwp-color-border-subtle);
+  }
+  .related__head {
+    font-size: var(--uwp-text-sm);
+    font-weight: var(--uwp-weight-medium);
+    color: var(--uwp-color-text-subtle);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    margin: 0 0 var(--uwp-space-5);
+  }
+  .related__list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--uwp-space-6);
+  }
+  .related__link {
+    font-size: var(--uwp-text-xl);
+    font-weight: var(--uwp-weight-semibold);
+    line-height: var(--uwp-leading-snug, 1.3);
+  }
+  .related__meta {
+    display: flex;
+    align-items: center;
+    gap: var(--uwp-space-3);
+    margin: var(--uwp-space-2) 0 0;
+    font-size: var(--uwp-text-sm);
+    color: var(--uwp-color-text-muted);
+  }
+</style>

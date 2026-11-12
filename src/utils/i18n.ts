@@ -97,6 +97,43 @@ export async function getCategoryGroups(lang: Lang): Promise<CategoryGroup[]> {
   );
 }
 
+/**
+ * Posts related to `post`, best first, for the "related posts" block.
+ *
+ * Candidates are all other non-draft posts in the SAME language (its own
+ * translation lives in the other language, so it never appears here). Each is
+ * scored by topical overlap — every shared tag counts 3, a shared category 2 —
+ * and ties break by recency. Posts that share nothing still rank (score 0) and
+ * are ordered by recency, so the block fills to `limit` as long as that many
+ * other posts exist. Returns fewer only when the archive is smaller than that.
+ *
+ * Runs at build time (post pages are prerendered), so this emits plain internal
+ * links with no runtime cost.
+ */
+export async function getRelatedPosts(
+  post: Post,
+  limit = 3,
+): Promise<Post[]> {
+  const pool = await getPostsByLang(post.data.lang); // non-draft, newest first
+  const myCategory = categorySlug(post);
+  const myTags = new Set(post.data.tags);
+
+  return pool
+    .filter((p) => p.id !== post.id)
+    .map((p) => {
+      const sharedTags = p.data.tags.filter((t) => myTags.has(t)).length;
+      const sameCategory = categorySlug(p) === myCategory ? 1 : 0;
+      return { post: p, score: sharedTags * 3 + sameCategory * 2 };
+    })
+    .sort(
+      (a, b) =>
+        b.score - a.score ||
+        b.post.data.publishedAt.getTime() - a.post.data.publishedAt.getTime(),
+    )
+    .slice(0, limit)
+    .map((s) => s.post);
+}
+
 /** One tag's posts (newest first). */
 export interface TagGroup {
   tag: string;

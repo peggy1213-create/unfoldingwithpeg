@@ -24,7 +24,7 @@ const df = new Intl.DateTimeFormat(lang === "en" ? "en" : "zh-TW", {
 const published = df.format(post.data.publishedAt);
 ---
 
-<article class="post-card">
+<article class="post-card" data-tags={post.data.tags.join(" ")}>
   <p class="post-card__meta">
     <time datetime={post.data.publishedAt.toISOString()}>{published}</time>
     {

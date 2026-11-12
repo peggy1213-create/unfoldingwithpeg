@@ -3,6 +3,7 @@ export const prerender = true;
 
 import { render } from "astro:content";
 import BaseLayout from "../../../layouts/BaseLayout.astro";
+import RelatedPosts from "../../../components/RelatedPosts.astro";
 import {
   getPostsByLang,
   postSlug,
@@ -59,7 +60,11 @@ const articleLd = {
   modifiedTime={post.data.updatedAt.toISOString()}
   jsonLd={articleLd}
 >
-  <article class="wrap wrap--prose post">
+  <article
+    class="wrap wrap--prose post"
+    data-pagefind-body
+    data-pagefind-filter="lang:en"
+  >
     <header class="post__head">
       <p class="post__meta">
         <a class="uwp-tag uwp-tag--blue" href={categoryHref(catSlug, lang)}>
@@ -96,6 +101,10 @@ const articleLd = {
       <Content />
     </div>
   </article>
+
+  <div class="wrap wrap--prose">
+    <RelatedPosts post={post} lang={lang} />
+  </div>
 </BaseLayout>
 
 <style>
