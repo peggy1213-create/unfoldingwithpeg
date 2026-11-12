@@ -8,12 +8,25 @@ import TagFilter from "../../components/TagFilter.astro";
 import {
   getCategoryGroups,
   getTagGroups,
+  getPostsByLang,
   categoryHref,
 } from "../../utils/i18n";
 
 const lang = "zh-TW";
 const groups = await getCategoryGroups(lang);
 const tags = await getTagGroups(lang);
+
+// Timeline view: all posts newest-first, grouped by publish year (newest first).
+const posts = await getPostsByLang(lang);
+const yearGroups = [
+  ...posts
+    .reduce((map, post) => {
+      const year = post.data.publishedAt.getFullYear();
+      (map.get(year) ?? map.set(year, []).get(year))!.push(post);
+      return map;
+    }, new Map<number, typeof posts>())
+    .entries(),
+].sort((a, b) => b[0] - a[0]);
 ---
 
 <BaseLayout
@@ -21,11 +34,25 @@ const tags = await getTagGroups(lang);
   title="知識庫 — Peggy"
   description="Peggy的知識庫：每週一篇，拆解 AI、學習設計、產品與科技。可搜尋或依主題瀏覽。"
 >
-  <div class="wrap wrap--prose" data-hub>
+  <div class="wrap wrap--prose" data-hub data-view="category">
     <Search lang={lang} />
 
     <nav class="browse" aria-label="依分類或標籤瀏覽">
-      <div class="browse__group">
+      <div
+        class="view-toggle"
+        role="group"
+        aria-label="瀏覽方式"
+        data-view-toggle
+      >
+        <button type="button" data-view-btn="category" aria-pressed="true">
+          依分類
+        </button>
+        <button type="button" data-view-btn="timeline" aria-pressed="false">
+          依時間
+        </button>
+      </div>
+
+      <div class="browse__group" data-view-only="category">
         <ul class="chips">
           {
             groups.map((group) => (
@@ -45,23 +72,75 @@ const tags = await getTagGroups(lang);
       <TagFilter tags={tags} lang={lang} />
     </nav>
 
-    {
-      groups.map((group) => (
-        <section class="cat-group">
-          <h2 class="cat-group__head">
-            <a class="uwp-link" href={categoryHref(group.slug, lang)}>
-              {group.name}
-            </a>
-            <span class="cat-group__count">{group.posts.length} 篇</span>
-          </h2>
-          {group.posts.map((post) => (
-            <PostCard post={post} lang={lang} />
-          ))}
-        </section>
-      ))
-    }
+    <div data-view-panel="category">
+      {
+        groups.map((group) => (
+          <section class="cat-group" data-group>
+            <h2 class="cat-group__head">
+              <a class="uwp-link" href={categoryHref(group.slug, lang)}>
+                {group.name}
+              </a>
+              <span class="cat-group__count">{group.posts.length} 篇</span>
+            </h2>
+            {group.posts.map((post) => (
+              <PostCard post={post} lang={lang} />
+            ))}
+          </section>
+        ))
+      }
+    </div>
+
+    <div data-view-panel="timeline" hidden>
+      {
+        yearGroups.map(([year, yearPosts]) => (
+          <section class="cat-group" data-group>
+            <h2 class="cat-group__head">
+              <span>{year}</span>
+              <span class="cat-group__count">{yearPosts.length} 篇</span>
+            </h2>
+            {yearPosts.map((post) => (
+              <PostCard post={post} lang={lang} showCategory />
+            ))}
+          </section>
+        ))
+      }
+    </div>
   </div>
 </BaseLayout>
+
+<script>
+  (() => {
+    const hub = document.querySelector<HTMLElement>("[data-hub]");
+    if (!hub) return;
+
+    const btns = Array.from(
+      hub.querySelectorAll<HTMLButtonElement>("[data-view-btn]"),
+    );
+    const panels = Array.from(
+      hub.querySelectorAll<HTMLElement>("[data-view-panel]"),
+    );
+    const viewOnly = Array.from(
+      hub.querySelectorAll<HTMLElement>("[data-view-only]"),
+    );
+    if (!btns.length) return;
+
+    function setView(view: string) {
+      hub!.dataset.view = view;
+      for (const b of btns)
+        b.setAttribute(
+          "aria-pressed",
+          b.dataset.viewBtn === view ? "true" : "false",
+        );
+      for (const p of panels) p.hidden = p.dataset.viewPanel !== view;
+      for (const el of viewOnly) el.hidden = el.dataset.viewOnly !== view;
+      // Let the tag filter re-scope to the now-visible panel.
+      hub!.dispatchEvent(new CustomEvent("hub:viewchange"));
+    }
+
+    for (const b of btns)
+      b.addEventListener("click", () => setView(b.dataset.viewBtn ?? "category"));
+  })();
+</script>
 
 <style>
   .browse {
@@ -71,6 +150,31 @@ const tags = await getTagGroups(lang);
     display: flex;
     flex-direction: column;
     gap: var(--uwp-space-5);
+  }
+  .view-toggle {
+    display: inline-flex;
+    align-self: flex-start;
+    gap: 2px;
+    padding: 2px;
+    border: 1px solid var(--uwp-color-border-subtle);
+    border-radius: var(--uwp-radius-full, 999px);
+    background: var(--uwp-color-surface-subtle, transparent);
+  }
+  .view-toggle button {
+    appearance: none;
+    border: 0;
+    background: none;
+    cursor: pointer;
+    font: inherit;
+    font-size: var(--uwp-text-sm);
+    color: var(--uwp-color-text-muted);
+    padding: var(--uwp-space-1) var(--uwp-space-4);
+    border-radius: var(--uwp-radius-full, 999px);
+  }
+  .view-toggle button[aria-pressed="true"] {
+    background-color: var(--uwp-color-primary-soft);
+    color: var(--uwp-color-primary-soft-text);
+    font-weight: var(--uwp-weight-medium);
   }
   .browse__label {
     font-size: var(--uwp-text-sm);
