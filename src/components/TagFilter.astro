@@ -59,10 +59,15 @@ const clearLabel = en ? "Clear filters" : "清除篩選";
     );
     if (!chips.length) return;
 
-    const cards = Array.from(
-      hub.querySelectorAll<HTMLElement>("[data-tags]"),
-    );
-    const groups = Array.from(hub.querySelectorAll<HTMLElement>(".cat-group"));
+    // Post cards and their group sections live inside view panels; the index
+    // may show more than one view (category / timeline). Scope to whichever
+    // panel is currently visible so filtering and counts never span both.
+    const visibleScope = () =>
+      hub.querySelector<HTMLElement>("[data-view-panel]:not([hidden])") ?? hub;
+    const cardsIn = (scope: HTMLElement) =>
+      Array.from(scope.querySelectorAll<HTMLElement>("[data-tags]"));
+    const groupsIn = (scope: HTMLElement) =>
+      Array.from(scope.querySelectorAll<HTMLElement>("[data-group], .cat-group"));
     const status = hub.querySelector<HTMLElement>("[data-filter-status]");
     const countEl = hub.querySelector<HTMLElement>("[data-filter-count]");
     const clearBtn = hub.querySelector<HTMLElement>("[data-filter-clear]");
@@ -81,13 +86,16 @@ const clearLabel = en ? "Clear filters" : "清除篩選";
     function apply() {
       const act = [...active];
       const filtering = act.length > 0;
+      const scope = visibleScope();
+      const cards = cardsIn(scope);
+      const groups = groupsIn(scope);
 
       for (const card of cards) {
         const tags = cardTags(card);
         card.hidden = filtering && !act.some((a) => tags.includes(a));
       }
 
-      // Hide category sections that have no visible cards while filtering.
+      // Hide group sections (category or year) that have no visible cards.
       for (const g of groups) {
         g.hidden = filtering && !g.querySelector("[data-tags]:not([hidden])");
       }
@@ -104,6 +112,19 @@ const clearLabel = en ? "Clear filters" : "清除篩選";
       if (countEl) {
         const n = cards.filter((c) => !c.hidden).length;
         countEl.textContent = countLabel(n);
+      }
+
+      // Keep hidden-panel cards consistent so a later view switch starts clean.
+      for (const other of hub!.querySelectorAll<HTMLElement>(
+        "[data-view-panel][hidden] [data-tags]",
+      )) {
+        const tags = cardTags(other);
+        other.hidden = filtering && !act.some((a) => tags.includes(a));
+      }
+      for (const g of hub!.querySelectorAll<HTMLElement>(
+        "[data-view-panel][hidden] [data-group], [data-view-panel][hidden] .cat-group",
+      )) {
+        g.hidden = filtering && !g.querySelector("[data-tags]:not([hidden])");
       }
 
       const url = new URL(location.href);
@@ -127,6 +148,9 @@ const clearLabel = en ? "Clear filters" : "清除篩選";
       active.clear();
       apply();
     });
+
+    // Re-run when the index switches between category / timeline views.
+    hub.addEventListener("hub:viewchange", () => apply());
 
     // Restore from ?tags=a,b on load.
     const initial = new URL(location.href).searchParams.get("tags");
