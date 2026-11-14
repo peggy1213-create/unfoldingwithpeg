@@ -44,9 +44,6 @@ export const GET: APIRoute = async () => {
     entries.push({ path: en, alternates });
   }
 
-  // --- zh-only static pages. ---
-  entries.push({ path: "/jobs/" });
-
   // --- Blog posts (both languages), with hreflang alternates when a
   //     translated counterpart exists. ---
   for (const lang of ["zh-TW", "en"] as Lang[]) {

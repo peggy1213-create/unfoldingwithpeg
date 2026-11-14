@@ -1,16 +1,19 @@
 # studiounfolding.cc — crawl policy
-# Default: allow everything. The /tracker/ app (job tracker + its API) is a
-# private tool, not content, so keep it out of search and AI indexes.
+# Default: allow everything. The /tracker/ app (job tracker + its API) and
+# /jobs/ board are private tools behind Cloudflare Access, not content, so keep
+# them out of search and AI indexes.
 
 User-agent: *
 Allow: /
 Disallow: /tracker/
+Disallow: /jobs/
 
 # Generative-AI / LLM crawlers — explicitly allowed so the site can be cited
 # and surfaced in AI answers (ChatGPT, Claude, Perplexity, Google AI, etc.).
 User-agent: GPTBot
 Allow: /
 Disallow: /tracker/
+Disallow: /jobs/
 
 User-agent: OAI-SearchBot
 Allow: /
