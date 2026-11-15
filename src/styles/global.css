@@ -532,6 +532,19 @@ a.uwp-tag:focus-visible { outline: none; box-shadow: var(--uwp-shadow-focus); }
    4. Page layout  (site-specific scaffolding — the only bespoke CSS)
    ------------------------------------------------------------------------- */
 
+/* Visually hidden, still read by screen readers and search engines */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
 /* Skip link */
 .skip-link {
   position: absolute;
@@ -902,3 +915,101 @@ a.card-link > .uwp-card { height: 100%; }
 
 /* Footer language switch — spacing preserved from the original inline style. */
 .site-footer__lang { margin-top: var(--uwp-space-2); }
+
+/* ---------------------------------------------------------------------------
+   6. Force-directed graph  (src/scripts/forceGraph.ts)
+   Nodes are created in the browser, so these rules are global rather than
+   scoped to a component. Used by the knowledge map and the per-post graph.
+   ------------------------------------------------------------------------- */
+.fg {
+  background-color: var(--uwp-color-surface);
+  border: 1px solid var(--uwp-color-border-subtle);
+  border-radius: var(--uwp-radius-xl);
+  overflow: hidden;
+}
+.fg svg {
+  display: block;
+  width: 100%;
+  touch-action: pan-y;
+}
+.fg line {
+  stroke: var(--uwp-color-border-strong);
+  stroke-width: 1.5;
+  opacity: 0.45;
+  transition: opacity var(--uwp-transition);
+}
+.fg svg.is-focus line { opacity: 0.08; }
+.fg svg.is-focus line.is-on { opacity: 1; stroke-width: 2.25; }
+
+.fg-node,
+.fg-node:focus {
+  cursor: grab;
+  outline: none;
+  text-decoration: none;
+  touch-action: none;
+  transition: opacity var(--uwp-transition);
+}
+.fg-node:active { cursor: grabbing; }
+.fg svg.is-focus .fg-node:not(.is-on) { opacity: 0.25; }
+.fg-node:focus-visible circle:not(.fg-hit) {
+  stroke: var(--uwp-color-focus-ring);
+  stroke-width: 3;
+}
+/* Larger invisible hit target; must win over every per-kind circle rule. */
+.fg-node .fg-hit {
+  fill: transparent !important;
+  stroke: none !important;
+}
+
+.fg-node text {
+  font-family: var(--uwp-font-sans);
+  font-size: 12px;
+  fill: var(--uwp-color-text-muted);
+  paint-order: stroke;
+  stroke: var(--uwp-color-surface);
+  stroke-width: 4px;
+  stroke-linejoin: round;
+  user-select: none;
+  transition: opacity var(--uwp-transition);
+}
+/* Quiet nodes keep their label hidden until hovered, focused or traced. */
+.fg-node--quiet text { opacity: 0; }
+.fg-node--quiet:hover text,
+.fg-node--quiet:focus-visible text,
+.fg-node--quiet.is-on text { opacity: 1; }
+
+.fg-node--cat circle { fill: var(--c); }
+.fg-node--cat text {
+  font-family: var(--uwp-font-display);
+  font-size: 15px;
+  font-weight: 700;
+  fill: var(--uwp-color-text);
+}
+.fg-node--cat[aria-pressed="true"] circle:not(.fg-hit) {
+  stroke: var(--uwp-color-text);
+  stroke-width: 3;
+}
+
+.fg-node--post circle {
+  fill: var(--uwp-color-surface);
+  stroke: var(--c);
+  stroke-width: 3;
+}
+.fg-node--post text {
+  font-size: 13px;
+  font-weight: 600;
+  fill: var(--uwp-color-text);
+}
+.fg-node--current circle:not(.fg-hit) { fill: var(--c); }
+.fg-node--current text { font-size: 14px; font-weight: 700; }
+
+.fg-node--tag circle { fill: var(--uwp-color-text-subtle); }
+.fg-node--tag[aria-pressed="true"] circle {
+  fill: var(--uwp-color-primary);
+  stroke: var(--uwp-color-primary-soft);
+  stroke-width: 6;
+}
+.fg-node--tag[aria-pressed="true"] text {
+  fill: var(--uwp-color-text);
+  font-weight: 600;
+}

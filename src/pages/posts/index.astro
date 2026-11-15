@@ -5,6 +5,7 @@ import BaseLayout from "../../layouts/BaseLayout.astro";
 import PostCard from "../../components/PostCard.astro";
 import Search from "../../components/Search.astro";
 import TagFilter from "../../components/TagFilter.astro";
+import KnowledgeMap from "../../components/KnowledgeMap.astro";
 import {
   getCategoryGroups,
   getTagGroups,
@@ -32,9 +33,15 @@ const yearGroups = [
 <BaseLayout
   lang={lang}
   title="知識庫 — Peggy"
-  description="Peggy的知識庫：每週一篇，拆解 AI、學習設計、產品與科技。可搜尋或依主題瀏覽。"
+  description="Peggy的知識庫：拆解 AI、學習設計、產品與科技。可搜尋或依主題瀏覽。"
 >
-  <div class="wrap wrap--prose" data-hub data-view="category">
+  <div class="wrap" data-hub data-view="category">
+    <header class="hub-head">
+      <h1 class="sr-only">知識庫</h1>
+    </header>
+
+    <KnowledgeMap groups={groups} lang={lang} />
+
     <Search lang={lang} />
 
     <nav class="browse" aria-label="依分類或標籤瀏覽">
@@ -143,10 +150,18 @@ const yearGroups = [
 </script>
 
 <style>
+  .hub-head {
+    padding-top: var(--uwp-space-8);
+  }
+  /* The knowledge map carries topics and tags, so the chip rows would repeat
+     it. The tag chips stay in the DOM: the map toggles them to filter. */
+  .browse__group[data-view-only],
+  .browse :global([data-tag-list]) {
+    display: none;
+  }
   .browse {
     margin-top: var(--uwp-space-8);
     padding-block: var(--uwp-space-6);
-    border-bottom: 1px solid var(--uwp-color-border-subtle);
     display: flex;
     flex-direction: column;
     gap: var(--uwp-space-5);
@@ -204,6 +219,10 @@ const yearGroups = [
     align-items: baseline;
     gap: var(--uwp-space-3);
     font-size: var(--uwp-text-2xl);
+  }
+  /* No divider between a group heading and its first post. */
+  .cat-group :global(.post-card:first-of-type) {
+    border-top: 0;
   }
   .cat-group__count {
     font-size: var(--uwp-text-sm);
