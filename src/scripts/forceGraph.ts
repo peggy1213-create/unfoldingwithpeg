@@ -53,7 +53,22 @@ export interface ForceGraphOptions {
 export interface ForceGraph {
   /** Replace the graph's contents and lay it out afresh. */
   setData(nodes: NodeSpec[], links: LinkSpec[]): void;
+  /**
+   * Fix the graph's height in px (clamped to MIN_HEIGHT..MAX_HEIGHT), or pass
+   * null to go back to a height chosen from the node count. Nodes keep their
+   * relative positions. Returns the height now in use.
+   */
+  setHeight(height: number | null): number;
 }
+
+export const MIN_HEIGHT = 260;
+export const MAX_HEIGHT = 900;
+
+/** Default height: grows with the node count, up to a ceiling. */
+const autoHeight = (count: number) =>
+  Math.round(Math.max(320, Math.min(620, 280 + count * 9)));
+const clampHeight = (h: number) =>
+  Math.round(Math.max(MIN_HEIGHT, Math.min(MAX_HEIGHT, h)));
 
 interface SimNode extends NodeSpec {
   x: number;
@@ -95,6 +110,8 @@ export function createForceGraph(
   let W = 0;
   let H = 0;
   let alpha = 0;
+  /** Height chosen by the reader, or null to use the automatic one. */
+  let fixedH: number | null = null;
   let running = false;
   let focus: SimNode | null = null;
   let dragged = false;
@@ -372,7 +389,7 @@ export function createForceGraph(
     if (pending) {
       const count = pending.nodes.length;
       W = width;
-      H = Math.round(Math.max(320, Math.min(620, 280 + count * 9)));
+      H = fixedH ?? autoHeight(count);
       svg.setAttribute("viewBox", `0 0 ${W} ${H}`);
       svg.style.height = `${H}px`;
       build(pending.nodes, pending.links);
@@ -399,6 +416,23 @@ export function createForceGraph(
     setData(nodeSpecs, linkSpecs) {
       pending = { nodes: nodeSpecs, links: linkSpecs };
       layout();
+    },
+    setHeight(height) {
+      fixedH = height === null ? null : clampHeight(height);
+      const count = pending ? pending.nodes.length : nodes.length;
+      const next = fixedH ?? autoHeight(count);
+      if (nodes.length && W && next !== H) {
+        // Keep each node at the same fraction of the height.
+        const scale = next / H;
+        for (const n of nodes) n.y *= scale;
+        H = next;
+        svg.setAttribute("viewBox", `0 0 ${W} ${H}`);
+        svg.style.height = `${H}px`;
+        alpha = Math.max(alpha, 0.3);
+        render();
+        run();
+      }
+      return next;
     },
   };
 }
