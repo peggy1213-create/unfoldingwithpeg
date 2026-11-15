@@ -44,6 +44,20 @@ const df = new Intl.DateTimeFormat(en ? "en" : "zh-TW", {
   day: "numeric",
 });
 
+// Every tag with the number of posts using it, most-used first. Unlike the
+// graph, this list never drops tags, so each one stays reachable as a filter.
+const tagCounts = new Map<string, number>();
+for (const g of groups)
+  for (const post of g.posts)
+    for (const tag of post.data.tags)
+      tagCounts.set(tag, (tagCounts.get(tag) ?? 0) + 1);
+const allTags = [...tagCounts].sort(
+  (a, b) => b[1] - a[1] || a[0].localeCompare(b[0]),
+);
+/** Tags shown before the list is expanded. */
+const TAGS_SHOWN = 12;
+const extraTags = Math.max(0, allTags.length - TAGS_SHOWN);
+
 // Everything the graph needs, handed to the browser as JSON.
 const data = {
   tagBase: en ? "/en/tag" : "/tag",
@@ -82,6 +96,12 @@ const json = JSON.stringify(data).replace(/</g, "\\u003c");
 
 const t = {
   label: en ? "Knowledge map" : "知識地圖",
+  tags: en ? "Tags" : "標籤",
+  resize: en ? "Graph height" : "圖表高度",
+  resizeHint: en
+    ? "Drag to change the height, double-click to reset"
+    : "拖曳調整高度，連點兩下還原",
+  moreTags: en ? "Show all tags" : "顯示全部標籤",
   graphHint: en
     ? "Hover to trace connections, drag to rearrange, click a topic to focus on it. "
     : "滑過節點看連結，拖曳可以重新排列，點主題可以只看該主題。",
@@ -108,6 +128,17 @@ const t = {
 
     <div class="kgraph fg" data-kgraph>
       <svg role="group" aria-label={t.label}></svg>
+      <div
+        class="kgrip"
+        role="separator"
+        aria-orientation="horizontal"
+        aria-label={t.resize}
+        title={t.resizeHint}
+        tabindex="0"
+        data-kgrip
+      >
+        <span aria-hidden="true"></span>
+      </div>
     </div>
 
     <ul class="ktree">
@@ -154,6 +185,42 @@ const t = {
       }
     </ul>
 
+    <div class="ktags" data-ktags>
+      <ul class="ktags__list" aria-label={t.tags}>
+        {
+          allTags.map(([tag, n], i) => (
+            <li>
+              <a
+                class="ktags__chip"
+                href={tagHref(tag, lang)}
+                data-tag={tag}
+                data-extra={i >= TAGS_SHOWN ? "" : undefined}
+              >
+                #{tag}
+                {n > 1 && <span class="ktags__count">{n}</span>}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+      {
+        extraTags > 0 && (
+          <button
+            type="button"
+            class="ktags__toggle"
+            aria-expanded="false"
+            aria-label={t.moreTags}
+            data-ktags-toggle
+          >
+            <span class="ktags__more">+{extraTags}</span>
+            <svg viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="m4 6 4 4 4-4" />
+            </svg>
+          </button>
+        )
+      }
+    </div>
+
     <p class="kmap__hint">
       <span class="kmap__hint-graph">{t.graphHint}</span>
       {t.hint}
@@ -177,6 +244,8 @@ const t = {
   import {
     createForceGraph,
     clipTitle,
+    MIN_HEIGHT,
+    MAX_HEIGHT,
     type NodeSpec,
     type LinkSpec,
   } from "../scripts/forceGraph";
@@ -213,6 +282,16 @@ const t = {
       } catch {
         /* storage unavailable: the choice just won't persist */
       }
+    });
+
+    // --- Expand / collapse the tag list -------------------------------------
+    const tagBox = wrap.querySelector<HTMLElement>("[data-ktags]");
+    const tagToggle = wrap.querySelector<HTMLButtonElement>(
+      "[data-ktags-toggle]",
+    );
+    tagToggle?.addEventListener("click", () => {
+      const open = tagBox?.toggleAttribute("data-open");
+      tagToggle.setAttribute("aria-expanded", String(!!open));
     });
 
     // --- Tag clicks drive the hub's tag filter ------------------------------
@@ -281,6 +360,68 @@ const t = {
         });
       },
     });
+
+    // --- Adjustable height: drag the bar under the graph --------------------
+    // Arrow keys nudge it, Home / double-click return to the automatic height.
+    // The chosen height is remembered per browser.
+    const grip = graphEl.querySelector<HTMLElement>("[data-kgrip]");
+    const STEP = 40;
+    let shown = 0;
+    const apply = (height: number | null, save = true) => {
+      shown = graph.setHeight(height);
+      grip?.setAttribute("aria-valuenow", String(shown));
+      grip?.setAttribute("aria-valuemin", String(MIN_HEIGHT));
+      grip?.setAttribute("aria-valuemax", String(MAX_HEIGHT));
+      if (!save) return;
+      try {
+        if (height === null) localStorage.removeItem("kmap-height");
+        else localStorage.setItem("kmap-height", String(shown));
+      } catch {
+        /* storage unavailable: the choice just won't persist */
+      }
+    };
+    try {
+      const saved = Number(localStorage.getItem("kmap-height"));
+      if (saved) apply(saved, false);
+    } catch {
+      /* ignore */
+    }
+    if (grip) {
+      grip.addEventListener("pointerdown", (e) => {
+        if (e.button !== 0) return;
+        e.preventDefault();
+        grip.setPointerCapture(e.pointerId);
+        const startY = e.clientY;
+        const startH = svg.getBoundingClientRect().height;
+        grip.dataset.dragging = "";
+        const move = (m: PointerEvent) => apply(startH + (m.clientY - startY));
+        const up = () => {
+          delete grip.dataset.dragging;
+          grip.removeEventListener("pointermove", move);
+          grip.removeEventListener("pointerup", up);
+          grip.removeEventListener("pointercancel", up);
+        };
+        grip.addEventListener("pointermove", move);
+        grip.addEventListener("pointerup", up);
+        grip.addEventListener("pointercancel", up);
+      });
+      grip.addEventListener("dblclick", () => apply(null));
+      // Report the current height to assistive tech as soon as it is focused.
+      grip.addEventListener("focus", () => {
+        const now = Math.round(svg.getBoundingClientRect().height);
+        grip.setAttribute("aria-valuenow", String(now));
+        grip.setAttribute("aria-valuemin", String(MIN_HEIGHT));
+        grip.setAttribute("aria-valuemax", String(MAX_HEIGHT));
+      });
+      grip.addEventListener("keydown", (e) => {
+        const now = svg.getBoundingClientRect().height;
+        if (e.key === "ArrowDown") apply(now + STEP);
+        else if (e.key === "ArrowUp") apply(now - STEP);
+        else if (e.key === "Home") apply(null);
+        else return;
+        e.preventDefault();
+      });
+    }
 
     function show(next: string | null) {
       scope = next;
@@ -574,6 +715,120 @@ const t = {
     background-color: var(--uwp-color-primary-soft);
     border-color: var(--uwp-color-primary);
     color: var(--uwp-color-primary-soft-text);
+  }
+
+  /* --- Height grip: the bar under the graph ------------------------------- */
+  .kgrip {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 1.25rem;
+    cursor: ns-resize;
+    touch-action: none;
+    user-select: none;
+    border-top: 1px solid var(--uwp-color-border-subtle);
+  }
+  .kgrip > span {
+    width: 2.5rem;
+    height: 0.25rem;
+    border-radius: 999px;
+    background-color: var(--uwp-color-border-strong);
+    transition: background-color var(--uwp-transition);
+  }
+  .kgrip:hover > span,
+  .kgrip[data-dragging] > span {
+    background-color: var(--uwp-color-text-subtle);
+  }
+  .kgrip:focus-visible {
+    outline: none;
+    box-shadow: inset var(--uwp-shadow-focus);
+  }
+
+  /* --- Tag list under the graph ------------------------------------------ */
+  .ktags {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--uwp-space-3);
+    margin-top: var(--uwp-space-4);
+  }
+  .ktags__list {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--uwp-space-2);
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  .ktags__chip {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--uwp-space-2);
+    padding: 0.25rem 0.625rem;
+    font-size: var(--uwp-text-sm);
+    color: var(--uwp-color-text-muted);
+    text-decoration: none;
+    background-color: var(--uwp-color-bg);
+    border: 1px solid var(--uwp-color-border);
+    border-radius: var(--uwp-radius-pill);
+    white-space: nowrap;
+    transition: color var(--uwp-transition), border-color var(--uwp-transition);
+  }
+  .ktags__chip:hover {
+    color: var(--uwp-color-text);
+    border-color: var(--uwp-color-border-strong);
+  }
+  .ktags__chip:focus-visible {
+    outline: none;
+    box-shadow: var(--uwp-shadow-focus);
+  }
+  .ktags__chip[aria-pressed="true"] {
+    background-color: var(--uwp-color-primary-soft);
+    border-color: var(--uwp-color-primary);
+    color: var(--uwp-color-primary-soft-text);
+  }
+  .ktags__count {
+    font-size: var(--uwp-text-xs);
+    color: var(--uwp-color-text-subtle);
+    font-variant-numeric: tabular-nums;
+  }
+  /* Collapsed: hide the extra tags, except any that are filtering the list. */
+  .ktags:not([data-open]) .ktags__chip[data-extra]:not([aria-pressed="true"]) {
+    display: none;
+  }
+  .ktags__toggle {
+    appearance: none;
+    flex-shrink: 0;
+    display: inline-flex;
+    align-items: center;
+    gap: var(--uwp-space-1);
+    padding: 0.25rem 0.625rem;
+    font: inherit;
+    font-size: var(--uwp-text-sm);
+    color: var(--uwp-color-text-muted);
+    background: none;
+    border: 1px solid var(--uwp-color-border-strong);
+    border-radius: var(--uwp-radius-pill);
+    cursor: pointer;
+    transition: color var(--uwp-transition), border-color var(--uwp-transition);
+  }
+  .ktags__toggle:hover {
+    color: var(--uwp-color-text);
+    border-color: var(--uwp-color-text-subtle);
+  }
+  .ktags__toggle:focus-visible {
+    outline: none;
+    box-shadow: var(--uwp-shadow-focus);
+  }
+  .ktags__toggle svg {
+    transition: transform var(--uwp-transition);
+  }
+  .ktags[data-open] .ktags__toggle svg {
+    transform: rotate(180deg);
+  }
+  .ktags[data-open] .ktags__more {
+    display: none;
   }
 
   .kmap__hint {
