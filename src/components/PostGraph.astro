@@ -1,0 +1,187 @@
+---
+/**
+ * Neighbourhood graph for a single post: the post in the centre, its tags
+ * around it, and the other posts that share any of those tags, each joined
+ * through the tag they have in common. It shows why posts are related, and
+ * stays small however large the archive grows (it never draws more than
+ * MAX_NEIGHBOURS other posts).
+ *
+ * Renders nothing when no other post shares a tag, since the graph would then
+ * be the post and its own tags with nothing to connect to. Needs JavaScript and
+ * 36rem of width; the related-post cards below it carry the same links as text.
+ */
+import {
+  getPostsByLang,
+  postHref,
+  postSlug,
+  tagHref,
+  type Post,
+  type Lang,
+} from "../utils/i18n";
+import { categoryColor } from "../utils/categoryColor";
+
+interface Props {
+  post: Post;
+  lang: Lang;
+}
+
+const MAX_NEIGHBOURS = 12;
+
+const { post, lang } = Astro.props;
+const en = lang === "en";
+const mine = new Set(post.data.tags);
+
+const neighbours = (await getPostsByLang(lang)) // newest first
+  .filter((p) => p.id !== post.id)
+  .map((p) => ({ p, shared: p.data.tags.filter((tag) => mine.has(tag)) }))
+  .filter((n) => n.shared.length > 0)
+  .sort((a, b) => b.shared.length - a.shared.length)
+  .slice(0, MAX_NEIGHBOURS);
+
+const data = {
+  current: {
+    slug: postSlug(post),
+    title: post.data.title,
+    href: postHref(post),
+    color: categoryColor(post.data.category),
+  },
+  tags: post.data.tags.map((tag) => ({ tag, href: tagHref(tag, lang) })),
+  others: neighbours.map(({ p, shared }) => ({
+    slug: postSlug(p),
+    title: p.data.title,
+    href: postHref(p),
+    color: categoryColor(p.data.category),
+    shared,
+  })),
+};
+const json = JSON.stringify(data).replace(/</g, "\\u003c");
+
+const heading = en ? "How this post connects" : "這篇文章的連結";
+const hint = en
+  ? "Posts that share a tag with this one. Hover to trace a connection, drag to rearrange."
+  : "和這篇文章有共同標籤的文章。滑過節點看連結，拖曳可以重新排列。";
+---
+
+{
+  neighbours.length > 0 && (
+    <section class="pgraph" aria-labelledby="pgraph-head" data-pgraph>
+      <h2 class="pgraph__head" id="pgraph-head">
+        {heading}
+      </h2>
+      <div class="fg" data-pgraph-canvas>
+        <svg role="group" aria-labelledby="pgraph-head" />
+      </div>
+      <p class="pgraph__hint">{hint}</p>
+      <script type="application/json" data-pgraph-data set:html={json} />
+    </section>
+  )
+}
+
+<script>
+  import {
+    createForceGraph,
+    clipTitle,
+    type NodeSpec,
+    type LinkSpec,
+  } from "../scripts/forceGraph";
+
+  interface PostRef {
+    slug: string;
+    title: string;
+    href: string;
+    color: string;
+  }
+  interface GraphData {
+    current: PostRef;
+    tags: { tag: string; href: string }[];
+    others: (PostRef & { shared: string[] })[];
+  }
+
+  (() => {
+    const root = document.querySelector<HTMLElement>("[data-pgraph]");
+    const canvas = root?.querySelector<HTMLElement>("[data-pgraph-canvas]");
+    const svg = canvas?.querySelector<SVGSVGElement>("svg");
+    const raw = root?.querySelector("[data-pgraph-data]")?.textContent;
+    if (!root || !canvas || !svg || !raw) return;
+    const data = JSON.parse(raw) as GraphData;
+
+    const here = `post:${data.current.slug}`;
+    const titles = data.others.length <= 8;
+    const nodes: NodeSpec[] = [
+      {
+        id: here,
+        kind: "post",
+        label: clipTitle(data.current.title),
+        full: data.current.title,
+        href: data.current.href,
+        color: data.current.color,
+        r: 14,
+        cr: 72,
+        current: true,
+      },
+    ];
+    const links: LinkSpec[] = [];
+
+    for (const { tag, href } of data.tags) {
+      const uses = data.others.filter((o) => o.shared.includes(tag)).length;
+      nodes.push({
+        id: `tag:${tag}`,
+        kind: "tag",
+        label: `#${tag}`,
+        full: `#${tag}`,
+        href,
+        r: 4 + Math.min(uses, 8) * 1.1,
+        cr: 34,
+        tag,
+      });
+      links.push({ a: here, b: `tag:${tag}`, owner: here, len: 96 });
+    }
+    for (const other of data.others) {
+      const id = `post:${other.slug}`;
+      nodes.push({
+        id,
+        kind: "post",
+        label: clipTitle(other.title),
+        full: other.title,
+        href: other.href,
+        color: other.color,
+        r: 9,
+        cr: titles ? 66 : 24,
+        quiet: !titles,
+      });
+      for (const tag of other.shared)
+        links.push({ a: `tag:${tag}`, b: id, owner: id, len: 110 });
+    }
+
+    root.dataset.graph = "on";
+    createForceGraph(canvas, svg).setData(nodes, links);
+  })();
+</script>
+
+<style>
+  /* Hidden until the script has run and there is room for a labelled graph. */
+  .pgraph {
+    display: none;
+  }
+  @media (min-width: 36rem) {
+    .pgraph[data-graph] {
+      display: block;
+      margin-top: var(--uwp-space-12);
+      padding-top: var(--uwp-space-8);
+      border-top: 1px solid var(--uwp-color-border-subtle);
+    }
+  }
+  .pgraph__head {
+    font-size: var(--uwp-text-sm);
+    font-weight: var(--uwp-weight-medium);
+    color: var(--uwp-color-text-subtle);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    margin: 0 0 var(--uwp-space-5);
+  }
+  .pgraph__hint {
+    margin-top: var(--uwp-space-3);
+    font-size: var(--uwp-text-sm);
+    color: var(--uwp-color-text-subtle);
+  }
+</style>

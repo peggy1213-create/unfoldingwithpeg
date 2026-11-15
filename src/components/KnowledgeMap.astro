@@ -1,0 +1,584 @@
+---
+/**
+ * Knowledge map for the posts index: topics, posts and tags as one graph.
+ *
+ * With JavaScript, from 36rem up, it is a force-directed graph (see
+ * src/scripts/forceGraph.ts). Without JavaScript, and on phones where a
+ * labelled graph does not fit, the same data is a tree of real links: topic,
+ * then its posts, then each post's tags.
+ *
+ * The graph is built to stay readable as the archive grows:
+ *  - past 10 posts (or 24 tags) it drops tags that sit on a single post, since
+ *    they add a node but no connection;
+ *  - past 12 posts it hides post titles until a post is hovered or traced;
+ *  - clicking a topic redraws the graph with only that topic's posts, where
+ *    both of those rules are applied again to the smaller set;
+ *  - topics and tags are sized by how many posts they connect.
+ *
+ * Clicking a tag (graph or tree) toggles the hub's tag filter (TagFilter.astro)
+ * rather than leaving the page. The whole map can be closed, and stays closed
+ * on the next visit.
+ */
+import {
+  postHref,
+  postSlug,
+  categoryHref,
+  tagHref,
+  type Lang,
+  type CategoryGroup,
+} from "../utils/i18n";
+import { categoryColor } from "../utils/categoryColor";
+
+interface Props {
+  groups: CategoryGroup[];
+  lang: Lang;
+}
+
+const { groups, lang } = Astro.props;
+const en = lang === "en";
+const total = groups.reduce((sum, g) => sum + g.posts.length, 0);
+
+const df = new Intl.DateTimeFormat(en ? "en" : "zh-TW", {
+  year: "numeric",
+  month: "short",
+  day: "numeric",
+});
+
+// Everything the graph needs, handed to the browser as JSON.
+const data = {
+  tagBase: en ? "/en/tag" : "/tag",
+  cats: groups.map((g) => ({
+    slug: g.slug,
+    name: g.name,
+    href: categoryHref(g.slug, lang),
+    color: categoryColor(g.name),
+  })),
+  posts: groups.flatMap((g) =>
+    g.posts.map((post) => ({
+      slug: postSlug(post),
+      title: post.data.title,
+      href: postHref(post),
+      cat: g.slug,
+      tags: post.data.tags,
+    })),
+  ),
+  text: en
+    ? {
+        all: "Show all topics",
+        topicPage: "Open topic page",
+        only: "Showing only",
+        singles: "Tags used on a single post are left out here.",
+        quiet: "Hover a post to see its title.",
+      }
+    : {
+        all: "顯示全部主題",
+        topicPage: "前往主題頁",
+        only: "只顯示",
+        singles: "只出現在一篇文章的標籤在這裡省略。",
+        quiet: "滑過文章節點可以看到標題。",
+      },
+};
+const json = JSON.stringify(data).replace(/</g, "\\u003c");
+
+const t = {
+  label: en ? "Knowledge map" : "知識地圖",
+  graphHint: en
+    ? "Hover to trace connections, drag to rearrange, click a topic to focus on it. "
+    : "滑過節點看連結，拖曳可以重新排列，點主題可以只看該主題。",
+  hint: en ? "Click a tag to filter the list below." : "點標籤可以篩選下方文章。",
+};
+---
+
+<section class="kmap-wrap" aria-label={t.label} data-kmap>
+  <details class="kmap-fold" open data-kmap-fold>
+    <summary>
+      <span class="kmap-fold__title">{t.label}</span>
+      <span class="kmap-fold__action">
+        <svg viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="m4 6 4 4 4-4" />
+        </svg>
+      </span>
+    </summary>
+
+    <p class="kscope" data-kscope hidden>
+      <span data-kscope-label></span>
+      <button type="button" class="uwp-link" data-kscope-all></button>
+      <a class="uwp-link" data-kscope-link></a>
+    </p>
+
+    <div class="kgraph fg" data-kgraph>
+      <svg role="group" aria-label={t.label}></svg>
+    </div>
+
+    <ul class="ktree">
+      {
+        groups.map((g) => (
+          <li style={`--c:${categoryColor(g.name)}`}>
+            <details open={total <= 10}>
+              <summary class="ktree__topic">
+                <span class="ktree__dot" aria-hidden="true" />
+                <span class="ktree__name">{g.name}</span>
+                <span class="ktree__count">{g.posts.length}</span>
+              </summary>
+              <ul class="ktree__posts">
+                {g.posts.map((post) => (
+                  <li>
+                    <a class="ktree__post" href={postHref(post)}>
+                      <span class="ktree__title">{post.data.title}</span>
+                      <time
+                        class="ktree__date"
+                        datetime={post.data.publishedAt.toISOString()}
+                      >
+                        {df.format(post.data.publishedAt)}
+                      </time>
+                    </a>
+                    <ul class="ktree__tags">
+                      {post.data.tags.map((tag) => (
+                        <li>
+                          <a
+                            class="ktree__tag"
+                            href={tagHref(tag, lang)}
+                            data-tag={tag}
+                          >
+                            #{tag}
+                          </a>
+                        </li>
+                      ))}
+                    </ul>
+                  </li>
+                ))}
+              </ul>
+            </details>
+          </li>
+        ))
+      }
+    </ul>
+
+    <p class="kmap__hint">
+      <span class="kmap__hint-graph">{t.graphHint}</span>
+      {t.hint}
+      <span data-knote></span>
+    </p>
+  </details>
+
+  <script is:inline>
+    // Restore the reader's last open/closed choice before first paint.
+    (function () {
+      try {
+        var fold = document.querySelector("[data-kmap-fold]");
+        if (fold && localStorage.getItem("kmap-open") === "0") fold.open = false;
+      } catch (e) {}
+    })();
+  </script>
+  <script type="application/json" data-kmap-data set:html={json} />
+</section>
+
+<script>
+  import {
+    createForceGraph,
+    clipTitle,
+    type NodeSpec,
+    type LinkSpec,
+  } from "../scripts/forceGraph";
+
+  interface MapData {
+    tagBase: string;
+    cats: { slug: string; name: string; href: string; color: string }[];
+    posts: {
+      slug: string;
+      title: string;
+      href: string;
+      cat: string;
+      tags: string[];
+    }[];
+    text: Record<"all" | "topicPage" | "only" | "singles" | "quiet", string>;
+  }
+
+  /** Past these sizes the graph stops drawing single-use tags / post titles. */
+  const SINGLES_MAX_POSTS = 10;
+  const SINGLES_MAX_TAGS = 24;
+  const TITLES_MAX_POSTS = 12;
+  /** Hard ceiling on tag nodes; the most-connected ones are kept. */
+  const MAX_TAGS = 40;
+
+  (() => {
+    const wrap = document.querySelector<HTMLElement>("[data-kmap]");
+    if (!wrap) return;
+
+    // --- Open / close, remembered per browser -------------------------------
+    const fold = wrap.querySelector<HTMLDetailsElement>("[data-kmap-fold]");
+    fold?.addEventListener("toggle", () => {
+      try {
+        localStorage.setItem("kmap-open", fold.open ? "1" : "0");
+      } catch {
+        /* storage unavailable: the choice just won't persist */
+      }
+    });
+
+    // --- Tag clicks drive the hub's tag filter ------------------------------
+    const chipFor = (tag: string) =>
+      document.querySelector<HTMLElement>(
+        `[data-hub] .tag-chip[data-tag="${CSS.escape(tag)}"]`,
+      );
+    const syncTags = () => {
+      for (const el of wrap.querySelectorAll<HTMLElement | SVGElement>(
+        "[data-tag]",
+      )) {
+        const chip = chipFor(el.dataset.tag ?? "");
+        if (!chip) continue;
+        el.setAttribute("role", "button");
+        el.setAttribute(
+          "aria-pressed",
+          chip.getAttribute("aria-pressed") ?? "false",
+        );
+      }
+    };
+    wrap.addEventListener("click", (e) => {
+      const el = (e.target as Element | null)?.closest<HTMLElement | SVGElement>(
+        "[data-tag]",
+      );
+      const chip = el ? chipFor(el.dataset.tag ?? "") : null;
+      if (!chip) return; // no filter on this page: follow the link
+      e.preventDefault();
+      chip.click();
+    });
+    const chipList = document.querySelector("[data-hub] [data-tag-list]");
+    if (chipList) {
+      new MutationObserver(syncTags).observe(chipList, {
+        attributes: true,
+        attributeFilter: ["aria-pressed"],
+        subtree: true,
+      });
+    }
+    syncTags();
+
+    // --- Graph --------------------------------------------------------------
+    const graphEl = wrap.querySelector<HTMLElement>("[data-kgraph]");
+    const svg = graphEl?.querySelector<SVGSVGElement>("svg");
+    const raw = wrap.querySelector("[data-kmap-data]")?.textContent;
+    if (!graphEl || !svg || !raw) return;
+    const data = JSON.parse(raw) as MapData;
+
+    const scopeBar = wrap.querySelector<HTMLElement>("[data-kscope]");
+    const scopeLabel = wrap.querySelector<HTMLElement>("[data-kscope-label]");
+    const scopeAll = wrap.querySelector<HTMLButtonElement>("[data-kscope-all]");
+    const scopeLink = wrap.querySelector<HTMLAnchorElement>("[data-kscope-link]");
+    const note = wrap.querySelector<HTMLElement>("[data-knote]");
+
+    /** Topic slug the graph is narrowed to, or null for the whole archive. */
+    let scope: string | null = null;
+
+    const graph = createForceGraph(graphEl, svg, {
+      onNode(el, spec) {
+        if (spec.kind !== "cat") return;
+        // A topic node narrows the graph to that topic (and back again).
+        const slug = spec.id.slice(4);
+        el.setAttribute("role", "button");
+        el.setAttribute("aria-pressed", scope === slug ? "true" : "false");
+        el.addEventListener("click", (e) => {
+          e.preventDefault();
+          show(scope === slug ? null : slug);
+        });
+      },
+    });
+
+    function show(next: string | null) {
+      scope = next;
+      const posts = scope
+        ? data.posts.filter((p) => p.cat === scope)
+        : data.posts;
+
+      const counts = new Map<string, number>();
+      for (const p of posts)
+        for (const tag of p.tags) counts.set(tag, (counts.get(tag) ?? 0) + 1);
+
+      const singles =
+        posts.length <= SINGLES_MAX_POSTS && counts.size <= SINGLES_MAX_TAGS;
+      const titles = posts.length <= TITLES_MAX_POSTS;
+      const tags = [...counts]
+        .filter(([, n]) => singles || n >= 2)
+        .sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]))
+        .slice(0, MAX_TAGS);
+      const drawn = new Set(tags.map(([tag]) => tag));
+
+      const nodes: NodeSpec[] = [];
+      const links: LinkSpec[] = [];
+      for (const cat of data.cats) {
+        const size = posts.filter((p) => p.cat === cat.slug).length;
+        if (!size) continue;
+        nodes.push({
+          id: `cat:${cat.slug}`,
+          kind: "cat",
+          label: cat.name,
+          full: cat.name,
+          href: cat.href,
+          color: cat.color,
+          r: 14 + Math.min(size, 10),
+          cr: 46,
+        });
+      }
+      for (const p of posts) {
+        const cat = data.cats.find((c) => c.slug === p.cat);
+        const id = `post:${p.slug}`;
+        nodes.push({
+          id,
+          kind: "post",
+          label: clipTitle(p.title),
+          full: p.title,
+          href: p.href,
+          color: cat?.color,
+          r: 9,
+          cr: titles ? 66 : 24,
+          quiet: !titles,
+        });
+        links.push({ a: `cat:${p.cat}`, b: id, owner: id, len: 120 });
+        for (const tag of p.tags) {
+          if (drawn.has(tag))
+            links.push({ a: id, b: `tag:${tag}`, owner: id, len: 96 });
+        }
+      }
+      for (const [tag, n] of tags) {
+        nodes.push({
+          id: `tag:${tag}`,
+          kind: "tag",
+          label: `#${tag}`,
+          full: `#${tag} (${n})`,
+          href: `${data.tagBase}/${tag}/`,
+          r: 4 + Math.min(n, 8) * 1.1,
+          cr: 34,
+          tag,
+        });
+      }
+
+      graph.setData(nodes, links);
+      syncTags();
+
+      // Say what the graph is leaving out, so nothing is silently missing.
+      const cat = data.cats.find((c) => c.slug === scope);
+      if (scopeBar && scopeLabel && scopeAll && scopeLink) {
+        scopeBar.hidden = !cat;
+        if (cat) {
+          scopeLabel.textContent = `${data.text.only}: ${cat.name} (${posts.length})`;
+          scopeAll.textContent = data.text.all;
+          scopeLink.textContent = `${data.text.topicPage} →`;
+          scopeLink.href = cat.href;
+        }
+      }
+      if (note) {
+        note.textContent = [
+          singles ? "" : data.text.singles,
+          titles ? "" : data.text.quiet,
+        ]
+          .filter(Boolean)
+          .join(" ");
+      }
+    }
+
+    scopeAll?.addEventListener("click", () => show(null));
+    wrap.dataset.graph = "on";
+    show(null);
+  })();
+</script>
+
+<style>
+  .kmap-wrap {
+    margin-top: var(--uwp-space-4);
+  }
+
+  /* --- Open / close ------------------------------------------------------ */
+  .kmap-fold > summary {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--uwp-space-4);
+    padding: var(--uwp-space-3) 0;
+    list-style: none;
+    cursor: pointer;
+    border-radius: var(--uwp-radius-sm);
+  }
+  .kmap-fold > summary::-webkit-details-marker {
+    display: none;
+  }
+  .kmap-fold > summary:focus-visible {
+    outline: none;
+    box-shadow: var(--uwp-shadow-focus);
+  }
+  .kmap-fold__title {
+    font-family: var(--uwp-font-display);
+    font-size: var(--uwp-text-lg);
+    font-weight: var(--uwp-weight-heading);
+  }
+  .kmap-fold__action {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.25rem;
+    height: 2.25rem;
+    color: var(--uwp-color-text-muted);
+    border: 1px solid var(--uwp-color-border-strong);
+    border-radius: var(--uwp-radius-pill);
+    transition: color var(--uwp-transition), border-color var(--uwp-transition);
+  }
+  .kmap-fold > summary:hover .kmap-fold__action {
+    color: var(--uwp-color-text);
+    border-color: var(--uwp-color-text-subtle);
+  }
+  .kmap-fold__action svg {
+    transition: transform var(--uwp-transition);
+  }
+  .kmap-fold[open] .kmap-fold__action svg {
+    transform: rotate(180deg);
+  }
+  .kmap-fold:not([open]) > summary {
+    border-bottom: 1px solid var(--uwp-color-border-subtle);
+  }
+
+  /* --- Graph (36rem and up, when the script has run) ---------------------- */
+  .kgraph,
+  .kscope,
+  .kmap__hint-graph {
+    display: none;
+  }
+  .kscope {
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: var(--uwp-space-2) var(--uwp-space-4);
+    margin-bottom: var(--uwp-space-3);
+    font-size: var(--uwp-text-sm);
+    color: var(--uwp-color-text);
+  }
+  .kscope button {
+    appearance: none;
+    background: none;
+    border: 0;
+    padding: 0;
+    font: inherit;
+    font-weight: var(--uwp-weight-medium);
+    cursor: pointer;
+  }
+  @media (min-width: 36rem) {
+    .kmap-wrap[data-graph] .kgraph {
+      display: block;
+    }
+    .kmap-wrap[data-graph] .kscope:not([hidden]) {
+      display: flex;
+    }
+    .kmap-wrap[data-graph] .kmap__hint-graph {
+      display: inline;
+    }
+    .kmap-wrap[data-graph] .ktree {
+      display: none;
+    }
+  }
+
+  /* --- Tree (phones, and whenever there is no JavaScript) ----------------- */
+  .ktree,
+  .ktree ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  .ktree {
+    display: flex;
+    flex-direction: column;
+    gap: var(--uwp-space-5);
+    padding: var(--uwp-space-5);
+    background-color: var(--uwp-color-surface);
+    border: 1px solid var(--uwp-color-border-subtle);
+    border-radius: var(--uwp-radius-xl);
+  }
+  .ktree__topic {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--uwp-space-2);
+    padding: 0.5rem 0.875rem;
+    font-family: var(--uwp-font-display);
+    font-weight: var(--uwp-weight-bold);
+    font-size: var(--uwp-text-lg);
+    background-color: var(--uwp-color-bg);
+    border: 1px solid var(--uwp-color-border);
+    border-radius: var(--uwp-radius-pill);
+    list-style: none;
+    cursor: pointer;
+  }
+  .ktree__topic::-webkit-details-marker {
+    display: none;
+  }
+  .ktree__topic:focus-visible {
+    outline: none;
+    box-shadow: var(--uwp-shadow-focus);
+  }
+  .ktree__dot {
+    width: 0.625rem;
+    height: 0.625rem;
+    border-radius: 999px;
+    background-color: var(--c);
+  }
+  .ktree__count {
+    font-family: var(--uwp-font-sans);
+    font-size: var(--uwp-text-xs);
+    font-weight: var(--uwp-weight-normal);
+    color: var(--uwp-color-text-subtle);
+  }
+  .ktree ul.ktree__posts {
+    margin: var(--uwp-space-3) 0 0 1.25rem;
+    border-left: 1.5px solid var(--c);
+  }
+  .ktree__posts > li {
+    position: relative;
+    padding: var(--uwp-space-3) 0 var(--uwp-space-3) var(--uwp-space-5);
+  }
+  .ktree__posts > li::before {
+    /* branch from the trunk to the post */
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 1.6rem;
+    width: var(--uwp-space-4);
+    border-top: 1.5px solid var(--c);
+  }
+  .ktree__post {
+    display: flex;
+    flex-direction: column;
+    gap: var(--uwp-space-1);
+    color: var(--uwp-color-text);
+    text-decoration: none;
+  }
+  .ktree__title {
+    font-family: var(--uwp-font-display);
+    font-weight: var(--uwp-weight-heading);
+    line-height: var(--uwp-leading-snug);
+  }
+  .ktree__date {
+    font-size: var(--uwp-text-xs);
+    color: var(--uwp-color-text-subtle);
+  }
+  .ktree ul.ktree__tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--uwp-space-2);
+    margin-top: var(--uwp-space-3);
+  }
+  .ktree__tag {
+    display: inline-flex;
+    padding: 0.25rem 0.625rem;
+    font-size: var(--uwp-text-sm);
+    color: var(--uwp-color-text-muted);
+    text-decoration: none;
+    background-color: var(--uwp-color-bg);
+    border: 1px solid var(--uwp-color-border);
+    border-radius: var(--uwp-radius-pill);
+    white-space: nowrap;
+  }
+  .ktree__tag[aria-pressed="true"] {
+    background-color: var(--uwp-color-primary-soft);
+    border-color: var(--uwp-color-primary);
+    color: var(--uwp-color-primary-soft-text);
+  }
+
+  .kmap__hint {
+    margin-top: var(--uwp-space-3);
+    font-size: var(--uwp-text-sm);
+    color: var(--uwp-color-text-subtle);
+  }
+</style>
