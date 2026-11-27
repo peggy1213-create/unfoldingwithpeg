@@ -1,39 +1,59 @@
 # studiounfolding.cc — crawl policy
-# Default: allow everything. The /tracker/ app (job tracker + its API) and
-# /jobs/ board are private tools behind Cloudflare Access, not content, so keep
+# Default: allow everything. The /tracker app (job tracker + its API) and the
+# /jobs board are private tools behind Cloudflare Access, not content, so keep
 # them out of search and AI indexes.
+#
+# NOTE: the Disallow paths below deliberately have NO trailing slash. robots.txt
+# matches on prefix, so "Disallow: /jobs" covers /jobs, /jobs/, /jobs?x=1 and
+# every path underneath, while "Disallow: /jobs/" would have left the
+# slash-less /jobs — which the site serves with a 200 — fully crawlable.
 
 User-agent: *
 Allow: /
-Disallow: /tracker/
-Disallow: /jobs/
+Disallow: /tracker
+Disallow: /jobs
 
 # Generative-AI / LLM crawlers — explicitly allowed so the site can be cited
-# and surfaced in AI answers (ChatGPT, Claude, Perplexity, Google AI, etc.).
+# and surfaced in AI answers (ChatGPT, Claude, Perplexity, Google AI, etc.),
+# with the same two private tools held back.
 User-agent: GPTBot
 Allow: /
-Disallow: /tracker/
-Disallow: /jobs/
+Disallow: /tracker
+Disallow: /jobs
 
 User-agent: OAI-SearchBot
 Allow: /
+Disallow: /tracker
+Disallow: /jobs
 
 User-agent: ChatGPT-User
 Allow: /
+Disallow: /tracker
+Disallow: /jobs
 
 User-agent: ClaudeBot
 Allow: /
+Disallow: /tracker
+Disallow: /jobs
 
 User-agent: Claude-Web
 Allow: /
+Disallow: /tracker
+Disallow: /jobs
 
 User-agent: PerplexityBot
 Allow: /
+Disallow: /tracker
+Disallow: /jobs
 
 User-agent: Google-Extended
 Allow: /
+Disallow: /tracker
+Disallow: /jobs
 
 User-agent: Applebot-Extended
 Allow: /
+Disallow: /tracker
+Disallow: /jobs
 
 Sitemap: https://studiounfolding.cc/sitemap.xml

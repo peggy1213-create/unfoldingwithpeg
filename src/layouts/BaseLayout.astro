@@ -21,6 +21,21 @@ interface Props {
    * The site-identity WebSite + Person graph is always emitted in addition.
    */
   jsonLd?: Record<string, unknown> | Record<string, unknown>[];
+  /**
+   * Keep this page out of search and AI indexes: emits `robots: noindex` and
+   * omits the hreflang alternates (Google ignores hreflang on a page it is
+   * told not to index). Use for gated app pages such as /jobs and /tracker,
+   * and for thin aggregation pages such as the per-tag listings.
+   */
+  noindex?: boolean;
+  /**
+   * Whether crawlers may follow the links on a `noindex` page. Defaults to
+   * false (so `noindex` alone means "noindex, nofollow", right for a private
+   * tool). Pass `follow` on a thin aggregation page whose links are the point:
+   * a tag listing should drop out of the index while still passing crawlers
+   * through to the posts it links.
+   */
+  follow?: boolean;
 }
 
 const {
@@ -32,6 +47,8 @@ const {
   publishedTime,
   modifiedTime,
   jsonLd,
+  noindex = false,
+  follow = false,
 } = Astro.props;
 
 // Derive the language-neutral route (e.g. "/", "/about/", "/contact/") from the
@@ -50,7 +67,13 @@ const skip = lang === "zh-TW" ? "跳到主要內容" : "Skip to content";
 // hreflang and Open Graph — crawlers and AI systems prefer absolute links.
 const site = Astro.site ?? new URL("https://studiounfolding.cc");
 const abs = (p: string) => new URL(p, site).href;
-const canonical = abs(lang === "en" ? enPath : zhPath);
+// Content pages canonicalise to their locale-correct route. A `noindex` page
+// (a gated tool such as /jobs or /tracker) has no locale pair, so it
+// self-canonicalises to the URL actually being served — otherwise /jobs would
+// point at /en/jobs/, which does not exist.
+const canonical = noindex
+  ? abs(raw.endsWith("/") ? raw : raw + "/")
+  : abs(lang === "en" ? enPath : zhPath);
 const zhUrl = abs(zhPath);
 const enUrl = abs(enPath);
 const ogImage = image ? abs(image) : undefined;
@@ -117,11 +140,26 @@ const extraJsonLd = jsonLd
     <title>{title}</title>
     <meta name="description" content={description} />
     <link rel="canonical" href={canonical} />
-    <meta name="robots" content="index, follow, max-image-preview:large" />
+    <meta
+      name="robots"
+      content={
+        noindex
+          ? follow
+            ? "noindex, follow"
+            : "noindex, nofollow"
+          : "index, follow, max-image-preview:large"
+      }
+    />
     <link rel="icon" href="/assets/brand/favicon.svg" type="image/svg+xml" />
-    <link rel="alternate" hreflang="en" href={enUrl} />
-    <link rel="alternate" hreflang="zh-Hant-TW" href={zhUrl} />
-    <link rel="alternate" hreflang="x-default" href={zhUrl} />
+    {
+      !noindex && (
+        <>
+          <link rel="alternate" hreflang="en" href={enUrl} />
+          <link rel="alternate" hreflang="zh-Hant-TW" href={zhUrl} />
+          <link rel="alternate" hreflang="x-default" href={zhUrl} />
+        </>
+      )
+    }
 
     <!-- Open Graph -->
     <meta property="og:type" content={ogType} />

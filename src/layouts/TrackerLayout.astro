@@ -17,6 +17,9 @@ const currentPath = Astro.url.pathname;
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{title} — Job Tracker</title>
+    <!-- Private tool: keep every tracker route out of search and AI indexes,
+         including the path variants Cloudflare Access does not cover. -->
+    <meta name="robots" content="noindex, nofollow" />
     <link rel="icon" href="/assets/brand/favicon.svg" type="image/svg+xml" />
   </head>
   <body>
