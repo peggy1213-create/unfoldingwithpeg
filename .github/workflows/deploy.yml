@@ -9,6 +9,26 @@ name: Deploy to Cloudflare
 on:
   push:
     branches: [main]
+
+  # Scheduled publishing.
+  #
+  # The public routes are prerendered, so a post with a future `publishedAt`
+  # does not appear until a build runs after that moment (the gate lives in
+  # `isLive()` in src/utils/i18n.ts). These three daily builds are what put
+  # scheduled posts live; without them a scheduled post would wait for the
+  # next push to main.
+  #
+  # Cron is UTC-only. These are 09:17 / 13:17 / 21:17 Asia/Taipei (UTC+8), so
+  # set a post's `publishedAt` to just before whichever slot you want. The
+  # off-the-hour minute dodges the top-of-hour congestion that delays queued
+  # runs; GitHub makes no on-time guarantee for `schedule` either way, so
+  # expect a few minutes' drift.
+  #
+  # Note: GitHub disables scheduled workflows after 60 days with no repo
+  # activity (it emails first). Any push re-enables them.
+  schedule:
+    - cron: "17 1,5,13 * * *"
+
   workflow_dispatch: {} # allow manual runs from the Actions tab
 
 # Never run two production deploys at once; let an in-flight deploy finish.

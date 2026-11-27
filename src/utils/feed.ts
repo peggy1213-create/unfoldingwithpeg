@@ -89,7 +89,7 @@ export function feedRoute(lang: Lang): APIRoute {
     const abs = (path: string) => new URL(path, site).href;
     const channel = FEED_CHANNELS[lang];
 
-    const posts = await getPostsByLang(lang); // non-draft, newest first
+    const posts = await getPostsByLang(lang); // published, newest first
 
     // Derived from the content rather than from `Date.now()`, so rebuilding
     // without publishing produces a byte-identical feed.

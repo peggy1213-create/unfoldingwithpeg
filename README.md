@@ -109,6 +109,29 @@ Actions):
 Add both **before** the first push to `main`, or the deploy step fails for lack
 of credentials. Keep the token private and rotate it in Cloudflare if it leaks.
 
+### Scheduling a post
+
+A post goes live when a build runs *after* its `publishedAt`, so a finished post
+can be merged ahead of time and publish itself:
+
+1. Set `draft: false` and `publishedAt` to the future moment you want.
+2. Merge to `main`. The deploy that follows builds the site *without* the post —
+   `isLive()` in [`src/utils/i18n.ts`](src/utils/i18n.ts) filters out any post
+   whose `publishedAt` has not arrived, across post pages, the archive,
+   category and tag pages, related posts, RSS and the sitemap.
+3. The scheduled builds above (09:17 / 13:17 / 21:17 Taipei) pick it up at the
+   first slot past its `publishedAt`.
+
+So set `publishedAt` just before the slot you want:
+`publishedAt: 2026-12-01T09:00:00+08:00` publishes at the 09:17 build on 1 Dec.
+Expect a few minutes' drift on top — GitHub's scheduled runs are best-effort,
+not punctual. To publish sooner, run **Actions → Deploy to Cloudflare → Run
+workflow**; to publish immediately, give the post a past date.
+
+`npm run dev` ignores the date and shows scheduled posts, so one can be previewed
+without editing its `publishedAt` — an edit that, left behind, would publish the
+post on the next build. `draft: true` still hides a post everywhere, dev included.
+
 ## Job Tracker
 
 A private job search tracker lives at `/tracker/`. It uses **Cloudflare D1**
