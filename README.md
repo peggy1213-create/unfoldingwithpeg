@@ -109,6 +109,25 @@ Actions):
 Add both **before** the first push to `main`, or the deploy step fails for lack
 of credentials. Keep the token private and rotate it in Cloudflare if it leaks.
 
+### Build check on pull requests
+
+Every pull request into `main` runs
+[`.github/workflows/build-check.yml`](.github/workflows/build-check.yml), which
+does `npm ci && npm run build` and stops there — no Cloudflare credentials, no
+deploy. It fails the PR on anything the build rejects:
+
+- a post that breaks the collection schema in
+  [`src/content.config.ts`](src/content.config.ts) — an unknown `category`, a
+  tag that isn't lowercase kebab-case, a `description` over 200 characters, a
+  missing or unparseable field;
+- a `translationKey` with no counterpart in the other language (the
+  `validate-translations` integration);
+- broken imports, bad frontmatter and component errors.
+
+Both content checks read every post file regardless of `draft` or a future
+`publishedAt`, so a post scheduled for next month is validated at PR time too —
+even though it renders no page until its date arrives.
+
 ### Scheduling a post
 
 A post goes live when a build runs *after* its `publishedAt`, so a finished post
@@ -121,6 +140,9 @@ can be merged ahead of time and publish itself:
    category and tag pages, related posts, RSS and the sitemap.
 3. The scheduled builds above (09:17 / 13:17 / 21:17 Taipei) pick it up at the
    first slot past its `publishedAt`.
+
+GitHub reads a workflow's `schedule` from the **default branch only**, so a
+change to those times does nothing until it is merged into `main`.
 
 So set `publishedAt` just before the slot you want:
 `publishedAt: 2026-12-01T09:00:00+08:00` publishes at the 09:17 build on 1 Dec.
