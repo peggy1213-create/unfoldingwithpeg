@@ -12,11 +12,38 @@ export function postSlug(post: Post): string {
   return base.replace(/\.(zh-tw|en)$/i, "");
 }
 
-/** Non-draft posts in the given language, newest first. */
+/**
+ * Whether a post is publicly visible: not a draft, and its `publishedAt` has
+ * arrived.
+ *
+ * The future-date check is what makes scheduled publishing work. A finished
+ * post can be merged to `main` with `draft: false` and a `publishedAt` a few
+ * days out; it stays invisible until a build runs after that moment. Because
+ * the public routes are prerendered (`prerender = true`), that build is what
+ * actually puts the post live — `.github/workflows/deploy.yml` runs one at
+ * three fixed times a day for exactly this purpose. See README.
+ *
+ * `Date.now()` is read per call and deliberately NOT hoisted into a
+ * module-level constant. Prerendering runs inside workerd, whose clock only
+ * advances on I/O: in module scope no I/O has happened yet, so `Date.now()`
+ * there returns 0 and every post looks unpublished — which silently empties
+ * the whole site (no post, category or tag pages, empty RSS and sitemap).
+ *
+ * The dev server deliberately ignores the date so a scheduled post can be
+ * previewed locally without editing its date — an edit that, left in place,
+ * would publish the post on the next build.
+ */
+function isLive(post: Post): boolean {
+  if (post.data.draft) return false;
+  if (import.meta.env.DEV) return true;
+  return post.data.publishedAt.getTime() <= Date.now();
+}
+
+/** Published posts in the given language, newest first. */
 export async function getPostsByLang(lang: Lang): Promise<Post[]> {
   const posts = await getCollection(
     "posts",
-    (p) => !p.data.draft && p.data.lang === lang,
+    (p) => isLive(p) && p.data.lang === lang,
   );
   return posts.sort(
     (a, b) => b.data.publishedAt.getTime() - a.data.publishedAt.getTime(),
@@ -25,8 +52,9 @@ export async function getPostsByLang(lang: Lang): Promise<Post[]> {
 
 /**
  * The counterpart post in the other language, or null when this post has no
- * translationKey or no published counterpart. Used by LangSwitcher on post
- * pages so the toggle points at the translated article (and hides otherwise).
+ * translationKey or no published counterpart (a scheduled counterpart does not
+ * count). Used by LangSwitcher on post pages so the toggle points at the
+ * translated article (and hides otherwise).
  */
 export async function getTranslation(post: Post): Promise<Post | null> {
   const key = post.data.translationKey;
@@ -35,7 +63,7 @@ export async function getTranslation(post: Post): Promise<Post | null> {
   const other: Lang = post.data.lang === "zh-TW" ? "en" : "zh-TW";
   const matches = await getCollection(
     "posts",
-    (p) => !p.data.draft && p.data.lang === other && p.data.translationKey === key,
+    (p) => isLive(p) && p.data.lang === other && p.data.translationKey === key,
   );
   return matches[0] ?? null;
 }
@@ -74,7 +102,7 @@ export interface CategoryGroup {
 }
 
 /**
- * Non-draft posts in `lang` grouped by category. Posts within a group are
+ * Published posts in `lang` grouped by category. Posts within a group are
  * newest first; groups are ordered by their most recent post (newest first).
  * Only categories with at least one post appear.
  */
@@ -100,7 +128,7 @@ export async function getCategoryGroups(lang: Lang): Promise<CategoryGroup[]> {
 /**
  * Posts related to `post`, best first, for the "related posts" block.
  *
- * Candidates are all other non-draft posts in the SAME language (its own
+ * Candidates are all other published posts in the SAME language (its own
  * translation lives in the other language, so it never appears here). Each is
  * scored by topical overlap — every shared tag counts 3, a shared category 2 —
  * and ties break by recency. Posts that share nothing still rank (score 0) and
@@ -114,7 +142,7 @@ export async function getRelatedPosts(
   post: Post,
   limit = 3,
 ): Promise<Post[]> {
-  const pool = await getPostsByLang(post.data.lang); // non-draft, newest first
+  const pool = await getPostsByLang(post.data.lang); // published, newest first
   const myCategory = categorySlug(post);
   const myTags = new Set(post.data.tags);
 
@@ -141,7 +169,7 @@ export interface TagGroup {
 }
 
 /**
- * Non-draft posts in `lang` grouped by tag (a post appears under each of its
+ * Published posts in `lang` grouped by tag (a post appears under each of its
  * tags). Posts within a group are newest first; groups are ordered by tag name.
  * Only tags that appear on at least one post appear.
  */

@@ -1,0 +1,54 @@
+name: Build check
+
+# Builds the site on every pull request, so a broken post is caught before
+# merge rather than at deploy time.
+#
+# Deliberately a separate workflow from deploy.yml: this job runs without
+# Cloudflare credentials and must never deploy. It stops after `npm run build`
+# (astro build + pagefind), which is where the checks that matter live:
+#
+#   - the posts collection schema in src/content.config.ts rejects a bad
+#     category, a non-kebab-case tag, an over-long description, a missing
+#     field, an unparseable date, …
+#   - the validate-translations integration rejects a `translationKey` with no
+#     counterpart in the other language
+#   - Astro/Vite reject broken imports, bad frontmatter and component errors
+#
+# Both content checks read every post file regardless of `draft` or a future
+# `publishedAt`, so a post scheduled for next month is validated at PR time
+# too — even though it renders no page until its date arrives.
+
+on:
+  pull_request:
+    branches: [main]
+  workflow_dispatch: {} # allow a manual run from the Actions tab
+
+# A new push to the PR supersedes the check still running for the old commit.
+concurrency:
+  group: build-check-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      # No Cloudflare secrets needed: this builds the Worker and static assets
+      # into dist/ and stops there. `npm run deploy` (push to main) is what
+      # ships it.
+      - name: Build
+        run: npm run build
