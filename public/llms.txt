@@ -21,6 +21,8 @@ education and safety, and shipping products as a solo builder.
 ## Reference
 
 - [Sitemap](https://studiounfolding.cc/sitemap.xml): Full list of indexable URLs.
+- [RSS (繁中)](https://studiounfolding.cc/rss.xml): Chinese posts, newest first.
+- [RSS (English)](https://studiounfolding.cc/en/rss.xml): English posts, newest first.
 - [LinkedIn](https://www.linkedin.com/in/peggy-pei-chun-hsieh/)
 - [GitHub](https://github.com/peggy1213-create)
 

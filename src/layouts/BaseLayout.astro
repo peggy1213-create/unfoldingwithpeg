@@ -1,6 +1,7 @@
 ---
 import Nav from "../components/Nav.astro";
 import Footer from "../components/Footer.astro";
+import { FEED_CHANNELS } from "../utils/feed";
 import "../styles/global.css";
 
 interface Props {
@@ -60,6 +61,7 @@ const route = stripped.endsWith("/") ? stripped : stripped + "/";
 
 const zhPath = route;
 const enPath = route === "/" ? "/en/" : "/en" + route;
+const otherLang = lang === "zh-TW" ? "en" : "zh-TW";
 const htmlLang = lang === "zh-TW" ? "zh-Hant-TW" : "en";
 const skip = lang === "zh-TW" ? "跳到主要內容" : "Skip to content";
 
@@ -160,6 +162,22 @@ const extraJsonLd = jsonLd
         </>
       )
     }
+
+    <!-- RSS auto-discovery. The current language's feed comes first, so a
+         reader handed any page of this site subscribes to that language; the
+         other language's feed is offered second. -->
+    <link
+      rel="alternate"
+      type="application/rss+xml"
+      title={FEED_CHANNELS[lang].title}
+      href={abs(FEED_CHANNELS[lang].path)}
+    />
+    <link
+      rel="alternate"
+      type="application/rss+xml"
+      title={FEED_CHANNELS[otherLang].title}
+      href={abs(FEED_CHANNELS[otherLang].path)}
+    />
 
     <!-- Open Graph -->
     <meta property="og:type" content={ogType} />
