@@ -2,7 +2,6 @@ import type { APIRoute } from "astro";
 import {
   getPostsByLang,
   getCategoryGroups,
-  getTagGroups,
   getTranslation,
   postSlug,
   type Lang,
@@ -72,12 +71,16 @@ export const GET: APIRoute = async () => {
       });
     }
 
-    // Category and tag index pages that actually have posts in this language.
+    // Category index pages that actually have posts in this language.
+    //
+    // Tag pages are deliberately NOT listed. They outnumbered every other URL
+    // here two to one (66 of 92), most listing a single post, so Google spent
+    // its crawl on near-duplicate listings and parked them as "crawled -
+    // currently not indexed". They now render `robots: noindex, follow`
+    // instead: still linked and still crawled through to the posts, just not
+    // advertised as content worth indexing.
     for (const group of await getCategoryGroups(lang)) {
       entries.push({ path: `${prefix}/category/${group.slug}/` });
-    }
-    for (const group of await getTagGroups(lang)) {
-      entries.push({ path: `${prefix}/tag/${group.tag}/` });
     }
   }
 
