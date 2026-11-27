@@ -4,6 +4,7 @@ export const prerender = true;
 import BaseLayout from "../../../layouts/BaseLayout.astro";
 import PostView from "../../../components/PostView.astro";
 import { getPostsByLang, postSlug, type Post } from "../../../utils/i18n";
+import { OG_IMAGE } from "../../../utils/brand";
 
 export async function getStaticPaths() {
   const posts = await getPostsByLang("en");
@@ -28,6 +29,10 @@ const articleLd = {
   author: { "@id": `${site.origin}/#person` },
   publisher: { "@id": `${site.origin}/#person` },
   mainEntityOfPage: new URL(`/en/posts/${postSlug(post)}/`, site).href,
+  // No per-post hero art yet, so every article carries the site's
+  // default card. Google wants an image on a BlogPosting for article
+  // rich results; a shared one still satisfies that.
+  image: new URL(OG_IMAGE.path, site).href,
   articleSection: post.data.category,
   keywords: post.data.tags,
 };

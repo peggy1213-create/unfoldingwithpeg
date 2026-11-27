@@ -1,5 +1,6 @@
 import type { APIRoute } from "astro";
 import { getPostsByLang, postHref, type Lang, type Post } from "./i18n";
+import { FEED_IMAGE } from "./brand";
 
 /**
  * RSS 2.0 feeds, one per language: /rss.xml (zh-TW) and /en/rss.xml (en).
@@ -110,6 +111,15 @@ export function feedRoute(lang: Lang): APIRoute {
         abs(channel.path),
       )}" />`,
       lastBuildDate ? `  <lastBuildDate>${lastBuildDate}</lastBuildDate>` : null,
+      // Channel avatar. Per the RSS spec the nested title/link must repeat the
+      // channel's own, so a reader that renders the image as a link matches.
+      "  <image>",
+      `    <url>${xml(abs(FEED_IMAGE.path))}</url>`,
+      `    <title>${xml(channel.title)}</title>`,
+      `    <link>${xml(abs(channel.link))}</link>`,
+      `    <width>${FEED_IMAGE.width}</width>`,
+      `    <height>${FEED_IMAGE.height}</height>`,
+      "  </image>",
       ...posts.map((post) => itemXml(post, abs)),
       "</channel>",
       "</rss>",
