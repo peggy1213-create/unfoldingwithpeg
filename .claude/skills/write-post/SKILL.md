@@ -77,7 +77,10 @@ rules) is identical in both modes.
 
 3. **Emit both files** (see paths and frontmatter below). Default both to
    `draft: false`. If the user specifically wants the post staged without going
-   live yet, use `draft: true`.
+   live yet, use `draft: true`. If they want it to go live on a set date, keep
+   `draft: false` and give both files the same future `publishedAt` instead (see
+   `publishedAt` below): that releases itself, where `draft: true` needs a second
+   pass to flip.
    - **Claude Code mode:** write the two files to disk with your file tools.
    - **Both modes, required:** whenever the Artifact tool is available, open the
      two files in the side-panel editor (see "Side-panel editor" below) so the
@@ -95,6 +98,12 @@ rules) is identical in both modes.
      `draft: true` post returns **404** at its own URL. There is no draft-preview
      mode. Publishing = building and deploying with `draft: false` via
      `npm run deploy`.
+   - **A scheduled post (future `publishedAt`) DOES appear on the dev server** —
+     at its own URL and in the listings and feed — because the date check is
+     skipped in dev so a scheduled post can be previewed without editing its
+     date. The dev server is therefore not a picture of what is live: a
+     production build leaves the post out until its date arrives. Do not read a
+     working dev page as proof that a scheduled post is published.
    - **Manual mode:** once the user confirms the text in the editor, publish it
      with the `post-to-unfoldingwithpeg` skill if it is available. Otherwise tell
      the user to save each file at its repo path, commit, and deploy
@@ -382,8 +391,13 @@ same `translationKey`. Traditional Chinese usually has neither `'` nor `"`, so
   `validate-translations` integration fails the build if a `translationKey` has
   no counterpart in the other language, so always write BOTH files together.
   Use the slug as the key.
-- **`publishedAt`** — a date (`YYYY-MM-DD`). Use today unless the user says
+- **`publishedAt`** — a date (`YYYY-MM-DD`), or a full timestamp with an offset
+  (`2026-12-01T09:00:00+08:00`) when scheduling. Use today unless the user says
   otherwise. `updatedAt` is optional and defaults to `publishedAt`.
+  **A future value schedules the post:** `isLive()` in `src/utils/i18n.ts` hides
+  it until that moment, and it goes live at the first build at or after it (every
+  push to `main`, plus 09:17 / 13:17 / 21:17 Asia/Taipei). Give both language
+  files the same value, or one language appears before the other.
 - **`lang`** — `"zh-TW"` in the `.zh-tw.md` file, `"en"` in the `.en.md` file.
 - Filenames use `.zh-tw.md` / `.en.md` (lowercase). The slug (filename minus the
   `.<lang>` suffix) must match between the two files.

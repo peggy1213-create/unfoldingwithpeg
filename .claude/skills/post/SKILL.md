@@ -60,7 +60,7 @@ title:          <compelling, specific — not a summary of the chat>
 description:    <≤ 200 chars; a hook, not a recap>
 category:       <exactly one of the 7 — see reference>
 tags:           <1–8, lowercase kebab-case>
-publishedAt:    <today, YYYY-MM-DD, unless the user gives a date>
+publishedAt:    <today, YYYY-MM-DD; a future value schedules — see notes>
 draft:          <true unless the user says publish>
 lang:           <zh-TW | en — the conversation's language>
 translationKey: <slug — reserved; only written when both languages exist>
@@ -265,4 +265,14 @@ Notes:
 - `draft: true` (the schema default) keeps a post out of the listings until the
   user says publish; set `draft: false` only when they confirm.
 - `updatedAt` is optional and defaults to `publishedAt` — omit it on a new post.
-- `publishedAt` accepts a plain `YYYY-MM-DD` date.
+- `publishedAt` accepts a plain `YYYY-MM-DD` date, or a full timestamp with an
+  offset (`2026-12-01T09:00:00+08:00`) when scheduling.
+- **A `publishedAt` in the future schedules the post.** `isLive()` in
+  `src/utils/i18n.ts` hides any non-draft post until its date arrives, and the
+  public routes are prerendered, so the post appears at the first build at or
+  after that moment. `.github/workflows/deploy.yml` builds on every push to
+  `main` and at 09:17 / 13:17 / 21:17 Asia/Taipei. Only use a future date when
+  the user asks for one; otherwise use today, or the post sits invisible.
+- Scheduling and `draft` are different tools: `draft: true` hides a post with no
+  release date and needs a second pass to flip, while a future `publishedAt`
+  releases itself.
